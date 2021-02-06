@@ -103,7 +103,7 @@ func export_avatar_upload() -> void:
 		export_data_callback.set_instance(self)
 		export_data_callback.set_function("get_export_data")
 		
-		VSKSDK.show_upload_panel(export_data_callback, VSKSDK.UserContentType.Avatar)
+		VSKEditor.show_upload_panel(export_data_callback, VSKEditor.UserContentType.Avatar)
 	else:
 		printerr("Node is not valid!")
 
@@ -221,7 +221,7 @@ func _init(p_editor_plugin : EditorPlugin) -> void:
 	options.get_popup().connect("id_pressed", self, "_menu_option")
 	
 func _ready():
-	VSKSDK.connect("user_content_new_id", self, "_user_content_new_id")
+	VSKEditor.connect("user_content_new_id", self, "_user_content_new_id")
 	
 	ik_pose_fixer = Reference.new()
 	ik_pose_fixer.set_script(ik_pose_fixer_const)
