@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://addons/vsk_avatar/shaders/warning_shader.shader" type="Shader" id=1]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/albedo = Color( 0, 0, 0, 1 )
+shader_param/emission = Color( 1, 0, 0, 1 )

@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://addons/vsk_avatar/vsk_avatar_definition.gd" type="Script" id=1]
+[ext_resource path="res://addons/vsk_avatar/import/error_handlers/teapot.glb" type="PackedScene" id=2]
+
+[node name="Avatar" type="Spatial"]
+script = ExtResource( 1 )
+humanoid_data = null
+
+[node name="teapot" parent="." instance=ExtResource( 2 )]
