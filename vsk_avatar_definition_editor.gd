@@ -1,5 +1,6 @@
 extends Control
 
+const vsk_types_const = preload("res://addons/vsk_importer_exporter/vsk_types.gd")
 const avatar_callback_const = preload("avatar_callback.gd")
 
 const bone_mapper_dialog_const = preload("bone_mapper_dialog.gd")
@@ -38,17 +39,6 @@ enum {
 	MENU_OPTION_EXPORT_AVATAR
 	MENU_OPTION_UPLOAD_AVATAR
 }
-
-func _user_content_new_id(p_node: Node, p_id: String) -> void:
-	var undo_redo: UndoRedo = editor_plugin.get_undo_redo()
-	
-	undo_redo.create_action("Add database id")
-	undo_redo.add_do_property(p_node, "database_id", p_id)
-	undo_redo.add_undo_property(p_node, "database_id", p_node.database_id)
-	undo_redo.commit_action()
-	
-	var inspector: EditorInspector = editor_plugin.get_editor_interface().get_inspector()
-	inspector.refresh()
 
 func setup_bones_menu() -> int:
 	if !node.humanoid_data:
@@ -103,7 +93,7 @@ func export_avatar_upload() -> void:
 		export_data_callback.set_instance(self)
 		export_data_callback.set_function("get_export_data")
 		
-		VSKEditor.show_upload_panel(export_data_callback, VSKEditor.UserContentType.Avatar)
+		VSKEditor.show_upload_panel(export_data_callback, vsk_types_const.UserContentType.Avatar)
 	else:
 		printerr("Node is not valid!")
 
@@ -221,8 +211,6 @@ func _init(p_editor_plugin : EditorPlugin) -> void:
 	options.get_popup().connect("id_pressed", self, "_menu_option")
 	
 func _ready():
-	VSKEditor.connect("user_content_new_id", self, "_user_content_new_id")
-	
 	ik_pose_fixer = Reference.new()
 	ik_pose_fixer.set_script(ik_pose_fixer_const)
 	
