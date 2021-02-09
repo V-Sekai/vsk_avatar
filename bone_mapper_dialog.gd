@@ -168,12 +168,6 @@ func update_all_buttons() -> void:
 	update_button_group(right_hand_bone_names, right_hand_bone_buttons)
 
 
-func setup_editor_interface(p_editor_interface: EditorInterface) -> void:
-	bone_selection_dialog.setup_editor_interface(p_editor_interface)
-	
-	clear_icon = p_editor_interface.get_base_control().get_icon("Clear", "EditorIcons")
-	bone_icon = p_editor_interface.get_base_control().get_icon("BoneAttachment", "EditorIcons")
-
 func _ready() -> void:
 	if connect("about_to_show", self, "_about_to_show") != OK:
 		printerr("Could not connect to about_to_show")
@@ -182,13 +176,16 @@ func _ready() -> void:
 		printerr("Could not connect signal!")
 
 
-func _init() -> void:
+func _init(p_bone_icon: Texture, p_clear_icon: Texture) -> void:
 	set_title("Assign bones")
 	set_size(Vector2(DIALOG_WIDTH, DIALOG_HEIGHT))
 
 	resizable = true
 
-	bone_selection_dialog = bone_selection_dialog_const.new()
+	bone_icon = p_bone_icon
+	clear_icon = p_clear_icon
+
+	bone_selection_dialog = bone_selection_dialog_const.new(bone_icon, clear_icon)
 	add_child(bone_selection_dialog)
 
 	left_hand_bone_names = get_hand_name_list(avatar_constants_const.SIDE_LEFT)

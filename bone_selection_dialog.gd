@@ -94,23 +94,21 @@ func _about_to_show() -> void:
 	_filter_changed("")
 
 
-func setup_editor_interface(p_editor_interface: EditorInterface) -> void:
-	clear_icon = p_editor_interface.get_base_control().get_icon("Clear", "EditorIcons")
-	bone_icon = p_editor_interface.get_base_control().get_icon("BoneAttachment", "EditorIcons")
-
-
 func _notification(p_what: int) -> void:
 	match p_what:
 		NOTIFICATION_POST_POPUP:
 			filter_lineedit.grab_focus()
 
 
-func _init() -> void:
+func _init(p_bone_icon: Texture, p_clear_icon: Texture) -> void:
 	connect("about_to_show", self, "_about_to_show")
 	connect("confirmed", self, "_confirmed")
 
 	set_title("Select bone...")
 	set_size(Vector2(DIALOG_WIDTH, DIALOG_HEIGHT))
+
+	bone_icon = p_bone_icon
+	clear_icon = p_clear_icon
 
 	resizable = true
 

@@ -165,9 +165,6 @@ func _menu_option(p_id : int) -> void:
 				
 	error_callback(err)
 
-func setup_editor_interface(p_editor_interface : EditorInterface) -> void:
-	bone_mapper_dialog.setup_editor_interface(p_editor_interface)
-
 func _save_file_at_path(p_string : String) -> void:
 	var err: int = VSKExporter.export_avatar(editor_plugin.get_editor_interface().get_edited_scene_root(),\
 	node,\
@@ -177,6 +174,12 @@ func _save_file_at_path(p_string : String) -> void:
 	external_transform_fixer)
 	
 	error_callback(err)
+
+func _notification(what):
+	match what:
+		NOTIFICATION_PREDELETE:
+			if editor_plugin:
+				editor_plugin.remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, options)
 
 func _init(p_editor_plugin : EditorPlugin) -> void:
 	editor_plugin = p_editor_plugin
@@ -191,13 +194,16 @@ func _init(p_editor_plugin : EditorPlugin) -> void:
 	save_dialog.connect("file_selected", self, "_save_file_at_path")
 	add_child(save_dialog)
 	
-	bone_mapper_dialog = bone_mapper_dialog_const.new()
+	var clear_icon: Texture = editor_plugin.get_editor_interface().get_base_control().get_icon("Clear", "EditorIcons")
+	var bone_icon: Texture = editor_plugin.get_editor_interface().get_base_control().get_icon("BoneAttachment", "EditorIcons")
+	
+	bone_mapper_dialog = bone_mapper_dialog_const.new(bone_icon, clear_icon)
 	add_child(bone_mapper_dialog)
 	
 	options = MenuButton.new()
 	options.set_switch_on_hover(true)
 	
-	p_editor_plugin.add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, options)
+	editor_plugin.add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, options)
 	options.set_text("Avater Definition")
 	options.get_popup().add_item("Setup Bones", MENU_OPTION_SETUP_BONES)
 	options.get_popup().add_item("Enforce T-Pose", MENU_OPTION_ENFORCE_T_POSE)
@@ -209,6 +215,7 @@ func _init(p_editor_plugin : EditorPlugin) -> void:
 	options.get_popup().add_item("Upload Avatar", MENU_OPTION_UPLOAD_AVATAR)
 	
 	options.get_popup().connect("id_pressed", self, "_menu_option")
+	options.hide()
 	
 func _ready():
 	ik_pose_fixer = Reference.new()
