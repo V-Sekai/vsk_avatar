@@ -267,8 +267,6 @@ func calculate_proportions() -> void:
 		avatar_eye_height = 0.0
 		avatar_wristspan = 0.0
 		VRManager.set_origin_world_scale(1.0)
-		
-
 
 func setup_avatar_instance(p_avatar_node: Spatial) -> void:
 	avatar_skeleton = null
