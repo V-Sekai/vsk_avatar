@@ -456,7 +456,7 @@ func ik_complete() -> void:
 			_avatar_display_node.save_head()
 			_avatar_display_node.try_head_shrink()
 			
-func execute_ik(p_delta : float) -> void:
+func execute_ik() -> void:
 	if is_network_master():
 		_avatar_display_node.restore_head()
 	
@@ -472,7 +472,7 @@ func transform_update(p_delta) -> void:
 		else:
 			interpolate_transforms(p_delta)
 			
-		execute_ik(p_delta)
+		execute_ik()
 
 # Current assumes physics to be running at 60hz, will behave differently
 # at a different physics update rate
@@ -514,7 +514,8 @@ func setup() -> void:
 		if is_network_master():
 			_create_output_trackers()
 			
-			VRManager.connect("xr_mode_changed", self, "update_trackers")
+			if !Engine.is_editor_hint():
+				assert(VRManager.connect("xr_mode_changed", self, "update_trackers") == OK)
 			
 			update_trackers()
 			update_ik_controller()
@@ -541,4 +542,5 @@ func _entity_ready():
 		target_transforms.push_back(Transform())
 		ik_point_count -= 1
 	
-	connect("external_trackers_changed", self, "_external_trackers_updated", [], CONNECT_ONESHOT)
+	if !Engine.is_editor_hint():
+		assert(connect("external_trackers_changed", self, "_external_trackers_updated", [], CONNECT_ONESHOT) == OK)

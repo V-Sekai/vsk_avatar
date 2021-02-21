@@ -58,7 +58,7 @@ static func generate_mesh_for_bone_ids(p_mesh: Mesh, p_valid_bone_ids: PoolIntAr
 						if found:
 							break
 							
-					if vertex_valid == false:
+					if !vertex_valid:
 						face_valid = false
 						
 			if face_valid:

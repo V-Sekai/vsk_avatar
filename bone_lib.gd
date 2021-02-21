@@ -134,7 +134,6 @@ static func rename_skeleton_to_humanoid_bones(
 		bone_parents.push_back(p_skeleton.get_bone_parent(i))
 
 	# Rename all the bones with the humanoid_mappings
-	var skeleton_mappings = humanoid_data_const.skeleton_mappings
 	for name in humanoid_data_const.skeleton_mappings:
 		var bone_id: int = get_bone_id_for_humanoid_bone(
 			p_skeleton, p_humanoid_data, "%s_bone_name" % name

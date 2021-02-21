@@ -436,7 +436,8 @@ func _setup_voice() -> void:
 
 	
 func _entity_ready() -> void:
-	VRManager.connect("xr_mode_changed", self, "calculate_proportions")
+	if !Engine.is_editor_hint():
+		assert(VRManager.connect("xr_mode_changed", self, "calculate_proportions") == OK)
 	
 	set_as_toplevel(false)
 	set_transform(Transform(AVATAR_BASIS, Vector3()))
