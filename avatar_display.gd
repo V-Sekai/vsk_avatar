@@ -414,16 +414,24 @@ func try_head_shrink() -> void:
 
 func shrink_head() -> void:
 	if avatar_skeleton and head_id != -1:
-		var custom_head_pose: Transform = Transform().scaled(Vector3(0.0, 0.0, 0.0))
-		avatar_skeleton.set_bone_custom_pose(head_id, avatar_skeleton.get_bone_custom_pose(head_id) * custom_head_pose)
+		var custom_head_pose: Transform = avatar_skeleton.get_bone_global_pose(head_id)
+		var custom_head_pose_parent: Transform = avatar_skeleton.get_bone_global_pose(avatar_skeleton.get_bone_parent(head_id))
+		custom_head_pose = Transform(custom_head_pose.basis.orthonormalized().scaled(Vector3(0.000001, 0.000001, 0.000001)), custom_head_pose_parent.origin)
+		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0)
+		# FIXME(lyuma): I don't understand why doing this twice makes it work, but it does...
+		custom_head_pose = avatar_skeleton.get_bone_global_pose(head_id)
+		custom_head_pose = Transform(custom_head_pose.basis.orthonormalized().scaled(Vector3(0.000001, 0.000001, 0.000001)), custom_head_pose_parent.origin)
+		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0)
 
 func save_head() -> void:
 	if avatar_skeleton and head_id != -1:
-		saved_head_transform = avatar_skeleton.get_bone_custom_pose(head_id)
+		saved_head_transform = avatar_skeleton.get_bone_global_pose(head_id)
 
 func restore_head() -> void:
 	if avatar_skeleton and head_id != -1:
-		avatar_skeleton.set_bone_custom_pose(head_id, saved_head_transform)
+		var custom_head_pose: Transform = avatar_skeleton.get_bone_global_pose(head_id)
+		custom_head_pose = Transform(custom_head_pose.basis.orthonormalized().scaled(saved_head_transform.basis.get_scale()), custom_head_pose.origin)
+		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0)
 
 func _setup_voice() -> void:
 	if ! is_network_master():
