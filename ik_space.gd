@@ -382,28 +382,15 @@ func update_output_trackers() -> void:
 	if tracker_collection_output and _avatar_display_node:
 		var skeleton : Skeleton = _avatar_display_node.avatar_skeleton
 		if skeleton:
-			# First load all the local rest * pose transforms
-			for i in range(0, skeleton.get_bone_count()):
-				rest_local_transforms[i] = skeleton.get_bone_rest(i)
-				pose_local_transforms[i] = skeleton.get_bone_pose(i)
-				
-				# Hack: really ugly hack to deal with the fact that we shrink the head of the local player
-				# So use the unscaled head transform we saved previously. Only do this players we are the master of,
-				# the local player, otherwise we could end with glitches like heads on backwards to other players.
-				if i == _avatar_display_node.head_id and is_network_master():
-					custom_local_transforms[i] = _avatar_display_node.saved_head_transform
-				else:
-					custom_local_transforms[i] = skeleton.get_bone_custom_pose(i)
-					
-			var local_transforms_array: Array = [rest_local_transforms, pose_local_transforms, custom_local_transforms]
-			
-			# Now calculate the transforms for the output trackers based on the global poses
-			var head_transform : Transform = bone_lib_const.get_bone_global_transform(_avatar_display_node.head_id, skeleton, local_transforms_array)
-			var hips_transform : Transform = bone_lib_const.get_bone_global_transform(_avatar_display_node.hip_id, skeleton, local_transforms_array)
-			var left_hand_transform : Transform = bone_lib_const.get_bone_global_transform(_avatar_display_node.left_hand_id, skeleton, local_transforms_array)
-			var right_hand_transform : Transform = bone_lib_const.get_bone_global_transform(_avatar_display_node.right_hand_id, skeleton, local_transforms_array)
-			var left_foot_transform : Transform = bone_lib_const.get_bone_global_transform(_avatar_display_node.left_foot_id, skeleton, local_transforms_array)
-			var right_foot_transform : Transform = bone_lib_const.get_bone_global_transform(_avatar_display_node.right_foot_id, skeleton, local_transforms_array)
+			# Calculate the transforms for the output trackers based on the global poses
+			var head_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.head_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.head_id, skeleton, local_transforms_array)
+			if is_network_master():
+				head_transform = Transform(head_transform.basis.orthonormalized().scaled(_avatar_display_node.saved_head_transform.basis.get_scale()), head_transform.origin);
+			var hips_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.hip_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.hip_id, skeleton, local_transforms_array)
+			var left_hand_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.left_hand_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.left_hand_id, skeleton, local_transforms_array)
+			var right_hand_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.right_hand_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.right_hand_id, skeleton, local_transforms_array)
+			var left_foot_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.left_foot_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.left_foot_id, skeleton, local_transforms_array)
+			var right_foot_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.right_foot_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.right_foot_id, skeleton, local_transforms_array)
 			
 			# Global transform is inefficent. Try to find a cheaper way of doing this.
 			var affine_inverse: Transform = global_transform.affine_inverse()
