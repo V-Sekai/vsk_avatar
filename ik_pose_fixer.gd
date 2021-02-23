@@ -772,17 +772,19 @@ func calculate_bone_roll_offset(
 	return 0.0
 
 
-func setup_bone_chain(p_skeleton: Skeleton, p_bone_chain: PoolIntArray, p_skeleton_ik: SkeletonIK) -> void:
+func setup_bone_chain(p_skeleton: Skeleton, p_bone_chain: PoolIntArray, p_skeleton_ik: SkeletonIK, p_custom_bone_poses: Array) -> Array:
 	print("setup_bone_chain")
 	p_skeleton_ik.interpolation = 1.0
 	for i in range(0, IK_CALCULATION_ITERATIONS):
 		p_skeleton_ik.start(true)
 
 	var array_fixed: Array = []
+	
+	# Saracen: currently this is incorrect because it does not factor the custom_bone_poses into the equation.
+	# Leaving it for now since I plan to rewrite this code
 	for bone_id in p_skeleton.get_bone_count():
 		var ik_transform: Transform = bone_lib_const.local_bone_rotation_from_global_pose(
-			p_skeleton, bone_id
-		)
+			p_skeleton, bone_id)
 		var rest_transform: Transform = p_skeleton.get_bone_rest(bone_id)
 
 		var offset_transform: Transform = rest_transform.affine_inverse() * ik_transform
@@ -791,7 +793,9 @@ func setup_bone_chain(p_skeleton: Skeleton, p_bone_chain: PoolIntArray, p_skelet
 	p_skeleton_ik.stop()
 
 	for bone_id in p_skeleton.get_bone_count():
-		p_skeleton.set_bone_custom_pose(bone_id, array_fixed[bone_id])
+		p_custom_bone_poses[bone_id] = array_fixed[bone_id]
+		
+	return p_custom_bone_poses
 
 
 func straighten_vertical(
@@ -803,8 +807,9 @@ func straighten_vertical(
 	p_start_name: String,
 	p_end_name: String,
 	p_skeleton_ik: SkeletonIK,
-	p_roll_fix_pass: bool
-) -> bool:
+	p_roll_fix_pass: bool,
+	p_custom_bone_pose_array: Array
+) -> Dictionary:
 	print("straighten_vertical")
 	var start_id: int = -1
 	var end_id: int = -1
@@ -859,16 +864,20 @@ func straighten_vertical(
 
 		p_skeleton_ik.target_node = p_skeleton_ik.get_path_to(end_node)
 
-		setup_bone_chain(p_skeleton, bone_chain, p_skeleton_ik)
+		p_custom_bone_pose_array = setup_bone_chain(p_skeleton, bone_chain, p_skeleton_ik, p_custom_bone_pose_array)
 
-		return true
+		return {"custom_bone_pose_array":p_custom_bone_pose_array, "success":true}
 
-	return false
+	return {"custom_bone_pose_array":p_custom_bone_pose_array, "success":false}
 
 
 func straighten_leg(p_root : Spatial,
-	p_side: int, p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const, p_roll_fix_pass: bool
-) -> bool:
+	p_side: int,
+	p_skeleton: Skeleton,
+	p_humanoid_data: humanoid_data_const,
+	p_roll_fix_pass: bool,
+	p_custom_bone_pose_array: Array
+) -> Dictionary:
 	print("straighten_leg")
 	var start_id: int = -1
 	var end_id: int = -1
@@ -937,16 +946,20 @@ func straighten_leg(p_root : Spatial,
 
 		ik.target_node = ik.get_path_to(end_node)
 
-		setup_bone_chain(p_skeleton, bone_chain, ik)
+		p_custom_bone_pose_array = setup_bone_chain(p_skeleton, bone_chain, ik, p_custom_bone_pose_array)
 
-		return true
+		return {"custom_bone_pose_array":p_custom_bone_pose_array, "success":true}
 
-	return false
+	return {"custom_bone_pose_array":p_custom_bone_pose_array, "success":false}
 
 
 func straighten_arm(p_root : Spatial,
-	p_side: int, p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const, p_roll_fix_pass: bool
-) -> bool:
+	p_side: int,
+	p_skeleton: Skeleton,
+	p_humanoid_data: humanoid_data_const,
+	p_roll_fix_pass: bool,
+	p_custom_bone_pose_array: Array
+) -> Dictionary:
 	print("straighten_arm")
 	var start_id: int = -1
 	var end_id: int = -1
@@ -1081,7 +1094,7 @@ func straighten_arm(p_root : Spatial,
 			)
 		)
 		ik.target_node = ik.get_path_to(end_node)
-		setup_bone_chain(p_skeleton, bone_chain, ik)
+		setup_bone_chain(p_skeleton, bone_chain, ik, p_custom_bone_pose_array)
 
 		# Second pass, hand roll fix
 
@@ -1100,7 +1113,7 @@ func straighten_arm(p_root : Spatial,
 		node_util_const.set_relative_global_transform(p_root, end_node, gt)
 		
 		ik.target_node = ik.get_path_to(end_node)  # Must be reset
-		setup_bone_chain(p_skeleton, bone_chain, ik)
+		p_custom_bone_pose_array = setup_bone_chain(p_skeleton, bone_chain, ik, p_custom_bone_pose_array)
 
 		# Third pass, hand pitch fix
 
@@ -1117,11 +1130,11 @@ func straighten_arm(p_root : Spatial,
 		node_util_const.set_relative_global_transform(p_root, end_node, gt)
 		
 		ik.target_node = ik.get_path_to(end_node)  # Must be reset
-		setup_bone_chain(p_skeleton, bone_chain, ik)
+		p_custom_bone_pose_array = setup_bone_chain(p_skeleton, bone_chain, ik, p_custom_bone_pose_array)
 
-		return true
+		return {"custom_bone_pose_array":p_custom_bone_pose_array, "success":true}
 
-	return false
+	return {"custom_bone_pose_array":p_custom_bone_pose_array, "success":false}
 
 
 func straighten_digit(
@@ -1132,8 +1145,9 @@ func straighten_digit(
 	p_humanoid_data: humanoid_data_const,
 	p_hand_basis: Basis,
 	p_snap_degrees: float,
-	p_roll_fix_pass: bool
-) -> bool:
+	p_roll_fix_pass: bool,
+	p_custom_bone_pose_array: Array
+) -> Dictionary:
 	print("straighten_digit")
 	var start_id: int = -1
 	var mid_id: int = -1
@@ -1263,11 +1277,11 @@ func straighten_digit(
 					
 				ik.target_node = ik.get_path_to(end_node)
 				
-				setup_bone_chain(p_skeleton, bone_chain, ik)
+				p_custom_bone_pose_array = setup_bone_chain(p_skeleton, bone_chain, ik, p_custom_bone_pose_array)
 				
-				return true
+				return {"custom_bone_pose_array":p_custom_bone_pose_array, "success":true}
 				
-	return false
+	return {"custom_bone_pose_array":p_custom_bone_pose_array, "success":false}
 
 
 func correct_hand_roll(
@@ -1357,10 +1371,18 @@ func correct_hand_pitch(
 
 
 func straighten_side(p_root: Spatial,
-	p_side: int, p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const, p_roll_fix_pass: bool
-) -> void:
+	p_side: int,
+	p_skeleton: Skeleton,
+	p_humanoid_data: humanoid_data_const,
+	p_roll_fix_pass: bool,
+	p_custom_bone_pose_array: Array
+) -> Dictionary:
 	print("straighten_side")
-	if straighten_arm(p_root, p_side, p_skeleton, p_humanoid_data, p_roll_fix_pass):
+	var arm_result: Dictionary = straighten_arm(p_root, p_side, p_skeleton, p_humanoid_data, p_roll_fix_pass, p_custom_bone_pose_array)
+	
+	p_custom_bone_pose_array = arm_result["custom_bone_pose_array"]
+	
+	if arm_result["success"]:
 		var hand_basis: Basis = Basis()
 		
 		if p_side == avatar_constants_const.SIDE_LEFT:
@@ -1370,7 +1392,7 @@ func straighten_side(p_root: Spatial,
 			
 		for i in range(avatar_constants_const.DIGIT_THUMB, avatar_constants_const.DIGIT_LITTLE + 1):
 			if i == avatar_constants_const.DIGIT_THUMB:
-				straighten_digit(
+				var thumb_result: Dictionary = straighten_digit(
 					p_root,
 					p_side,
 					i,
@@ -1378,10 +1400,13 @@ func straighten_side(p_root: Spatial,
 					p_humanoid_data,
 					hand_basis,
 					THUMB_SNAP_DEGREES,
-					p_roll_fix_pass
+					p_roll_fix_pass,
+					p_custom_bone_pose_array
 				)
+				
+				p_custom_bone_pose_array = thumb_result["custom_bone_pose_array"]
 			else:
-				straighten_digit(
+				var digit_result: Dictionary = straighten_digit(
 					p_root,
 					p_side,
 					i,
@@ -1389,9 +1414,16 @@ func straighten_side(p_root: Spatial,
 					p_humanoid_data,
 					hand_basis,
 					FINGER_SNAP_DEGREES,
-					p_roll_fix_pass
+					p_roll_fix_pass,
+					p_custom_bone_pose_array
 				)
-	straighten_leg(p_root, p_side, p_skeleton, p_humanoid_data, p_roll_fix_pass)
+				
+				p_custom_bone_pose_array = digit_result["custom_bone_pose_array"]
+	var leg_result: Dictionary = straighten_leg(p_root, p_side, p_skeleton, p_humanoid_data, p_roll_fix_pass, p_custom_bone_pose_array)
+	
+	p_custom_bone_pose_array = leg_result["custom_bone_pose_array"]
+	
+	return {"custom_bone_pose_array":p_custom_bone_pose_array}
 
 
 func setup_ik_t_pose(
@@ -1399,7 +1431,7 @@ func setup_ik_t_pose(
 	p_skeleton: Skeleton,
 	p_humanoid_data: humanoid_data_const,
 	p_is_roll_fix_pass: bool
-) -> int:
+) -> Dictionary:
 	print("---Running IKPoseFixer---")
 	destroy_points()
 
@@ -1408,18 +1440,27 @@ func setup_ik_t_pose(
 	left_hand = null
 	right_hand = null
 	
-	var err: int = avatar_callback_const.generic_error_check(p_root, p_skeleton)
-	if err != avatar_callback_const.AVATAR_OK:
-		return err
+	# Build the custom bone pose array
+	var custom_bone_pose_array: Array = []
+	custom_bone_pose_array.resize(p_skeleton.get_bone_count())
 		
 	for bone_id in p_skeleton.get_bone_count():
-		p_skeleton.set_bone_custom_pose(bone_id, Transform())
+		custom_bone_pose_array[bone_id] = Transform()
+	#
+	
+	# Check for errors
+	var err: int = avatar_callback_const.generic_error_check(p_root, p_skeleton)
+	if err != avatar_callback_const.AVATAR_OK:
+		return {
+			"result":err,
+			"custom_bone_pose_array":custom_bone_pose_array
+			}
 		
 	var create_points_callback: int = create_points(p_root, p_skeleton, p_humanoid_data)
 	
 	if create_points_callback == avatar_callback_const.AVATAR_OK:
 		print("Attempting to straighten spine...")
-		straighten_vertical(
+		var result: Dictionary = straighten_vertical(
 			p_root,
 			p_skeleton,
 			p_humanoid_data,
@@ -1428,10 +1469,14 @@ func setup_ik_t_pose(
 			hips_name,
 			spine_end_name,
 			spine_ik,
-			is_roll_fix_pass
+			is_roll_fix_pass,
+			custom_bone_pose_array
 		)
+		
+		custom_bone_pose_array = result["custom_bone_pose_array"]
+		
 		print("Attempting to straighten neck...")
-		straighten_vertical(
+		result = straighten_vertical(
 			p_root,
 			p_skeleton,
 			p_humanoid_data,
@@ -1440,20 +1485,41 @@ func setup_ik_t_pose(
 			neck_name,
 			head_name,
 			neck_ik,
-			is_roll_fix_pass
+			is_roll_fix_pass,
+			custom_bone_pose_array
 		)
+		
+		custom_bone_pose_array = result["custom_bone_pose_array"]
+		
 		print("Attempting to straighten left side...")
-		straighten_side(
+		result = straighten_side(
 			p_root,
-			avatar_constants_const.SIDE_LEFT, p_skeleton, p_humanoid_data, is_roll_fix_pass
+			avatar_constants_const.SIDE_LEFT,
+			p_skeleton,
+			p_humanoid_data,
+			is_roll_fix_pass,
+			custom_bone_pose_array
 		)
+		
+		custom_bone_pose_array = result["custom_bone_pose_array"]
+		
 		print("Attempting to straighten right side...")
-		straighten_side(
+		result = straighten_side(
 			p_root,
-			avatar_constants_const.SIDE_RIGHT, p_skeleton, p_humanoid_data, is_roll_fix_pass
+			avatar_constants_const.SIDE_RIGHT,
+			p_skeleton,
+			p_humanoid_data,
+			is_roll_fix_pass,
+			custom_bone_pose_array
 		)
+		
+		custom_bone_pose_array = result["custom_bone_pose_array"]
+		
 	else:
-		return create_points_callback
+		return {
+			"result":create_points_callback,
+			"custom_bone_pose_array":custom_bone_pose_array
+			}
 
 	# Workaround: IK is using a global pose override so this clears it
 	for i in range(0, p_skeleton.get_bone_count()):
@@ -1462,4 +1528,7 @@ func setup_ik_t_pose(
 	if DELETE_HELPER_NODES:
 		destroy_points()
 
-	return avatar_callback_const.AVATAR_OK
+	return {
+		"result":avatar_callback_const.AVATAR_OK,
+		"custom_bone_pose_array":custom_bone_pose_array
+		}

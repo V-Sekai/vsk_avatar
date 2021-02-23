@@ -32,10 +32,7 @@ const OUTPUT_SCENE_EXTENSION = "scn"
 enum {
 	MENU_OPTION_SETUP_BONES
 	MENU_OPTION_ENFORCE_T_POSE
-	MENU_OPTION_FIX_ROTATIONS
-	MENU_OPTION_FIX_EXTERNAL_TRANSFORM
 	MENU_OPTION_FIX_ALL
-	MENU_OPTION_CLEAR_ROTATIONS
 	MENU_OPTION_EXPORT_AVATAR
 	MENU_OPTION_UPLOAD_AVATAR
 }
@@ -53,24 +50,12 @@ func setup_bones_menu() -> int:
 	return avatar_callback_const.AVATAR_OK
 	
 func setup_ik_t_pose(p_roll_fix_pass : bool) -> int:
-	return ik_pose_fixer.setup_ik_t_pose(node, node._skeleton_node, node.humanoid_data, p_roll_fix_pass)
-
-func fix_rotations() -> int:
-	return rotation_fixer.fix_rotations(node, node._skeleton_node, node.humanoid_data)
-
-func clear_rotations() -> int:
-	var mesh_instances : Array = rotation_fixer.find_mesh_instances_for_skeleton(node, node._skeleton_node, [])
-	var skins : Array = []
+	var ik_pose_fixer_output: Dictionary = ik_pose_fixer.setup_ik_t_pose(node, node._skeleton_node, node.humanoid_data, p_roll_fix_pass)
 	
-	for mesh_instance in mesh_instances:
-		skins.push_back(mesh_instance.skin)
+	for i in range(0, node._skeleton_node.get_bone_count()):
+		node._skeleton_node.set_bone_pose(i, node._skeleton_node.get_bone_pose(i) * ik_pose_fixer_output["custom_bone_pose_array"][i])
 	
-	rotation_fixer.clear_rotations(node._skeleton_node, node.humanoid_data, skins, [])
-	
-	return avatar_callback_const.AVATAR_OK
-
-func fix_external_transform() -> int:
-	return external_transform_fixer.fix_external_transform(node, node._skeleton_node)
+	return ik_pose_fixer_output["result"]
 
 func export_avatar_local() -> void:
 	save_dialog.add_filter("*.%s;%s" % [OUTPUT_SCENE_EXTENSION, OUTPUT_SCENE_EXTENSION.to_upper()]);
@@ -128,28 +113,21 @@ func _menu_option(p_id : int) -> void:
 				err = setup_ik_t_pose(true)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
-		MENU_OPTION_FIX_ROTATIONS:
-			if check_if_avatar_is_valid():
-				err = fix_rotations()
-			else:
-				err = avatar_callback_const.ROOT_IS_NULL
-		MENU_OPTION_FIX_EXTERNAL_TRANSFORM:
-			if check_if_avatar_is_valid():
-				err = fix_external_transform()
-			else:
-				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_FIX_ALL:
 			if check_if_avatar_is_valid():
-				err = setup_ik_t_pose(true)
-				if err == avatar_callback_const.AVATAR_OK:
-					err = fix_rotations()
-					if err == avatar_callback_const.AVATAR_OK:
-						err = fix_external_transform()
-			else:
-				err = avatar_callback_const.ROOT_IS_NULL
-		MENU_OPTION_CLEAR_ROTATIONS:
-			if check_if_avatar_is_valid():
-				err = clear_rotations()
+				var ik_pose_output: Dictionary = ik_pose_fixer.setup_ik_t_pose(
+					node,
+					node._skeleton_node,
+					node.humanoid_data,
+					true)
+				if ik_pose_output["result"] == avatar_callback_const.AVATAR_OK:
+					var rotation_fixer_err: int = rotation_fixer.fix_rotations(
+						node,
+						node._skeleton_node,
+						node.humanoid_data,
+						ik_pose_output["custom_bone_pose_array"])
+					if rotation_fixer_err == avatar_callback_const.AVATAR_OK:
+						err = external_transform_fixer.fix_external_transform(node, node._skeleton_node)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_EXPORT_AVATAR:
@@ -207,10 +185,7 @@ func _init(p_editor_plugin : EditorPlugin) -> void:
 	options.set_text("Avater Definition")
 	options.get_popup().add_item("Setup Bones", MENU_OPTION_SETUP_BONES)
 	options.get_popup().add_item("Enforce T-Pose", MENU_OPTION_ENFORCE_T_POSE)
-	options.get_popup().add_item("Fix Rotations", MENU_OPTION_FIX_ROTATIONS)
-	options.get_popup().add_item("Fix External Transform", MENU_OPTION_FIX_EXTERNAL_TRANSFORM)
 	options.get_popup().add_item("Fix All", MENU_OPTION_FIX_ALL)
-	options.get_popup().add_item("Clear Rotations", MENU_OPTION_CLEAR_ROTATIONS)
 	options.get_popup().add_item("Export Avatar", MENU_OPTION_EXPORT_AVATAR)
 	options.get_popup().add_item("Upload Avatar", MENU_OPTION_UPLOAD_AVATAR)
 	
