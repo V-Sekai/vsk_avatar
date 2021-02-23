@@ -8,7 +8,7 @@ const array_util_const = preload("res://addons/gdutil/array_util.gd")
 const humanoid_data_const = preload("res://addons/vsk_avatar/humanoid_data.gd")
 const bone_lib_const = preload("bone_lib.gd")
 
-const APPLY_AS_REST = false
+const APPLY_AS_REST = true
 
 const HIPS_BASIS_GLOBAL = Basis(Vector3(1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0))
 const HEAD_BASIS_GLOBAL = Basis(Vector3(1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0))
@@ -430,6 +430,7 @@ static func fix_rotations_internal(p_root: Spatial, p_skeleton: Skeleton, p_huma
 	if APPLY_AS_REST:
 		for i in range(0, p_skeleton.get_bone_count()):
 			p_skeleton.set_bone_rest(i, rest_transform_local_offsets[i] * t_pose_transform_local_offsets[i] * rotation_fix_transform_local_offsets[i])
+			p_skeleton.set_bone_pose(i, Transform())
 	else:
 		for i in range(0, p_skeleton.get_bone_count()):
 			p_skeleton.set_bone_pose(i, bone_pose_array[i] * t_pose_transform_local_offsets[i] * rotation_fix_transform_local_offsets[i])

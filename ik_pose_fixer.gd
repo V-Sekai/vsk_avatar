@@ -1433,6 +1433,12 @@ func setup_ik_t_pose(
 	p_is_roll_fix_pass: bool
 ) -> Dictionary:
 	print("---Running IKPoseFixer---")
+	
+	# Saracen: this is a hack to get around a bug where the skeleton which was
+	# recently duplicated is not updated correctly.
+	p_skeleton.clear_bones_global_pose_override()
+	var _root_global_pose = p_skeleton.get_bone_global_pose_without_override(0, true)
+	
 	destroy_points()
 
 	var is_roll_fix_pass: bool = true
