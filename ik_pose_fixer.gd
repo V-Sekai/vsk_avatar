@@ -784,7 +784,7 @@ func setup_bone_chain(p_skeleton: Skeleton, p_bone_chain: PoolIntArray, p_skelet
 	# Leaving it for now since I plan to rewrite this code
 	for bone_id in p_skeleton.get_bone_count():
 		var ik_transform: Transform = bone_lib_const.local_bone_rotation_from_global_pose(
-			p_skeleton, bone_id)
+			p_skeleton, bone_id, p_custom_bone_poses)
 		var rest_transform: Transform = p_skeleton.get_bone_rest(bone_id)
 
 		var offset_transform: Transform = rest_transform.affine_inverse() * ik_transform

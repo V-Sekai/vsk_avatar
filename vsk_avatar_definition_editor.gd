@@ -1,5 +1,7 @@
 extends Control
 
+const avater_debug_const = preload("avatar_debug.gd")
+const bone_direction_const = preload("bone_direction.gd")
 const vsk_types_const = preload("res://addons/vsk_importer_exporter/vsk_types.gd")
 const avatar_callback_const = preload("avatar_callback.gd")
 
@@ -30,12 +32,22 @@ var external_transform_fixer : Reference = null
 const OUTPUT_SCENE_EXTENSION = "scn"
 
 enum {
+	MENU_OPTION_DEBUG_BONES
+	MENU_OPTION_CORRECT_BONE_DIRECTIONS,
 	MENU_OPTION_SETUP_BONES
 	MENU_OPTION_ENFORCE_T_POSE
 	MENU_OPTION_FIX_ALL
 	MENU_OPTION_EXPORT_AVATAR
 	MENU_OPTION_UPLOAD_AVATAR
 }
+
+func debug_bones(p_skeleton: Skeleton) -> void:
+	avater_debug_const.debug_bones(node._skeleton_node)
+	
+	
+func correct_bone_directions(p_skeleton_node: Skeleton, p_humanoid_data: HumanoidData) -> void:
+	bone_direction_const.fix_skeleton(p_skeleton_node, p_humanoid_data)
+
 
 func setup_bones_menu() -> int:
 	if !node.humanoid_data:
@@ -48,7 +60,8 @@ func setup_bones_menu() -> int:
 	bone_mapper_dialog.popup_centered()
 	
 	return avatar_callback_const.AVATAR_OK
-	
+
+
 func setup_ik_t_pose(p_roll_fix_pass : bool) -> int:
 	var ik_pose_fixer_output: Dictionary = ik_pose_fixer.setup_ik_t_pose(node, node._skeleton_node, node.humanoid_data, p_roll_fix_pass)
 	
@@ -57,12 +70,14 @@ func setup_ik_t_pose(p_roll_fix_pass : bool) -> int:
 	
 	return ik_pose_fixer_output["result"]
 
+
 func export_avatar_local() -> void:
 	save_dialog.add_filter("*.%s;%s" % [OUTPUT_SCENE_EXTENSION, OUTPUT_SCENE_EXTENSION.to_upper()]);
 	
 	save_dialog.popup_centered_ratio()
 	save_dialog.set_title("Save Avatar As...")
-	
+
+
 func get_export_data() -> Dictionary:
 	return {
 		"root":editor_plugin.get_editor_interface().get_edited_scene_root(),
@@ -71,7 +86,8 @@ func get_export_data() -> Dictionary:
 		"rotation_fixer":rotation_fixer,
 		"external_transform_fixer":external_transform_fixer
 	}
-	
+
+
 func export_avatar_upload() -> void:
 	if node and node is Node:
 		var export_data_callback: FuncRef = FuncRef.new()
@@ -82,9 +98,11 @@ func export_avatar_upload() -> void:
 	else:
 		printerr("Node is not valid!")
 
+
 func edit(p_node : Node) -> void:
 	node = p_node
-	
+
+
 func error_callback(p_err: int) -> void:
 	if p_err != avatar_callback_const.AVATAR_OK:
 		var error_string: String = avatar_callback_const.get_error_string(p_err)
@@ -92,7 +110,8 @@ func error_callback(p_err: int) -> void:
 		printerr(error_string)
 		err_dialog.set_text(error_string)
 		err_dialog.popup_centered_minsize()
-	
+
+
 func check_if_avatar_is_valid() -> bool:
 	if ! node:
 		return false
@@ -103,6 +122,16 @@ func check_if_avatar_is_valid() -> bool:
 func _menu_option(p_id : int) -> void:
 	var err: int = avatar_callback_const.AVATAR_OK
 	match p_id:
+		MENU_OPTION_DEBUG_BONES:
+			if check_if_avatar_is_valid():
+				debug_bones(node._skeleton_node)
+			else:
+				err = avatar_callback_const.ROOT_IS_NULL
+		MENU_OPTION_CORRECT_BONE_DIRECTIONS:
+			if check_if_avatar_is_valid():
+				correct_bone_directions(node._skeleton_node, node.humanoid_data)
+			else:
+				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_SETUP_BONES:
 			if check_if_avatar_is_valid():
 				err = setup_bones_menu()
@@ -183,6 +212,8 @@ func _init(p_editor_plugin : EditorPlugin) -> void:
 	
 	editor_plugin.add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, options)
 	options.set_text("Avater Definition")
+	options.get_popup().add_item("Debug Bones", MENU_OPTION_DEBUG_BONES)
+	options.get_popup().add_item("Correct Bone Directions", MENU_OPTION_CORRECT_BONE_DIRECTIONS)
 	options.get_popup().add_item("Setup Bones", MENU_OPTION_SETUP_BONES)
 	options.get_popup().add_item("Enforce T-Pose", MENU_OPTION_ENFORCE_T_POSE)
 	options.get_popup().add_item("Fix All", MENU_OPTION_FIX_ALL)

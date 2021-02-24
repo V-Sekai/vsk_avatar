@@ -2,6 +2,7 @@ extends Reference
 tool
 
 const node_util_const = preload("res://addons/gdutil/node_util.gd")
+const avatar_lib_const = preload("avatar_lib.gd")
 const avatar_constants_const = preload("avatar_constants.gd")
 const avatar_callback_const = preload("avatar_callback.gd")
 const array_util_const = preload("res://addons/gdutil/array_util.gd")
@@ -23,8 +24,8 @@ const FOOT_BASIS_GLOBAL = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, -0.707, 0.
 #const RIGHT_ARM_BASIS_LOCAL = Basis(Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0), Vector3(1.0, 0.0, 0.0))
 #const LEGS_BASIS_LOCAL = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, -1.0))
 
-static func get_bone_children(p_skeleton : Skeleton, p_id : int) -> PoolIntArray:
-	var children : PoolIntArray = PoolIntArray()
+static func get_bone_children(p_skeleton : Skeleton, p_id : int) -> Array:
+	var children : Array = Array()
 	for i in range(0, p_skeleton.get_bone_count()):
 		var parent_id : int = p_skeleton.get_bone_parent(i)
 		if parent_id == p_id:
@@ -67,8 +68,8 @@ static func fix_bone(p_root: Spatial, p_skeleton: Skeleton, p_id: int, p_global_
 		
 	return p_transform_data
 
-static func fix_chain(p_root: Spatial, p_skeleton: Skeleton, p_start_id: int, p_end_id: int, p_valid_bone_ids: PoolIntArray, p_global_basis: Basis, p_transform_data: Dictionary) -> Dictionary:
-	var bone_chain : PoolIntArray = bone_lib_const.get_full_bone_chain(p_skeleton, p_start_id, p_end_id)
+static func fix_bone_list(p_root: Spatial, p_skeleton: Skeleton, p_start_id: int, p_end_id: int, p_valid_bone_ids: Array, p_global_basis: Basis, p_transform_data: Dictionary) -> Dictionary:
+	var bone_chain : Array = bone_lib_const.get_full_bone_chain(p_skeleton, p_start_id, p_end_id)
 	
 	for id in bone_chain:
 		if array_util_const.pool_int_array_find(p_valid_bone_ids, id) != -1:
@@ -87,31 +88,24 @@ static func fix_arm(p_root : Spatial, p_humanoid_data : humanoid_data_const, p_s
 	p_skeleton, p_humanoid_data, "shoulder_%s_bone_name" % direction_name)
 	var arm_end_name : String = bone_lib_const.get_internal_bone_name_for_humanoid_bone(\
 	p_skeleton, p_humanoid_data, "hand_%s_bone_name" % direction_name)
-	var arm_middle_name : String = bone_lib_const.get_internal_bone_name_for_humanoid_bone(\
-	p_skeleton, p_humanoid_data, "forearm_%s_bone_name" % direction_name)
 	
 	if arm_start_name == "":
 		arm_start_name = upper_arm_name
 		
-	if arm_start_name == "" or arm_middle_name == "" or arm_end_name == "" or upper_arm_name == "":
+	if arm_start_name == "" or arm_end_name == "":
 		return p_transform_data
 
 	var arm_start_id : int = p_skeleton.find_bone(arm_start_name)
-	var arm_middle_id : int = p_skeleton.find_bone(arm_middle_name)
 	var arm_end_id : int = p_skeleton.find_bone(arm_end_name)
-	var upper_arm_id : int = p_skeleton.find_bone(upper_arm_name)
 	
-	if arm_start_id == -1 or arm_middle_id == -1 or arm_end_id == -1 or upper_arm_id == -1:
+	if arm_start_id == -1 or arm_end_id == -1:
 		return p_transform_data
 	
-	var valid_bone_ids : PoolIntArray = []
-	valid_bone_ids.append(arm_start_id)
-	valid_bone_ids.append(arm_middle_id)
+	var valid_bone_ids : Array = Array()
 	valid_bone_ids.append(arm_end_id)
-	if array_util_const.pool_int_array_find(valid_bone_ids, upper_arm_id) == -1:
-		valid_bone_ids.append(upper_arm_id)
+	valid_bone_ids.append_array(bone_lib_const.get_bone_chain(p_skeleton, arm_start_id, arm_end_id))
 
-	return fix_chain(p_root, p_skeleton, arm_start_id, arm_end_id, valid_bone_ids, global_basis, p_transform_data)
+	return fix_bone_list(p_root, p_skeleton, arm_start_id, arm_end_id, valid_bone_ids, global_basis, p_transform_data)
 	
 	
 static func fix_digit(p_root: Spatial, p_humanoid_data: humanoid_data_const, p_skeleton: Skeleton, p_transform_data: Dictionary, p_side: int, p_digit_id: int, p_global_basis: Basis) -> Dictionary:
@@ -145,12 +139,12 @@ static func fix_digit(p_root: Spatial, p_humanoid_data: humanoid_data_const, p_s
 		
 	print("Got digit bone IDs!")
 		
-	var valid_bone_ids : PoolIntArray = []
+	var valid_bone_ids : Array = []
 	valid_bone_ids.append(start_id)
 	valid_bone_ids.append(middle_id)
 	valid_bone_ids.append(end_id)
 	
-	p_transform_data = fix_chain(p_root, p_skeleton, start_id, end_id, valid_bone_ids, p_global_basis, p_transform_data)
+	p_transform_data = fix_bone_list(p_root, p_skeleton, start_id, end_id, valid_bone_ids, p_global_basis, p_transform_data)
 	
 	print("Digit Fixed!")
 	
@@ -169,62 +163,26 @@ static func fix_digits(p_root: Spatial, p_humanoid_data: humanoid_data_const, p_
 	
 static func fix_spine(p_root: Spatial, p_humanoid_data: humanoid_data_const, p_skeleton: Skeleton, p_transform_data: Dictionary) -> Dictionary:
 	var hips_name : String = bone_lib_const.get_internal_bone_name_for_humanoid_bone(p_skeleton, p_humanoid_data, "hips_bone_name")
-	var spine_name : String = bone_lib_const.get_internal_bone_name_for_humanoid_bone(p_skeleton, p_humanoid_data, "spine_bone_name")
-	var chest_name : String = bone_lib_const.get_internal_bone_name_for_humanoid_bone(p_skeleton, p_humanoid_data, "chest_bone_name")
-	var upper_chest_name : String = bone_lib_const.get_internal_bone_name_for_humanoid_bone(p_skeleton, p_humanoid_data, "upper_chest_bone_name")
+	var head_name : String = bone_lib_const.get_internal_bone_name_for_humanoid_bone(p_skeleton, p_humanoid_data, "head_bone_name")
 	
 	var spine_start_name : String = hips_name
-	var spine_end_name : String = upper_chest_name
-	
-	if spine_end_name == "":
-		spine_end_name = chest_name
-		if spine_end_name == "":
-			spine_end_name = spine_name
-		
+	var spine_end_name : String = head_name
+			
 	if spine_start_name == "" or spine_end_name == "":
 		return p_transform_data
 
-	var hips_id : int = p_skeleton.find_bone(hips_name)
-	var spine_id : int = p_skeleton.find_bone(spine_name)
-	var chest_id : int = p_skeleton.find_bone(chest_name)
-	var upper_chest_id : int = p_skeleton.find_bone(upper_chest_name)
-	
 	var spine_start_id : int = p_skeleton.find_bone(spine_start_name)
 	var spine_end_id : int = p_skeleton.find_bone(spine_end_name)
 	
-	var valid_bone_ids : PoolIntArray = []
-	if array_util_const.pool_int_array_find(valid_bone_ids, hips_id) == -1:
-		valid_bone_ids.append(hips_id)
-	if array_util_const.pool_int_array_find(valid_bone_ids, spine_id) == -1:
-		valid_bone_ids.append(spine_id)
-	if array_util_const.pool_int_array_find(valid_bone_ids, chest_id) == -1:
-		valid_bone_ids.append(chest_id)
-	if array_util_const.pool_int_array_find(valid_bone_ids, upper_chest_id) == -1:
-		valid_bone_ids.append(upper_chest_id)
-
-	return fix_chain(p_root, p_skeleton, spine_start_id, spine_end_id, valid_bone_ids, HIPS_BASIS_GLOBAL, p_transform_data)
-	
-static func fix_neck(p_root: Spatial, p_humanoid_data: humanoid_data_const, p_skeleton: Skeleton, p_transform_data: Dictionary) -> Dictionary:
-	var global_basis : Basis = HEAD_BASIS_GLOBAL
-	
-	var neck_start_name : String = bone_lib_const.get_internal_bone_name_for_humanoid_bone(p_skeleton, p_humanoid_data, "neck_bone_name")
-	var neck_end_name : String = bone_lib_const.get_internal_bone_name_for_humanoid_bone(p_skeleton, p_humanoid_data, "head_bone_name")
-		
-	if neck_start_name == "" or neck_end_name == "":
+	if spine_start_id == -1 or spine_end_id == -1:
 		return p_transform_data
-
-	var neck_start_id : int = p_skeleton.find_bone(neck_start_name)
-	var neck_end_id : int = p_skeleton.find_bone(neck_end_name)
-
-	if neck_start_id == -1 or neck_end_id == -1:
-		return p_transform_data
-
-	var valid_bone_ids : PoolIntArray = []
-	valid_bone_ids.append(neck_start_id)
-	valid_bone_ids.append(neck_end_id)
-
-	return fix_chain(p_root, p_skeleton, neck_start_id, neck_end_id, valid_bone_ids, global_basis, p_transform_data)
-
+	
+	var valid_bone_ids : Array = Array()
+	valid_bone_ids.append(spine_end_id)
+	valid_bone_ids.append_array(bone_lib_const.get_bone_chain(p_skeleton, spine_start_id, spine_end_id))
+			
+	return fix_bone_list(p_root, p_skeleton, spine_start_id, spine_end_id, valid_bone_ids, HIPS_BASIS_GLOBAL, p_transform_data)
+	
 	
 static func fix_leg(p_root: Spatial, p_humanoid_data: humanoid_data_const, p_skeleton: Skeleton, p_transform_data: Dictionary, p_side : int) -> Dictionary:
 	var direction_name : String = avatar_constants_const.get_name_for_side(p_side)
@@ -244,11 +202,11 @@ static func fix_leg(p_root: Spatial, p_humanoid_data: humanoid_data_const, p_ske
 	if leg_start_id == -1 or leg_end_id == -1:
 		return p_transform_data
 
-	var valid_bone_ids : PoolIntArray = []
-	valid_bone_ids.append(leg_start_id)
+	var valid_bone_ids : Array = Array()
 	valid_bone_ids.append(leg_end_id)
+	valid_bone_ids.append_array(bone_lib_const.get_bone_chain(p_skeleton, leg_start_id, leg_end_id))
 
-	return fix_chain(p_root, p_skeleton, leg_start_id, leg_end_id, valid_bone_ids, global_basis, p_transform_data)
+	return fix_bone_list(p_root, p_skeleton, leg_start_id, leg_end_id, valid_bone_ids, global_basis, p_transform_data)
 	
 static func fix_foot(p_root: Spatial, p_humanoid_data: humanoid_data_const, p_skeleton: Skeleton, p_transform_data: Dictionary, p_side : int) -> Dictionary:
 	var direction_name : String = avatar_constants_const.get_name_for_side(p_side)
@@ -353,17 +311,6 @@ static func apply_local_transform_to_bind_pose(p_bind_id : int, p_skeleton : Ske
 	
 	return p_skin
 
-static func find_mesh_instances_for_skeleton(p_node: Node, p_skeleton: Skeleton, p_valid_mesh_instances: Array) -> Array:
-	if p_skeleton and p_node is MeshInstance:
-		var skeleton: Node = p_node.get_node_or_null(p_node.skeleton)
-		if skeleton == p_skeleton:
-			p_valid_mesh_instances.push_back(p_node)
-			
-	for child in p_node.get_children():
-		p_valid_mesh_instances = find_mesh_instances_for_skeleton(child, p_skeleton, p_valid_mesh_instances)
-	
-	return p_valid_mesh_instances
-
 static func fix_rotations_internal(p_root: Spatial, p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const, p_skins: Array, p_default_skins: Array, p_custom_bone_pose_array: Array) -> Array:
 		
 	var bone_pose_array: Array = []
@@ -388,7 +335,6 @@ static func fix_rotations_internal(p_root: Spatial, p_skeleton: Skeleton, p_huma
 		"transform_offsets":rotation_fix_transform_local_offsets}
 		
 	transform_data = fix_spine(p_root, p_humanoid_data, p_skeleton, transform_data)
-	transform_data = fix_neck(p_root, p_humanoid_data, p_skeleton, transform_data)
 	transform_data = fix_eye(p_root, p_humanoid_data, p_skeleton, transform_data, false)
 	transform_data = fix_eye(p_root, p_humanoid_data, p_skeleton, transform_data, true)
 	transform_data = fix_arm(p_root, p_humanoid_data, p_skeleton, transform_data, false)
@@ -450,7 +396,7 @@ static func fix_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoid_data
 	if err != avatar_callback_const.AVATAR_OK:
 		return err
 	
-	var mesh_instances: Array = find_mesh_instances_for_skeleton(p_root, p_root._skeleton_node, [])
+	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_skeleton(p_root, p_root._skeleton_node, [])
 	var skins: Array = []
 
 	for mesh_instance in mesh_instances:

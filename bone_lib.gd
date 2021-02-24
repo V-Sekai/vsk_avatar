@@ -22,7 +22,12 @@ static func get_bone_global_rest_transform(p_id: int, p_skeleton: Skeleton) -> T
 	return get_bone_global_transform(p_id, p_skeleton, [rest_local_transforms])
 
 # Todo: Optimise these!
-static func local_bone_rotation_from_global_pose(p_skeleton: Skeleton, p_bone_id: int) -> Transform:
+static func local_bone_rotation_from_global_pose(p_skeleton: Skeleton, p_bone_id: int, p_custom_pose_array: Array) -> Transform:
+	var original_poses: Array = []
+	for i in range(0, p_skeleton.get_bone_count()):
+		original_poses.append(p_skeleton.get_bone_pose(i))
+		p_skeleton.set_bone_pose(i, p_skeleton.get_bone_pose(i) * p_custom_pose_array[i])
+	
 	var parent_id: int = p_skeleton.get_bone_parent(p_bone_id)
 
 	var transform_global: Transform = p_skeleton.get_bone_global_pose(p_bone_id)
@@ -32,6 +37,9 @@ static func local_bone_rotation_from_global_pose(p_skeleton: Skeleton, p_bone_id
 		parent_transform_global *= p_skeleton.get_bone_global_pose(parent_id)
 
 	var transform: Transform = parent_transform_global.affine_inverse() * transform_global
+
+	for i in range(0, p_skeleton.get_bone_count()):
+		p_skeleton.set_bone_pose(i, original_poses[i])
 
 	return transform
 
