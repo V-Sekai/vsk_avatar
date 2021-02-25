@@ -3,7 +3,7 @@ extends Node
 const bone_lib_const = preload("res://addons/vsk_avatar/bone_lib.gd")
 const math_funcs_const = preload("res://addons/math_util/math_funcs.gd")
 
-const MAXIMUM_SPINE_TWIEST_DEGREES = 40.0
+const MAXIMUM_SPINE_TWIST_DEGREES = 40.0
 
 # Relative to spine
 const MAXIMUM_HORIZINTAL_HIPS_DEGREES = 20.0

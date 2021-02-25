@@ -26,7 +26,7 @@ enum { DIGIT_JOINT_PROXIMAL, DIGIT_JOINT_INTERMEDIATE, DIGIT_JOINT_DISTAL, DIGIT
 
 enum { DIGIT_THUMB, DIGIT_INDEX, DIGIT_MIDDLE, DIGIT_RING, DIGIT_LITTLE }
 
-enum { SIDE_LEFT, SIDE_RIGHT }
+enum { SIDE_LEFT, SIDE_RIGHT, SIDE_CENTER }
 
 static func get_name_for_digit_joint(p_digit_joint: int) -> String:
 	match p_digit_joint:
@@ -60,4 +60,5 @@ static func get_name_for_side(p_side: int) -> String:
 			return LEFT_SIDE_NAME
 		SIDE_RIGHT:
 			return RIGHT_SIDE_NAME
-	return ""
+		_:
+			return ""

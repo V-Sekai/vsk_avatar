@@ -45,8 +45,8 @@ func debug_bones(p_skeleton: Skeleton) -> void:
 	avater_debug_const.debug_bones(node._skeleton_node)
 	
 	
-func correct_bone_directions(p_skeleton_node: Skeleton, p_humanoid_data: HumanoidData) -> void:
-	bone_direction_const.fix_skeleton(p_skeleton_node, p_humanoid_data)
+func correct_bone_directions(p_root: Node, p_skeleton_node: Skeleton, p_humanoid_data: HumanoidData) -> void:
+	bone_direction_const.fix_skeleton(p_root, p_skeleton_node, p_humanoid_data)
 
 
 func setup_bones_menu() -> int:
@@ -129,7 +129,7 @@ func _menu_option(p_id : int) -> void:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_CORRECT_BONE_DIRECTIONS:
 			if check_if_avatar_is_valid():
-				correct_bone_directions(node._skeleton_node, node.humanoid_data)
+				correct_bone_directions(node, node._skeleton_node, node.humanoid_data)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_SETUP_BONES:

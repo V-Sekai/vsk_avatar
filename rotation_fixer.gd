@@ -101,9 +101,7 @@ static func fix_arm(p_root : Spatial, p_humanoid_data : humanoid_data_const, p_s
 	if arm_start_id == -1 or arm_end_id == -1:
 		return p_transform_data
 	
-	var valid_bone_ids : Array = Array()
-	valid_bone_ids.append(arm_end_id)
-	valid_bone_ids.append_array(bone_lib_const.get_bone_chain(p_skeleton, arm_start_id, arm_end_id))
+	var valid_bone_ids : Array = bone_lib_const.get_full_bone_chain(p_skeleton, arm_start_id, arm_end_id)
 
 	return fix_bone_list(p_root, p_skeleton, arm_start_id, arm_end_id, valid_bone_ids, global_basis, p_transform_data)
 	
@@ -177,9 +175,7 @@ static func fix_spine(p_root: Spatial, p_humanoid_data: humanoid_data_const, p_s
 	if spine_start_id == -1 or spine_end_id == -1:
 		return p_transform_data
 	
-	var valid_bone_ids : Array = Array()
-	valid_bone_ids.append(spine_end_id)
-	valid_bone_ids.append_array(bone_lib_const.get_bone_chain(p_skeleton, spine_start_id, spine_end_id))
+	var valid_bone_ids : Array = bone_lib_const.get_full_bone_chain(p_skeleton, spine_start_id, spine_end_id)
 			
 	return fix_bone_list(p_root, p_skeleton, spine_start_id, spine_end_id, valid_bone_ids, HIPS_BASIS_GLOBAL, p_transform_data)
 	
@@ -202,9 +198,7 @@ static func fix_leg(p_root: Spatial, p_humanoid_data: humanoid_data_const, p_ske
 	if leg_start_id == -1 or leg_end_id == -1:
 		return p_transform_data
 
-	var valid_bone_ids : Array = Array()
-	valid_bone_ids.append(leg_end_id)
-	valid_bone_ids.append_array(bone_lib_const.get_bone_chain(p_skeleton, leg_start_id, leg_end_id))
+	var valid_bone_ids : Array = bone_lib_const.get_full_bone_chain(p_skeleton, leg_start_id, leg_end_id)
 
 	return fix_bone_list(p_root, p_skeleton, leg_start_id, leg_end_id, valid_bone_ids, global_basis, p_transform_data)
 	
@@ -396,7 +390,7 @@ static func fix_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoid_data
 	if err != avatar_callback_const.AVATAR_OK:
 		return err
 	
-	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_skeleton(p_root, p_root._skeleton_node, [])
+	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_root._skeleton_node, [])
 	var skins: Array = []
 
 	for mesh_instance in mesh_instances:

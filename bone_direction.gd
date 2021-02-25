@@ -1,5 +1,7 @@
 extends Node
 
+const avatar_lib_const = preload("avatar_lib.gd")
+
 const VECTOR_DIRECTION = Vector3.UP
 
 class RestBone extends Reference:
@@ -9,6 +11,7 @@ class RestBone extends Reference:
 	var children_centroid_direction: Vector3 = Vector3()
 	var parent_index: int = -1
 	var children: Array = []
+	var override_direction: bool = true
 
 static func _get_perpendicular_vector(p_v: Vector3) -> Vector3:
 	var perpendicular: Vector3 = Vector3()
@@ -32,7 +35,12 @@ static func _align_vectors(a: Vector3, b: Vector3) -> Quat:
 	else:
 		return Quat()
 
-static func _fortune(p_skeleton: Skeleton, r_rest_bones: Dictionary) -> Dictionary:
+static func _fortune_with_chains(
+	p_skeleton: Skeleton,
+	r_rest_bones: Dictionary,
+	p_fixed_chains: Array,
+	p_ignore_unchained_bones: bool,
+	p_ignore_chain_tips: bool) -> Dictionary:
 	var bone_count: int = p_skeleton.get_bone_count()
 	
 	# First iterate through all the bones and create a RestBone for it with an empty centroid 
@@ -44,44 +52,142 @@ static func _fortune(p_skeleton: Skeleton, r_rest_bones: Dictionary) -> Dictiona
 		rest_bone.rest_local_after = rest_bone.rest_local_before
 		r_rest_bones[j] = rest_bone
 		
+	# Collect all bone chains into a hash table for optimisation
+	var chain_hash_table: Dictionary = Dictionary()
+	for chain in p_fixed_chains:
+		for bone_id in chain:
+			chain_hash_table[bone_id] = chain
 
 	# We iterate through again, and add the child's position to the centroid of its parent.
 	# These position are local to the parent which means (0, 0, 0) is right where the parent is.
 	for i in range(0, bone_count):
 		var parent_bone: int = p_skeleton.get_bone_parent(i)
 		if (parent_bone >= 0):
-			r_rest_bones[parent_bone].children_centroid_direction = r_rest_bones[parent_bone].children_centroid_direction + p_skeleton.get_bone_rest(i).origin
-			r_rest_bones[parent_bone].children.append(i)
 			
-	for i in range(0, bone_count):
-		print(r_rest_bones[i].children_centroid_direction)
-		print(r_rest_bones[i].children)
+			var apply_centroid = true
+			
+			var chain = chain_hash_table.get(parent_bone, null)
+			if chain is Array:
+				var index: int = chain.find(parent_bone)
+				if (index + 1) < chain.size():
+					# Check if child bone is the next bone in the chain
+					if chain[index + 1] == i:
+						apply_centroid = true
+					else:
+						apply_centroid = false
+				else:
+					# If the bone is at the end of a chain, p_ignore_chain_tips argument determines
+					# whether it should attempt to be corrected or not
+					if p_ignore_chain_tips:
+						r_rest_bones[parent_bone].override_direction = false
+						apply_centroid = false
+					else:
+						apply_centroid = true
+			else:
+				if p_ignore_unchained_bones:
+					r_rest_bones[parent_bone].override_direction = false
+					apply_centroid = false
+					
+			if apply_centroid:
+				r_rest_bones[parent_bone].children_centroid_direction = r_rest_bones[parent_bone].children_centroid_direction + p_skeleton.get_bone_rest(i).origin
+			r_rest_bones[parent_bone].children.append(i)
 			
 
 	# Point leaf bones to parent
 	for i in range(0, bone_count):
 		var leaf_bone: RestBone = r_rest_bones[i]
 		if (leaf_bone.children.size() == 0):
+			if p_ignore_unchained_bones and !chain_hash_table.get(i, null):
+				r_rest_bones[i].override_direction = false
 			leaf_bone.children_centroid_direction = r_rest_bones[leaf_bone.parent_index].children_centroid_direction
 
 	# We iterate again to point each bone to the centroid
 	# When we rotate a bone, we also have to move all of its children in the opposite direction
 	for i in range(0, bone_count):
-		r_rest_bones[i].rest_delta = _align_vectors(VECTOR_DIRECTION, r_rest_bones[i].children_centroid_direction)
-		r_rest_bones[i].rest_local_after.basis = r_rest_bones[i].rest_local_after.basis * Basis(r_rest_bones[i].rest_delta)
+		if r_rest_bones[i].override_direction:
+			r_rest_bones[i].rest_delta = _align_vectors(VECTOR_DIRECTION, r_rest_bones[i].children_centroid_direction)
+			r_rest_bones[i].rest_local_after.basis = r_rest_bones[i].rest_local_after.basis * Basis(r_rest_bones[i].rest_delta)
 
-		# Iterate through the children and rotate them in the opposite direction.
-		for j in range(0, r_rest_bones[i].children.size()):
-			var child_index: int = r_rest_bones[i].children[j]
-			r_rest_bones[child_index].rest_local_after = Transform(r_rest_bones[i].rest_delta.inverse(), Vector3()) * r_rest_bones[child_index].rest_local_after
-
-	# One last iteration to apply the transforms we calculated
-	for i in range(0, bone_count):
-		p_skeleton.set_bone_rest(i, r_rest_bones[i].rest_local_after)
+			# Iterate through the children and rotate them in the opposite direction.
+			for j in range(0, r_rest_bones[i].children.size()):
+				var child_index: int = r_rest_bones[i].children[j]
+				r_rest_bones[child_index].rest_local_after = Transform(r_rest_bones[i].rest_delta.inverse(), Vector3()) * r_rest_bones[child_index].rest_local_after
 	
 	return r_rest_bones
 
-static func fix_skeleton(p_skeleton: Skeleton, _humanoid_data: HumanoidData) -> void:
+static func _fix_meshes(r_rest_bones: Dictionary, p_mesh_instances: Array) -> void:
+	print("bone_direction: _fix_meshes")
+	
+	for mi in p_mesh_instances:
+		var skin: Skin = mi.get_skin();
+		if skin == null:
+			continue
+			
+		skin = skin.duplicate()
+		mi.set_skin(skin)
+		var skeleton_path: NodePath = mi.get_skeleton_path()
+		var node: Node = mi.get_node_or_null(skeleton_path)
+		var skeleton: Skeleton = node
+		for bind_i in range(0, skin.get_bind_count()):
+			var bone_index:int  = skin.get_bind_bone(bind_i)
+			if (bone_index == -1):
+				var bind_name: String = skin.get_bind_name(bind_i)
+				if bind_name.empty():
+					continue
+				bone_index = skeleton.find_bone(bind_name)
+				
+			if (bone_index == -1):
+				continue
+			var rest_bone: RestBone = r_rest_bones[bone_index]
+			skin.set_bind_pose(bind_i, Transform(rest_bone.rest_delta.inverse()) * skin.get_bind_pose(bind_i))
+			
+static func get_humanoid_chains(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> Array:
+	var chains: Array = []
+	
+	# Spine
+	chains.append(Array(avatar_lib_const.get_full_spine_chain(p_skeleton, p_humanoid_data)))
+	
+	# Left Arm
+	chains.append(Array(avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data,\
+	avatar_lib_const.avatar_constants_const.SIDE_LEFT)))
+	
+	# Right Arm
+	chains.append(Array(avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data,\
+	avatar_lib_const.avatar_constants_const.SIDE_RIGHT)))
+	
+	# Left Leg
+	chains.append(Array(avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data,\
+	avatar_lib_const.avatar_constants_const.SIDE_LEFT)))
+	
+	# Right Leg
+	chains.append(Array(avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data,\
+	avatar_lib_const.avatar_constants_const.SIDE_RIGHT)))
+	
+	return chains
+	
+static func print_chain_names(p_skeleton: Skeleton, p_chains: Array) -> void:
+	var idx: int = 0
+	for chain in p_chains:
+		var bone_string: String = ""
+		for bone_id in chain:
+			bone_string += p_skeleton.get_bone_name(bone_id) + ", "
+		
+		print("Chain %s: %s" % [str(idx), bone_string])
+		
+		idx += 1
+
+static func fix_skeleton(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> void:
 	print("bone_direction: fix_skeleton")
 	
-	_fortune(p_skeleton, {})
+	# Get the 5 bone chains nessecary for a valid humanoid rig
+	var humanoid_chains: Array = get_humanoid_chains(p_skeleton, p_humanoid_data)
+	
+	var rest_bones: Dictionary = _fortune_with_chains(p_skeleton, {}, humanoid_chains, false, false)
+	
+	# One last iteration to apply the transforms we calculated
+	for key in rest_bones.keys():
+		p_skeleton.set_bone_rest(key, rest_bones[key].rest_local_after)
+	
+	# Correct the bind poses
+	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])
+	_fix_meshes(rest_bones, mesh_instances)
