@@ -20,6 +20,8 @@ var bone_mapper_dialog : bone_mapper_dialog_const = null
 
 const humanoid_data_const = preload("humanoid_data.gd")
 
+const avatar_fixer_const = preload("avatar_fixer.gd")
+
 const bone_direction_const = preload("bone_direction.gd")
 const rotation_fixer_const = preload("rotation_fixer.gd")
 const t_poser_const = preload("t_poser.gd")
@@ -49,7 +51,11 @@ func enforce_standard_t_pose(p_root: Node, p_skeleton_node: Skeleton, p_humanoid
 	t_poser_const.enforce_standard_t_pose(p_root, p_skeleton_node, p_humanoid_data)
 
 func enforce_strict_t_pose(p_root: Node, p_skeleton_node: Skeleton, p_humanoid_data: HumanoidData) -> void:
-	t_poser_const.enforce_strict_t_pose(p_root, p_skeleton_node, p_humanoid_data)
+	var base_pose_array: Array = []
+	for i in range(0, p_skeleton_node.get_bone_count()):
+		base_pose_array.push_back(p_skeleton_node.get_bone_rest(i))
+	
+	t_poser_const.enforce_strict_t_pose(p_root, p_skeleton_node, p_humanoid_data, base_pose_array)
 
 func setup_bones_menu() -> int:
 	if !node.humanoid_data:
@@ -138,15 +144,7 @@ func _menu_option(p_id : int) -> void:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_FIX_ALL:
 			if check_if_avatar_is_valid():
-				bone_direction_const.fix_skeleton(node, node._skeleton_node, node.humanoid_data)
-				var custom_t_pose_array: Array = t_poser_const.get_strict_t_pose(node, node._skeleton_node, node.humanoid_data)
-				var rotation_fixer_err: int = rotation_fixer_const.fix_rotations(
-					node,
-					node._skeleton_node,
-					node.humanoid_data,
-					custom_t_pose_array)
-				if rotation_fixer_err == avatar_callback_const.AVATAR_OK:
-					err = external_transform_fixer_const.fix_external_transform(node, node._skeleton_node)
+				err = avatar_fixer_const.fix_avatar(node, node._skeleton_node, node.humanoid_data)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_EXPORT_AVATAR:

@@ -25,14 +25,14 @@ static func fix_bone_chain(
 	p_skeleton: Skeleton,
 	p_reference_basis: Basis,
 	p_bone_chain: Array,
-	p_rest_pose_local_offsets: Array,
+	p_base_pose_local_offsets: Array,
 	p_t_pose_local_offsets: Array,
 	p_rotation_fix_data: Dictionary) -> Dictionary:
 	for id in p_bone_chain:
 		
 		var global_pose : Transform = bone_lib_const.get_bone_global_transform(id, p_skeleton, 
 		[
-			p_rest_pose_local_offsets,
+			p_base_pose_local_offsets,
 			p_t_pose_local_offsets
 		])
 
@@ -42,47 +42,36 @@ static func fix_bone_chain(
 		p_rotation_fix_data["bone_pose_roll_fixes"][id] *= Transform(difference.inverse())
 		
 		for child_id in p_skeleton.get_bone_children(id):
-			var rest_transform : Transform = p_rest_pose_local_offsets[child_id]
-			p_rotation_fix_data["bone_pose_roll_fixes"][child_id] = rest_transform.inverse() * (Transform(difference) * rest_transform)
+			var base_transform : Transform = p_base_pose_local_offsets[child_id]
+			p_rotation_fix_data["bone_pose_roll_fixes"][child_id] = base_transform.inverse() * (Transform(difference) * base_transform)
 		
 	return p_rotation_fix_data
 	
-static func fix_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const, p_t_pose_local_offsets: Array) -> int:
-		
-	print("---Running RotationFixer---")
-	
-	var err: int = avatar_callback_const.generic_error_check(p_root, p_skeleton)
-	if err != avatar_callback_const.AVATAR_OK:
-		return err
-		
+static func get_fixed_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const, p_base_pose_local_offsets: Array, p_t_pose_local_offsets: Array) -> Dictionary:
 	var base_transform: Transform = node_util_const.get_relative_global_transform(p_root, p_skeleton)
-			
-
-	var rest_pose_local_offsets: Array = []
 	
-	var p_rotation_fix_data: Dictionary = {"bone_pose_roll_fixes":[], "bind_pose_fixes":[]}
+	var rotation_fix_data: Dictionary = {"bone_pose_roll_fixes":[], "bind_pose_fixes":[]}
 	
 	for i in range(0, p_skeleton.get_bone_count()):
-		rest_pose_local_offsets.push_back(p_skeleton.get_bone_rest(i))
-		p_rotation_fix_data["bone_pose_roll_fixes"].push_back(Transform())
-		p_rotation_fix_data["bind_pose_fixes"].push_back(Transform())
+		rotation_fix_data["bone_pose_roll_fixes"].push_back(Transform())
+		rotation_fix_data["bind_pose_fixes"].push_back(Transform())
 	
-	p_rotation_fix_data = fix_bone_chain(
+	rotation_fix_data = fix_bone_chain(
 		p_skeleton,
 		base_transform.basis * SPINE_BASIS_GLOBAL,
 		avatar_lib_const.get_full_spine_chain(p_skeleton, p_humanoid_data),
-		rest_pose_local_offsets,
+		p_base_pose_local_offsets,
 		p_t_pose_local_offsets,
-		p_rotation_fix_data)
+		rotation_fix_data)
 		
 	for side in range(avatar_constants_const.SIDE_LEFT, avatar_constants_const.SIDE_RIGHT+1):
-		p_rotation_fix_data = fix_bone_chain(
+		rotation_fix_data = fix_bone_chain(
 			p_skeleton,
 			base_transform.basis * LEGS_BASIS_GLOBAL,
 			avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data, side),
-			rest_pose_local_offsets,
+			p_base_pose_local_offsets,
 			p_t_pose_local_offsets,
-			p_rotation_fix_data)
+			rotation_fix_data)
 		
 		var p_arm_reference_basis: Basis = Basis()
 		match side:
@@ -91,30 +80,43 @@ static func fix_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoid_data
 			avatar_constants_const.SIDE_RIGHT:
 				p_arm_reference_basis = RIGHT_ARM_BASIS_GLOBAL
 				
-		p_rotation_fix_data = fix_bone_chain(
+		rotation_fix_data = fix_bone_chain(
 			p_skeleton,
 			base_transform.basis * p_arm_reference_basis,
 			avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data, side),
-			rest_pose_local_offsets,
+			p_base_pose_local_offsets,
 			p_t_pose_local_offsets,
-			p_rotation_fix_data)
+			rotation_fix_data)
 			
 		for digit in range(avatar_constants_const.DIGIT_THUMB, avatar_constants_const.DIGIT_LITTLE+1):
-			p_rotation_fix_data = fix_bone_chain(
+			rotation_fix_data = fix_bone_chain(
 				p_skeleton,
 				base_transform.basis * p_arm_reference_basis,
 				avatar_lib_const.get_digit_chain(p_skeleton, p_humanoid_data, side, digit),
-				rest_pose_local_offsets,
+				p_base_pose_local_offsets,
 				p_t_pose_local_offsets,
-				p_rotation_fix_data)
-
+				rotation_fix_data)
+				
+	return rotation_fix_data
+	
+static func fix_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const, p_t_pose_local_offsets: Array) -> int:
+	print("---Running RotationFixer---")
+	
+	var err: int = avatar_callback_const.generic_error_check(p_root, p_skeleton)
+	if err != avatar_callback_const.AVATAR_OK:
+		return err
+		
+	var rest_pose_local_offsets: Array = []
 	
 	for i in range(0, p_skeleton.get_bone_count()):
-		p_skeleton.set_bone_pose(i, p_rotation_fix_data["bone_pose_roll_fixes"][i])
+		rest_pose_local_offsets.push_back(p_skeleton.get_bone_rest(i))
 		
+	var rotation_fix_data: Dictionary = get_fixed_rotations(p_root, p_skeleton, p_humanoid_data, rest_pose_local_offsets, p_t_pose_local_offsets)
+	
+	for i in range(0, p_skeleton.get_bone_count()):
+		p_skeleton.set_bone_pose(i, rotation_fix_data["bone_pose_roll_fixes"][i])
 		
 	# Fix to skins
-	
 	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_root._skeleton_node, [])
 	var skins: Array = []
 	
@@ -143,7 +145,7 @@ static func fix_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoid_data
 			if (bone_index == -1):
 				continue
 			
-			skin.set_bind_pose(bind_i, Transform(p_rotation_fix_data["bind_pose_fixes"][bone_index]) * skin.get_bind_pose(bind_i))
+			skin.set_bind_pose(bind_i, Transform(rotation_fix_data["bind_pose_fixes"][bone_index]) * skin.get_bind_pose(bind_i))
 	
 	if skins.size() == mesh_instances.size():
 		for i in range(0, mesh_instances.size()):

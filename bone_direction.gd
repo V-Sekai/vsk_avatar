@@ -40,7 +40,8 @@ static func _fortune_with_chains(
 	r_rest_bones: Dictionary,
 	p_fixed_chains: Array,
 	p_ignore_unchained_bones: bool,
-	p_ignore_chain_tips: bool) -> Dictionary:
+	p_ignore_chain_tips: bool,
+	p_base_pose: Array) -> Dictionary:
 	var bone_count: int = p_skeleton.get_bone_count()
 	
 	# First iterate through all the bones and create a RestBone for it with an empty centroid 
@@ -48,7 +49,7 @@ static func _fortune_with_chains(
 		var rest_bone: RestBone = RestBone.new()
 
 		rest_bone.parent_index = p_skeleton.get_bone_parent(j)
-		rest_bone.rest_local_before = p_skeleton.get_bone_rest(j)
+		rest_bone.rest_local_before = p_base_pose[j]
 		rest_bone.rest_local_after = rest_bone.rest_local_before
 		r_rest_bones[j] = rest_bone
 		
@@ -89,7 +90,7 @@ static func _fortune_with_chains(
 					apply_centroid = false
 					
 			if apply_centroid:
-				r_rest_bones[parent_bone].children_centroid_direction = r_rest_bones[parent_bone].children_centroid_direction + p_skeleton.get_bone_rest(i).origin
+				r_rest_bones[parent_bone].children_centroid_direction = r_rest_bones[parent_bone].children_centroid_direction + p_base_pose[i].origin
 			r_rest_bones[parent_bone].children.append(i)
 			
 
@@ -115,7 +116,7 @@ static func _fortune_with_chains(
 	
 	return r_rest_bones
 
-static func _fix_meshes(r_rest_bones: Dictionary, p_mesh_instances: Array) -> void:
+static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> void:
 	print("bone_direction: _fix_meshes")
 	
 	for mi in p_mesh_instances:
@@ -138,8 +139,7 @@ static func _fix_meshes(r_rest_bones: Dictionary, p_mesh_instances: Array) -> vo
 				
 			if (bone_index == -1):
 				continue
-			var rest_bone: RestBone = r_rest_bones[bone_index]
-			skin.set_bind_pose(bind_i, Transform(rest_bone.rest_delta.inverse()) * skin.get_bind_pose(bind_i))
+			skin.set_bind_pose(bind_i, p_bind_fix_array[bone_index] * skin.get_bind_pose(bind_i))
 			
 static func get_humanoid_chains(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> Array:
 	var chains: Array = []
@@ -173,19 +173,34 @@ static func print_chain_names(p_skeleton: Skeleton, p_chains: Array) -> void:
 		print("Chain %s: %s" % [str(idx), bone_string])
 		
 		idx += 1
+		
+static func get_fortune_with_chain_offsets(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_base_pose: Array) -> Dictionary:
+	# Get the 5 bone chains nessecary for a valid humanoid rig
+	
+	var humanoid_chains: Array = get_humanoid_chains(p_skeleton, p_humanoid_data)
+	var rest_bones: Dictionary = _fortune_with_chains(p_skeleton, {}, humanoid_chains, false, false, p_base_pose)
+	
+	var offsets: Dictionary = {"base_pose_offsets":[], "bind_pose_offsets":[]}
+	
+	for key in rest_bones.keys():
+		offsets["base_pose_offsets"].append(rest_bones[key].rest_local_before.inverse() * rest_bones[key].rest_local_after)
+		offsets["bind_pose_offsets"].append(Transform(rest_bones[key].rest_delta.inverse()))
+		
+	return offsets
 
 static func fix_skeleton(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> void:
 	print("bone_direction: fix_skeleton")
 	
-	# Get the 5 bone chains nessecary for a valid humanoid rig
-	var humanoid_chains: Array = get_humanoid_chains(p_skeleton, p_humanoid_data)
+	var base_pose: Array = []
+	for i in range(0, p_skeleton.get_bone_count()):
+		base_pose.append(p_skeleton.get_bone_rest(i))
 	
-	var rest_bones: Dictionary = _fortune_with_chains(p_skeleton, {}, humanoid_chains, false, false)
+	var offsets: Dictionary = get_fortune_with_chain_offsets(p_root, p_skeleton, p_humanoid_data, base_pose)
 	
 	# One last iteration to apply the transforms we calculated
-	for key in rest_bones.keys():
-		p_skeleton.set_bone_rest(key, rest_bones[key].rest_local_after)
+	for i in range(0, offsets["base_pose_offsets"].size()):
+		p_skeleton.set_bone_rest(i, p_skeleton.get_bone_rest(i) * offsets["base_pose_offsets"][i])
 	
 	# Correct the bind poses
 	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])
-	_fix_meshes(rest_bones, mesh_instances)
+	_fix_meshes(offsets["bind_pose_offsets"], mesh_instances)
