@@ -1,5 +1,10 @@
 extends Node
 
+# GDScript implementation of a modified version of the fortune algorthim.
+# Thanks to iFire, Lyuma, and MMMaellon for the C++ implementation this version was based offsets, saved me
+# a lot of headaches ;)
+# https://github.com/godot-extended-libraries/godot-fire/commit/622022d2779f9d35b586db4ee31c9cb76d0b7bc7
+
 const avatar_lib_const = preload("avatar_lib.gd")
 
 const VECTOR_DIRECTION = Vector3.UP
