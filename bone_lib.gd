@@ -21,48 +21,6 @@ static func get_bone_global_rest_transform(p_id: int, p_skeleton: Skeleton) -> T
 
 	return get_bone_global_transform(p_id, p_skeleton, [rest_local_transforms])
 
-# Todo: Optimise these!
-static func local_bone_rotation_from_global_pose(p_skeleton: Skeleton, p_bone_id: int, p_custom_pose_array: Array) -> Transform:
-	var original_poses: Array = []
-	for i in range(0, p_skeleton.get_bone_count()):
-		original_poses.append(p_skeleton.get_bone_pose(i))
-		p_skeleton.set_bone_pose(i, p_skeleton.get_bone_pose(i) * p_custom_pose_array[i])
-	
-	var parent_id: int = p_skeleton.get_bone_parent(p_bone_id)
-
-	var transform_global: Transform = p_skeleton.get_bone_global_pose(p_bone_id)
-	var parent_transform_global: Transform = Transform()
-
-	if parent_id != -1:
-		parent_transform_global *= p_skeleton.get_bone_global_pose(parent_id)
-
-	var transform: Transform = parent_transform_global.affine_inverse() * transform_global
-
-	for i in range(0, p_skeleton.get_bone_count()):
-		p_skeleton.set_bone_pose(i, original_poses[i])
-
-	return transform
-
-static func get_bone_chain_length(p_root: Spatial, p_skeleton: Skeleton, p_bone_chain: PoolIntArray, p_scaled: bool) -> float:
-	var length: float = 0.0
-	var current: int = -1
-	var last: int = -1
-
-	for chain_entry in p_bone_chain:
-		last = current
-		current = chain_entry
-		if last != -1:
-			var current_bone_transform: Transform = p_skeleton.get_bone_global_pose(current)
-			var last_bone_transform: Transform = p_skeleton.get_bone_global_pose(last)
-
-			if p_scaled:
-				current_bone_transform = node_util_const.get_relative_global_transform(p_root, p_skeleton) * current_bone_transform
-				last_bone_transform = node_util_const.get_relative_global_transform(p_root, p_skeleton) * last_bone_transform
-
-			length += current_bone_transform.origin.distance_to(last_bone_transform.origin)
-
-	return length
-
 static func get_full_bone_chain(p_skeleton: Skeleton, p_first: int, p_last: int) -> PoolIntArray:
 	var bone_chain: PoolIntArray = get_bone_chain(p_skeleton, p_first, p_last)
 	bone_chain.push_back(p_last)

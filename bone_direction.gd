@@ -147,21 +147,19 @@ static func get_humanoid_chains(p_skeleton: Skeleton, p_humanoid_data: HumanoidD
 	# Spine
 	chains.append(Array(avatar_lib_const.get_full_spine_chain(p_skeleton, p_humanoid_data)))
 	
-	# Left Arm
-	chains.append(Array(avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data,\
-	avatar_lib_const.avatar_constants_const.SIDE_LEFT)))
-	
-	# Right Arm
-	chains.append(Array(avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data,\
-	avatar_lib_const.avatar_constants_const.SIDE_RIGHT)))
-	
-	# Left Leg
-	chains.append(Array(avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data,\
-	avatar_lib_const.avatar_constants_const.SIDE_LEFT)))
-	
-	# Right Leg
-	chains.append(Array(avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data,\
-	avatar_lib_const.avatar_constants_const.SIDE_RIGHT)))
+	for side in range(\
+	avatar_lib_const.avatar_constants_const.SIDE_LEFT,\
+	avatar_lib_const.avatar_constants_const.SIDE_RIGHT + 1):
+		# Arm
+		chains.append(Array(avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data,side)))
+		# Leg
+		chains.append(Array(avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data, side)))
+		
+		# Digits
+		for digit in range(avatar_lib_const.avatar_constants_const.DIGIT_THUMB,
+			avatar_lib_const.avatar_constants_const.DIGIT_LITTLE + 1):
+				chains.append(Array(avatar_lib_const.get_digit_chain(\
+					p_skeleton, p_humanoid_data, side, digit)))
 	
 	return chains
 	

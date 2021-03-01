@@ -71,3 +71,15 @@ static func get_leg_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p
 	
 static func get_full_spine_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> PoolIntArray:
 	return get_chain(p_skeleton, p_humanoid_data, avatar_constants_const.SIDE_CENTER, "hips", "head", "")
+	
+static func get_digit_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_side: int, p_digit) -> PoolIntArray:
+	return get_chain(p_skeleton, p_humanoid_data, p_side,\
+	"%s_%s" % [
+		avatar_constants_const.get_name_for_digit(p_digit),
+		avatar_constants_const.get_name_for_digit_joint(avatar_constants_const.DIGIT_JOINT_PROXIMAL)
+	],
+	"%s_%s" % [
+		avatar_constants_const.get_name_for_digit(p_digit),
+		avatar_constants_const.get_name_for_digit_joint(avatar_constants_const.DIGIT_JOINT_DISTAL)
+	],
+	"")

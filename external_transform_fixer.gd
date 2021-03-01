@@ -3,7 +3,7 @@ tool
 
 const avatar_callback_const = preload("avatar_callback.gd")
 
-func fix_external_transform(p_root: Node, p_skeleton: Skeleton) -> int:
+static func fix_external_transform(p_root: Node, p_skeleton: Skeleton) -> int:
 	print("---Running ExternalTransformFixer---")
 	
 	var err: int = avatar_callback_const.generic_error_check(p_root, p_skeleton)
