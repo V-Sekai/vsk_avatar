@@ -32,7 +32,7 @@ enum ik_points {
 	CHEST_ID
 }
 
-const MOCAP_RECORDING_ENABLED = false
+const MOCAP_RECORDING_ENABLED: bool = false
 
 const HEAD_BIT = (1 << ik_points.HEAD_ID)
 const LEFT_HAND_BIT = (1 << ik_points.LEFT_HAND_ID)
@@ -354,7 +354,7 @@ func get_local_head_transform(p_camera: Spatial, p_origin_offset: Vector3, p_cam
 	lerp(eye_offset.z, eye_offset.y * sign(offset_value) * 2.0, tilt_ratio))
 	
 	return Transform().rotated(\
-	Vector3(0.0, 1.0, 0.0), PI) * Transform(p_camera.transform.basis,\
+	Vector3.UP, PI) * Transform(p_camera.transform.basis,\
 	(p_camera.transform.origin + p_origin_offset - p_camera_offset)).translated(\
 	relative_offset) * Transform(IK_POINT_HEAD_BASIS_GLOBAL)
 				
@@ -386,7 +386,11 @@ func update_output_trackers() -> void:
 			var head_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.head_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.head_id, skeleton, local_transforms_array)
 			if is_network_master():
 				head_transform = Transform(head_transform.basis.orthonormalized().scaled(_avatar_display_node.saved_head_transform.basis.get_scale()), head_transform.origin);
-			var hips_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.hip_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.hip_id, skeleton, local_transforms_array)
+			
+			# The outgoing hips rotation should treat the default rotation as identity,
+			# so apply the inverse of the rest pose to actual global pose here
+			var hips_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.hip_id) * Transform(skeleton.get_bone_rest(_avatar_display_node.hip_id).basis.inverse(), Vector3()) # bone_lib_const.get_bone_global_transform(_avatar_display_node.hip_id, skeleton, local_transforms_array)
+			
 			var left_hand_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.left_hand_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.left_hand_id, skeleton, local_transforms_array)
 			var right_hand_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.right_hand_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.right_hand_id, skeleton, local_transforms_array)
 			var left_foot_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.left_foot_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.left_foot_id, skeleton, local_transforms_array)

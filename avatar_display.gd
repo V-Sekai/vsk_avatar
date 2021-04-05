@@ -333,16 +333,14 @@ func setup_avatar_instance(p_avatar_node: Spatial) -> void:
 				var head_global_rest_transfrom: Transform = \
 				node_util_const.get_relative_global_transform(avatar_node, skeleton)\
 				* bone_lib_const.get_bone_global_rest_transform(head_bone_id, skeleton)
-				eye_offset_transform = (
-					eye_global_transform
-					* head_global_rest_transfrom.inverse()
-				)
-
+				
+				eye_offset_transform = head_global_rest_transfrom.affine_inverse() * eye_global_transform
+				
 			var left_hand_bone_name_id: int = skeleton.find_bone(humanoid_data.hand_left_bone_name)
 			var right_hand_bone_name_id: int = skeleton.find_bone(
 				humanoid_data.hand_right_bone_name
 			)
-
+			
 			if left_hand_bone_name_id != -1 and right_hand_bone_name_id != -1:
 				var left_wrist_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
 					left_hand_bone_name_id, skeleton
@@ -387,7 +385,7 @@ func setup_avatar_instance(p_avatar_node: Spatial) -> void:
 		else:
 			mouth_global_transform = head_global_transform
 		
-		relative_mouth_transform = head_global_transform.inverse() * mouth_global_transform
+		relative_mouth_transform = head_global_transform.affine_inverse() * mouth_global_transform
 
 		setup_bone_attachments(humanoid_data, avatar_skeleton)
 
