@@ -389,12 +389,15 @@ func update_output_trackers() -> void:
 			
 			# The outgoing hips rotation should treat the default rotation as identity,
 			# so apply the inverse of the rest pose to actual global pose here
+			
+			# TODO: we may want to use global rest as the inverse, but it should probably be cached
 			var hips_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.hip_id) * Transform(skeleton.get_bone_rest(_avatar_display_node.hip_id).basis.inverse(), Vector3()) # bone_lib_const.get_bone_global_transform(_avatar_display_node.hip_id, skeleton, local_transforms_array)
 			
-			var left_hand_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.left_hand_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.left_hand_id, skeleton, local_transforms_array)
-			var right_hand_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.right_hand_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.right_hand_id, skeleton, local_transforms_array)
-			var left_foot_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.left_foot_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.left_foot_id, skeleton, local_transforms_array)
-			var right_foot_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.right_foot_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.right_foot_id, skeleton, local_transforms_array)
+			var left_hand_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.left_hand_id) * Transform(skeleton.get_bone_rest(_avatar_display_node.left_hand_id).basis.inverse(), Vector3()) # bone_lib_const.get_bone_global_transform(_avatar_display_node.left_hand_id, skeleton, local_transforms_array)
+			var right_hand_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.right_hand_id) * Transform(skeleton.get_bone_rest(_avatar_display_node.right_hand_id).basis.inverse(), Vector3()) # bone_lib_const.get_bone_global_transform(_avatar_display_node.right_hand_id, skeleton, local_transforms_array)
+			
+			var left_foot_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.left_foot_id) * Transform(skeleton.get_bone_rest(_avatar_display_node.left_foot_id).basis.inverse(), Vector3()) # bone_lib_const.get_bone_global_transform(_avatar_display_node.left_foot_id, skeleton, local_transforms_array)
+			var right_foot_transform : Transform = skeleton.get_bone_global_pose(_avatar_display_node.right_foot_id) * Transform(skeleton.get_bone_rest(_avatar_display_node.right_foot_id).basis.inverse(), Vector3()) # bone_lib_const.get_bone_global_transform(_avatar_display_node.right_foot_id, skeleton, local_transforms_array)
 			
 			# Global transform is inefficent. Try to find a cheaper way of doing this.
 			var affine_inverse: Transform = global_transform.affine_inverse()
