@@ -67,7 +67,7 @@ static func get_arm_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p
 	return get_chain(p_skeleton, p_humanoid_data, p_side, "shoulder", "hand", "upper_arm")
 	
 static func get_leg_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_side: int) -> PoolIntArray:
-	return get_chain(p_skeleton, p_humanoid_data, p_side, "thigh", "shin", "")
+	return get_chain(p_skeleton, p_humanoid_data, p_side, "thigh", "foot", "")
 	
 # Get all the bones in the spine chain aside from the head
 static func get_spine_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> PoolIntArray:
