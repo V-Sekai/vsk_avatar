@@ -45,7 +45,7 @@ static func _fortune_with_chains(
 	r_rest_bones: Dictionary,
 	p_fixed_chains: Array,
 	p_ignore_unchained_bones: bool,
-	p_ignore_chain_tips: bool,
+	p_ignore_chain_tips: Array,
 	p_base_pose: Array) -> Dictionary:
 	var bone_count: int = p_skeleton.get_bone_count()
 	
@@ -84,7 +84,7 @@ static func _fortune_with_chains(
 				else:
 					# If the bone is at the end of a chain, p_ignore_chain_tips argument determines
 					# whether it should attempt to be corrected or not
-					if p_ignore_chain_tips:
+					if p_ignore_chain_tips.has(chain):
 						r_rest_bones[parent_bone].override_direction = false
 						apply_centroid = false
 					else:
@@ -183,7 +183,7 @@ static func get_fortune_with_chain_offsets(p_root: Node, p_skeleton: Skeleton, p
 	# Get the 5 bone chains nessecary for a valid humanoid rig
 	
 	var humanoid_chains: Array = get_humanoid_chains(p_skeleton, p_humanoid_data)
-	var rest_bones: Dictionary = _fortune_with_chains(p_skeleton, {}, humanoid_chains, false, false, p_base_pose)
+	var rest_bones: Dictionary = _fortune_with_chains(p_skeleton, {}, humanoid_chains, false, [humanoid_chains[0]], p_base_pose)
 	
 	var offsets: Dictionary = {"base_pose_offsets":[], "bind_pose_offsets":[]}
 	

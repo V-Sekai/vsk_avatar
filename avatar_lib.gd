@@ -69,8 +69,28 @@ static func get_arm_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p
 static func get_leg_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_side: int) -> PoolIntArray:
 	return get_chain(p_skeleton, p_humanoid_data, p_side, "thigh", "shin", "")
 	
+# Get all the bones in the spine chain aside from the head
+static func get_spine_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> PoolIntArray:
+	var chain: PoolIntArray = get_chain(p_skeleton, p_humanoid_data, avatar_constants_const.SIDE_CENTER, "hips", "head", "")
+	chain.resize(chain.size() - 1)
+	
+	return chain
+	
 static func get_full_spine_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> PoolIntArray:
 	return get_chain(p_skeleton, p_humanoid_data, avatar_constants_const.SIDE_CENTER, "hips", "head", "")
+	
+static func get_hips(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> int:
+	return p_skeleton.find_bone(p_humanoid_data.hips_bone_name)
+	
+static func get_root_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> PoolIntArray:
+	var hips_bone_id: int = get_hips(p_skeleton, p_humanoid_data)
+	var parent_id: int = p_skeleton.get_bone_parent(hips_bone_id)
+	var chain: PoolIntArray = PoolIntArray()
+	while(parent_id != -1):
+		chain.append(parent_id)
+		parent_id = p_skeleton.get_bone_parent(parent_id)
+	
+	return chain
 	
 static func get_digit_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_side: int, p_digit) -> PoolIntArray:
 	return get_chain(p_skeleton, p_humanoid_data, p_side,\
@@ -83,3 +103,16 @@ static func get_digit_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData,
 		avatar_constants_const.get_name_for_digit_joint(avatar_constants_const.DIGIT_JOINT_DISTAL)
 	],
 	"")
+	
+static func get_root_transform(p_skeleton: Skeleton, p_bone_id: int) -> Transform:
+	var cumulative_transform: Transform = Transform()
+	if (p_bone_id != -1):
+		cumulative_transform = p_skeleton.get_bone_rest(p_bone_id)
+
+		var current_bone_id: int = p_skeleton.get_bone_parent(p_bone_id)
+		while (current_bone_id != -1):
+			cumulative_transform = p_skeleton.get_bone_rest(current_bone_id) * cumulative_transform
+			current_bone_id = p_skeleton.get_bone_parent(current_bone_id)
+
+	return cumulative_transform;
+	

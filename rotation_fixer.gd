@@ -48,17 +48,33 @@ static func fix_bone_chain(
 	return p_rotation_fix_data
 	
 static func get_fixed_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const, p_base_pose_local_offsets: Array, p_t_pose_local_offsets: Array) -> Dictionary:
-	var base_transform: Transform = node_util_const.get_relative_global_transform(p_root, p_skeleton)
+	
+	var base_transform: Transform = \
+	node_util_const.get_relative_global_transform(p_root, p_skeleton)
+	
+	var base_transform_with_root: Transform = \
+	base_transform * \
+	avatar_lib_const.get_root_transform(p_skeleton, p_skeleton.get_bone_parent(avatar_lib_const.get_hips(p_skeleton, p_humanoid_data)))
 	
 	var rotation_fix_data: Dictionary = {"bone_pose_roll_fixes":[], "bind_pose_fixes":[]}
 	
 	for i in range(0, p_skeleton.get_bone_count()):
 		rotation_fix_data["bone_pose_roll_fixes"].push_back(Transform())
 		rotation_fix_data["bind_pose_fixes"].push_back(Transform())
-	
+		
+	# Correct any root bones between the root and hip
 	rotation_fix_data = fix_bone_chain(
 		p_skeleton,
 		base_transform.basis * SPINE_BASIS_GLOBAL,
+		avatar_lib_const.get_root_chain(p_skeleton, p_humanoid_data),
+		p_base_pose_local_offsets,
+		p_t_pose_local_offsets,
+		rotation_fix_data)
+	
+	# TODO, figure out how to handle the head
+	rotation_fix_data = fix_bone_chain(
+		p_skeleton,
+		base_transform_with_root.basis * SPINE_BASIS_GLOBAL,
 		avatar_lib_const.get_full_spine_chain(p_skeleton, p_humanoid_data),
 		p_base_pose_local_offsets,
 		p_t_pose_local_offsets,
@@ -67,7 +83,7 @@ static func get_fixed_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoi
 	for side in range(avatar_constants_const.SIDE_LEFT, avatar_constants_const.SIDE_RIGHT+1):
 		rotation_fix_data = fix_bone_chain(
 			p_skeleton,
-			base_transform.basis * LEGS_BASIS_GLOBAL,
+			base_transform_with_root.basis * LEGS_BASIS_GLOBAL,
 			avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data, side),
 			p_base_pose_local_offsets,
 			p_t_pose_local_offsets,
@@ -82,7 +98,7 @@ static func get_fixed_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoi
 				
 		rotation_fix_data = fix_bone_chain(
 			p_skeleton,
-			base_transform.basis * p_arm_reference_basis,
+			base_transform_with_root.basis * p_arm_reference_basis,
 			avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data, side),
 			p_base_pose_local_offsets,
 			p_t_pose_local_offsets,
@@ -91,7 +107,7 @@ static func get_fixed_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoi
 		for digit in range(avatar_constants_const.DIGIT_THUMB, avatar_constants_const.DIGIT_LITTLE+1):
 			rotation_fix_data = fix_bone_chain(
 				p_skeleton,
-				base_transform.basis * p_arm_reference_basis,
+				base_transform_with_root.basis * p_arm_reference_basis,
 				avatar_lib_const.get_digit_chain(p_skeleton, p_humanoid_data, side, digit),
 				p_base_pose_local_offsets,
 				p_t_pose_local_offsets,
