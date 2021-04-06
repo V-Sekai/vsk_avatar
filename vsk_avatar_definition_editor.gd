@@ -17,7 +17,6 @@ var save_dialog : FileDialog = null
 
 var bone_mapper_dialog : bone_mapper_dialog_const = null
 
-
 const humanoid_data_const = preload("humanoid_data.gd")
 
 const avatar_fixer_const = preload("avatar_fixer.gd")
@@ -96,6 +95,7 @@ func export_avatar_upload() -> void:
 
 func edit(p_node : Node) -> void:
 	node = p_node
+	update_menu_options()
 
 
 func error_callback(p_err: int) -> void:
@@ -173,6 +173,20 @@ func _notification(what):
 			if editor_plugin:
 				editor_plugin.remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, options)
 
+func update_menu_options() -> void:
+	if options:
+		options.get_popup().clear()
+		
+		options.get_popup().add_item("Setup Bones", MENU_OPTION_SETUP_BONES)
+		if VSKDebugManager.developer_mode:
+			options.get_popup().add_item("Debug Bones", MENU_OPTION_DEBUG_BONES)
+			options.get_popup().add_item("Correct Bone Directions", MENU_OPTION_CORRECT_BONE_DIRECTIONS)
+			options.get_popup().add_item("Enforce Standard T-Pose", MENU_OPTION_ENFORCE_STANDARD_T_POSE)
+			options.get_popup().add_item("Enforce Strict T-Pose", MENU_OPTION_ENFORCE_STRICT_T_POSE)
+			options.get_popup().add_item("Fix All", MENU_OPTION_FIX_ALL)
+		options.get_popup().add_item("Export Avatar Locally", MENU_OPTION_EXPORT_AVATAR)
+		options.get_popup().add_item("Upload Avatar", MENU_OPTION_UPLOAD_AVATAR)
+
 func _init(p_editor_plugin : EditorPlugin) -> void:
 	editor_plugin = p_editor_plugin
 	
@@ -197,14 +211,6 @@ func _init(p_editor_plugin : EditorPlugin) -> void:
 	
 	editor_plugin.add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, options)
 	options.set_text("Avater Definition")
-	options.get_popup().add_item("Setup Bones", MENU_OPTION_SETUP_BONES)
-	options.get_popup().add_item("Debug Bones", MENU_OPTION_DEBUG_BONES)
-	options.get_popup().add_item("Correct Bone Directions", MENU_OPTION_CORRECT_BONE_DIRECTIONS)
-	options.get_popup().add_item("Enforce Standard T-Pose", MENU_OPTION_ENFORCE_STANDARD_T_POSE)
-	options.get_popup().add_item("Enforce Strict T-Pose", MENU_OPTION_ENFORCE_STRICT_T_POSE)
-	options.get_popup().add_item("Fix All", MENU_OPTION_FIX_ALL)
-	options.get_popup().add_item("Export Avatar", MENU_OPTION_EXPORT_AVATAR)
-	options.get_popup().add_item("Upload Avatar", MENU_OPTION_UPLOAD_AVATAR)
 	
 	options.get_popup().connect("id_pressed", self, "_menu_option")
 	options.hide()
