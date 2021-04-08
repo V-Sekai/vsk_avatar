@@ -58,7 +58,7 @@ static func get_fixed_rotations(p_root: Spatial, p_skeleton: Skeleton, p_humanoi
 	
 	var rotation_fix_data: Dictionary = {"bone_pose_roll_fixes":[], "bind_pose_fixes":[]}
 	
-	for i in range(0, p_skeleton.get_bone_count()):
+	for _i in range(0, p_skeleton.get_bone_count()):
 		rotation_fix_data["bone_pose_roll_fixes"].push_back(Transform())
 		rotation_fix_data["bind_pose_fixes"].push_back(Transform())
 		

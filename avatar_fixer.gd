@@ -47,7 +47,7 @@ static func fix_avatar(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: Huma
 	# Next get apply the fortune_with_chain_offsets algorithm which will return the offsets to the base pose required to get
 	# all the bones to point their Y-direction to either the next bone in the humanoid chain, or the average of their children.
 	# It will also return an array of transforms which when multiplied by the skin bind poses, will correct the mesh skinning.
-	var fortune_offsets: Dictionary = bone_direction_const.get_fortune_with_chain_offsets(p_root, p_skeleton, p_humanoid_data, base_pose)
+	var fortune_offsets: Dictionary = bone_direction_const.get_fortune_with_chain_offsets(p_skeleton, p_humanoid_data, base_pose)
 	
 	# Create an array of the base pose transforms multiplied by the direction corrected offsets
 	var direction_corrected_base_pose: Array = []

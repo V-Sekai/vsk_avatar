@@ -61,7 +61,7 @@ static func get_chain_length(p_skeleton: Skeleton, p_chain: Array, p_rest_transf
 	return chain_length
 	
 
-static func straighten_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_direction: Vector3, p_chain: Array, p_rest_transform_array: Array, p_t_pose_transform_array: Array, p_inverse_children: bool) -> Array:
+static func straighten_chain(p_skeleton: Skeleton, p_direction: Vector3, p_chain: Array, p_rest_transform_array: Array, p_t_pose_transform_array: Array, p_inverse_children: bool) -> Array:
 	#print("STRAIGHTEN_CHAIN")
 	
 	for bone_id in p_chain:
@@ -87,29 +87,26 @@ static func straighten_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData
 	
 	return p_t_pose_transform_array
 
+"""
 static func get_relative_global_transform_for_bone(p_skeleton: Skeleton, p_root_bone_name: String, p_bone_name: String) -> Transform:
 	# Stub
 	return Transform()
 
 static func enforce_standard_t_pose(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> void:
 	pass
+"""
 
 static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_base_pose_array: Array) -> Array:
 	var t_pose_transform_array: Array = []
 	
 	var base_transform: Transform = node_util_const.get_relative_global_transform(p_root, p_skeleton)
 	
-	var base_transform_with_root: Transform = \
-	base_transform * \
-	avatar_lib_const.get_root_transform(p_skeleton, p_skeleton.get_bone_parent(avatar_lib_const.get_hips(p_skeleton, p_humanoid_data)))
-	
-	for i in range(0, p_skeleton.get_bone_count()):
+	for _i in range(0, p_skeleton.get_bone_count()):
 		t_pose_transform_array.push_back(Transform())
 		
 	# Correct any root bones between the root and hip
 	t_pose_transform_array = straighten_chain(
 		p_skeleton,
-		p_humanoid_data,
 		base_transform.xform(Vector3.UP),
 		avatar_lib_const.get_root_chain(p_skeleton, p_humanoid_data),
 		p_base_pose_array,
@@ -118,7 +115,6 @@ static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton, p_humanoid_dat
 	
 	t_pose_transform_array = straighten_chain(
 		p_skeleton,
-		p_humanoid_data,
 		base_transform.xform(Vector3.UP),
 		Array(avatar_lib_const.get_spine_chain(p_skeleton, p_humanoid_data)),
 		p_base_pose_array,
@@ -128,7 +124,6 @@ static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton, p_humanoid_dat
 	for side in range(avatar_lib_const.avatar_constants_const.SIDE_LEFT, avatar_lib_const.avatar_constants_const.SIDE_RIGHT+1):
 		t_pose_transform_array = straighten_chain(
 			p_skeleton,
-			p_humanoid_data,
 			base_transform.xform(Vector3.DOWN),
 			Array(avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data, side)),
 			p_base_pose_array,
@@ -145,7 +140,6 @@ static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton, p_humanoid_dat
 				
 		t_pose_transform_array = straighten_chain(
 			p_skeleton,
-			p_humanoid_data,
 			side_direction,
 			Array(avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data, side)),
 			p_base_pose_array,
@@ -155,7 +149,6 @@ static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton, p_humanoid_dat
 		for digit in range(avatar_lib_const.avatar_constants_const.DIGIT_THUMB, avatar_lib_const.avatar_constants_const.DIGIT_LITTLE+1):
 			t_pose_transform_array = straighten_chain(
 				p_skeleton,
-				p_humanoid_data,
 				side_direction,
 				Array(avatar_lib_const.get_digit_chain(p_skeleton, p_humanoid_data, side, digit)),
 				p_base_pose_array,

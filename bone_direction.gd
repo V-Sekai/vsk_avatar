@@ -179,7 +179,7 @@ static func print_chain_names(p_skeleton: Skeleton, p_chains: Array) -> void:
 		
 		idx += 1
 		
-static func get_fortune_with_chain_offsets(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_base_pose: Array) -> Dictionary:
+static func get_fortune_with_chain_offsets(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_base_pose: Array) -> Dictionary:
 	# Get the 5 bone chains nessecary for a valid humanoid rig
 	
 	var humanoid_chains: Array = get_humanoid_chains(p_skeleton, p_humanoid_data)
@@ -200,7 +200,7 @@ static func fix_skeleton(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: Hu
 	for i in range(0, p_skeleton.get_bone_count()):
 		base_pose.append(p_skeleton.get_bone_rest(i))
 	
-	var offsets: Dictionary = get_fortune_with_chain_offsets(p_root, p_skeleton, p_humanoid_data, base_pose)
+	var offsets: Dictionary = get_fortune_with_chain_offsets(p_skeleton, p_humanoid_data, base_pose)
 	
 	# One last iteration to apply the transforms we calculated
 	for i in range(0, offsets["base_pose_offsets"].size()):
