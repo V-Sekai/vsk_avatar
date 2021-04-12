@@ -39,6 +39,8 @@ enum {
 	AVATAR_LEG_RIGHT_ROOT_MISSING,
 	AVATAR_LEG_RIGHT_TIP_MISSING,
 	AVATAR_LEG_RIGHT_BONES_MISORDERED,
+	
+	EXPORTER_NOT_LOADED,
 }
 
 static func get_error_string(p_err: int) -> String:
@@ -108,6 +110,8 @@ static func get_error_string(p_err: int) -> String:
 			error_string = "Leg Right tip missing!"
 		AVATAR_LEG_RIGHT_BONES_MISORDERED:
 			error_string = "Leg Right chain misordered!"
+		EXPORTER_NOT_LOADED:
+			error_string = "Exporter not loaded!"
 	
 	return error_string
 
