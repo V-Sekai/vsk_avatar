@@ -167,7 +167,7 @@ func _menu_option(p_id : int) -> void:
 func _save_file_at_path(p_string : String) -> void:
 	var vsk_exporter: Node = get_node_or_null("/root/VSKExporter")
 	
-	var err: int = avatar_callback_const.EXPORTER_NODE_LOADED
+	var err: int = avatar_callback_const.EXPORTER_NOT_LOADED
 	if vsk_exporter:
 		err = vsk_exporter.export_avatar(editor_plugin.get_editor_interface().get_edited_scene_root(),\
 		node,\
