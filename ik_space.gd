@@ -450,7 +450,7 @@ func ik_complete() -> void:
 			_avatar_display_node.save_head()
 			_avatar_display_node.try_head_shrink()
 			
-func execute_ik() -> void:
+func execute_ik(p_delta: float) -> void:
 	if is_network_master():
 		_avatar_display_node.restore_head()
 	
@@ -459,14 +459,20 @@ func execute_ik() -> void:
 	
 	ik_complete()
 	
-func transform_update(p_delta) -> void:
+	# Physics
+	if VSKAvatarManager.use_avatar_physics:
+		if _avatar_display_node.avatar_node:
+			if _avatar_display_node.avatar_node._avatar_physics_node:
+				_avatar_display_node.avatar_node._avatar_physics_node.update(p_delta)
+	
+func transform_update(p_delta: float) -> void:
 	if is_inside_tree():
 		if is_network_master():
 			update_local_transforms()
 		else:
 			interpolate_transforms(p_delta)
 			
-		execute_ik()
+		execute_ik(p_delta)
 
 # Current assumes physics to be running at 60hz, will behave differently
 # at a different physics update rate
