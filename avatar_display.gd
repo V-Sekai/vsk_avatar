@@ -15,6 +15,8 @@ const attachment_point_3d_const = preload("res://addons/entity_manager/attachmen
 const vr_constants_const = preload("res://addons/vr_manager/vr_constants.gd")
 
 signal avatar_changed
+signal avatar_download_started(p_url)
+signal avatar_load_stage(p_stage, p_stage_count)
 
 var simulation_logic: Node = null
 
@@ -103,8 +105,9 @@ func clear_avatar() -> void:
 
 
 func _avatar_load_finished() -> void:
-	VSKAvatarManager.disconnect("avatar_load_succeeded", self, "_avatar_load_succeeded")
-	VSKAvatarManager.disconnect("avatar_load_failed", self, "_avatar_load_failed")
+	VSKAvatarManager.disconnect("avatar_download_started", self, "_avatar_download_started")
+	VSKAvatarManager.disconnect("avatar_load_callback", self, "_avatar_load_callback")
+	VSKAvatarManager.disconnect("avatar_load_update", self, "_avatar_load_update")
 
 	avatar_pending = false
 
@@ -131,14 +134,26 @@ func _avatar_load_failed(p_url: String, p_err: int) -> void:
 			clear_avatar()
 			printerr("Could not load failed avatar!")
 
+func _avatar_download_started(p_url: String) -> void:
+	if avatar_pending and p_url == avatar_path:
+		emit_signal("avatar_download_started", p_url)
+
+func _avatar_load_callback(p_url: String, p_err: int, p_packed_scene: PackedScene) -> void:
+	if p_err == VSKAssetManager.ASSET_OK:
+		_avatar_load_succeeded(p_url, p_packed_scene)
+	else:
+		_avatar_load_failed(p_url, p_err)
+
+func _avatar_load_update(p_url: String, p_stage: int, p_stage_count: int) -> void:
+	if avatar_pending and p_url == avatar_path:
+		emit_signal("avatar_load_stage", p_stage, p_stage_count)
+
 func _instance_avatar() -> void:
 	if is_inside_tree():
 		if avatar_packed_scene:
 			clear_avatar()
-
-			var new_avatar_node: Spatial = avatar_packed_scene.instance()
-			setup_avatar_instance(new_avatar_node)
 			
+			setup_avatar_instance(avatar_packed_scene.instance())
 			avatar_packed_scene = null
 
 func _update_voice_player() -> void:
@@ -146,17 +161,16 @@ func _update_voice_player() -> void:
 		if voice_player.get_parent() != head_bone_attachment:
 			if voice_player.is_inside_tree():
 				voice_player.get_parent().remove_child(voice_player)
-		
+				
 			head_bone_attachment.add_child(voice_player)
 		voice_player.transform = relative_mouth_transform * Transform().rotated(Vector3(0.0, 1.0, 0.0), PI)
 
 func load_model(p_bypass_whitelist: bool) -> void:
 	if ! avatar_pending:
-		if VSKAvatarManager.connect("avatar_load_succeeded", self, "_avatar_load_succeeded") != OK:
-			printerr("Could not connect 'avatar_load_succeeded'!")
-		if VSKAvatarManager.connect("avatar_load_failed", self, "_avatar_load_failed") != OK:
-			printerr("Could not connect 'avatar_load_failed'!")
-
+		assert(VSKAvatarManager.connect("avatar_download_started", self, "_avatar_download_started") == OK)
+		assert(VSKAvatarManager.connect("avatar_load_callback", self, "_avatar_load_callback") == OK)
+		assert(VSKAvatarManager.connect("avatar_load_update", self, "_avatar_load_update") == OK)
+		
 		avatar_pending = true
 	VSKAvatarManager.call_deferred("request_avatar", avatar_path, p_bypass_whitelist)
 
