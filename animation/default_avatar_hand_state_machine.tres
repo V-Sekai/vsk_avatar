@@ -1,0 +1,290 @@
+[gd_resource type="AnimationNodeStateMachine" load_steps=72 format=2]
+
+[sub_resource type="AnimationNodeAnimation" id=1]
+animation = "DefaultPose"
+
+[sub_resource type="AnimationNodeAnimation" id=2]
+animation = "FingerPoint"
+
+[sub_resource type="AnimationNodeAnimation" id=3]
+animation = "Fist"
+
+[sub_resource type="AnimationNodeAnimation" id=4]
+animation = "Handgun"
+
+[sub_resource type="AnimationNodeAnimation" id=5]
+animation = "Neutral"
+
+[sub_resource type="AnimationNodeAnimation" id=6]
+animation = "OKSign"
+
+[sub_resource type="AnimationNodeAnimation" id=7]
+animation = "OpenHands"
+
+[sub_resource type="AnimationNodeAnimation" id=8]
+animation = "PeaceSign"
+
+[sub_resource type="AnimationNodeAnimation" id=9]
+animation = "ThumbsUp"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=10]
+advance_condition = "fist"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=11]
+advance_condition = "neutral"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=12]
+advance_condition = "hand_gun"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=13]
+advance_condition = "thumbs_up"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=14]
+advance_condition = "hand_gun"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=15]
+advance_condition = "thumbs_up"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=16]
+advance_condition = "neutral"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=17]
+advance_condition = "thumbs_up"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=18]
+advance_condition = "peace_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=19]
+advance_condition = "open_hands"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=20]
+advance_condition = "peace_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=21]
+advance_condition = "neutral"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=22]
+advance_condition = "open_hands"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=23]
+advance_condition = "thumbs_up"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=24]
+advance_condition = "open_hands"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=25]
+advance_condition = "ok_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=26]
+advance_condition = "open_hands"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=27]
+advance_condition = "ok_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=28]
+advance_condition = "thumbs_up"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=29]
+advance_condition = "peace_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=30]
+advance_condition = "ok_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=31]
+advance_condition = "hand_gun"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=32]
+advance_condition = "ok_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=33]
+advance_condition = "hand_gun"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=34]
+advance_condition = "open_hands"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=35]
+advance_condition = "hand_gun"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=36]
+advance_condition = "peace_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=37]
+advance_condition = "open_hands"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=38]
+advance_condition = "neutral"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=39]
+advance_condition = "hand_gun"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=40]
+advance_condition = "ok_sign"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=41]
+advance_condition = "thumbs_up"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=42]
+advance_condition = "peace_sign"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=43]
+advance_condition = "neutral"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=44]
+advance_condition = "fist"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=45]
+advance_condition = "finger_point"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=46]
+advance_condition = "fist"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=47]
+advance_condition = "hand_gun"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=48]
+advance_condition = "finger_point"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=49]
+advance_condition = "fist"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=50]
+advance_condition = "hand_gun"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=51]
+advance_condition = "finger_point"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=52]
+advance_condition = "peace_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=53]
+advance_condition = "finger_point"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=54]
+advance_condition = "open_hands"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=55]
+advance_condition = "finger_point"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=56]
+advance_condition = "finger_point"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=57]
+advance_condition = "thumbs_up"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=58]
+advance_condition = "thumbs_up"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=59]
+advance_condition = "fist"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=60]
+advance_condition = "open_hands"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=61]
+advance_condition = "fist"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=62]
+advance_condition = "ok_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=63]
+advance_condition = "finger_point"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=64]
+advance_condition = "ok_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=65]
+advance_condition = "fist"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=66]
+advance_condition = "fist"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=67]
+advance_condition = "peace_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=68]
+advance_condition = "neutral"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=69]
+advance_condition = "finger_point"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=70]
+advance_condition = "ok_sign"
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=71]
+advance_condition = "neutral"
+xfade_time = 0.1
+
+[resource]
+states/DefaultPose/node = SubResource( 1 )
+states/DefaultPose/position = Vector2( 50, 239 )
+states/FingerPoint/node = SubResource( 2 )
+states/FingerPoint/position = Vector2( 473, 239 )
+states/Fist/node = SubResource( 3 )
+states/Fist/position = Vector2( 321, 30 )
+states/Handgun/node = SubResource( 4 )
+states/Handgun/position = Vector2( 321, 396 )
+states/Neutral/node = SubResource( 5 )
+states/Neutral/position = Vector2( 50, -54 )
+states/OKSign/node = SubResource( 6 )
+states/OKSign/position = Vector2( 50, 483 )
+states/OpenHands/node = SubResource( 7 )
+states/OpenHands/position = Vector2( -210, 30 )
+states/PeaceSign/node = SubResource( 8 )
+states/PeaceSign/position = Vector2( -375, 239 )
+states/ThumbsUp/node = SubResource( 9 )
+states/ThumbsUp/position = Vector2( -210, 396 )
+transitions = [ "DefaultPose", "Fist", SubResource( 10 ), "Handgun", "Neutral", SubResource( 11 ), "Neutral", "Handgun", SubResource( 12 ), "Handgun", "ThumbsUp", SubResource( 13 ), "ThumbsUp", "Handgun", SubResource( 14 ), "Neutral", "ThumbsUp", SubResource( 15 ), "ThumbsUp", "Neutral", SubResource( 16 ), "PeaceSign", "ThumbsUp", SubResource( 17 ), "ThumbsUp", "PeaceSign", SubResource( 18 ), "PeaceSign", "OpenHands", SubResource( 19 ), "OpenHands", "PeaceSign", SubResource( 20 ), "OpenHands", "Neutral", SubResource( 21 ), "Neutral", "OpenHands", SubResource( 22 ), "OpenHands", "ThumbsUp", SubResource( 23 ), "ThumbsUp", "OpenHands", SubResource( 24 ), "OpenHands", "OKSign", SubResource( 25 ), "OKSign", "OpenHands", SubResource( 26 ), "ThumbsUp", "OKSign", SubResource( 27 ), "OKSign", "ThumbsUp", SubResource( 28 ), "OKSign", "PeaceSign", SubResource( 29 ), "PeaceSign", "OKSign", SubResource( 30 ), "OKSign", "Handgun", SubResource( 31 ), "Handgun", "OKSign", SubResource( 32 ), "OpenHands", "Handgun", SubResource( 33 ), "Handgun", "OpenHands", SubResource( 34 ), "PeaceSign", "Handgun", SubResource( 35 ), "Handgun", "PeaceSign", SubResource( 36 ), "DefaultPose", "OpenHands", SubResource( 37 ), "DefaultPose", "Neutral", SubResource( 38 ), "DefaultPose", "Handgun", SubResource( 39 ), "DefaultPose", "OKSign", SubResource( 40 ), "DefaultPose", "ThumbsUp", SubResource( 41 ), "DefaultPose", "PeaceSign", SubResource( 42 ), "Fist", "Neutral", SubResource( 43 ), "Neutral", "Fist", SubResource( 44 ), "Fist", "FingerPoint", SubResource( 45 ), "FingerPoint", "Fist", SubResource( 46 ), "FingerPoint", "Handgun", SubResource( 47 ), "Handgun", "FingerPoint", SubResource( 48 ), "Handgun", "Fist", SubResource( 49 ), "Fist", "Handgun", SubResource( 50 ), "DefaultPose", "FingerPoint", SubResource( 51 ), "FingerPoint", "PeaceSign", SubResource( 52 ), "PeaceSign", "FingerPoint", SubResource( 53 ), "FingerPoint", "OpenHands", SubResource( 54 ), "OpenHands", "FingerPoint", SubResource( 55 ), "ThumbsUp", "FingerPoint", SubResource( 56 ), "FingerPoint", "ThumbsUp", SubResource( 57 ), "Fist", "ThumbsUp", SubResource( 58 ), "ThumbsUp", "Fist", SubResource( 59 ), "Fist", "OpenHands", SubResource( 60 ), "OpenHands", "Fist", SubResource( 61 ), "FingerPoint", "OKSign", SubResource( 62 ), "OKSign", "FingerPoint", SubResource( 63 ), "Fist", "OKSign", SubResource( 64 ), "OKSign", "Fist", SubResource( 65 ), "PeaceSign", "Fist", SubResource( 66 ), "Fist", "PeaceSign", SubResource( 67 ), "FingerPoint", "Neutral", SubResource( 68 ), "Neutral", "FingerPoint", SubResource( 69 ), "Neutral", "OKSign", SubResource( 70 ), "OKSign", "Neutral", SubResource( 71 ) ]
+start_node = "DefaultPose"
+graph_offset = Vector2( -532, -42 )
