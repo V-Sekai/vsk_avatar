@@ -12,7 +12,7 @@ const humanoid_data_const = preload("humanoid_data.gd")
 const gizmo_reference_const = preload("gizmo_reference.tscn")
 
 const attachment_point_3d_const = preload("res://addons/entity_manager/attachment_point_3d.gd")
-const vr_constants_const = preload("res://addons/vr_manager/vr_constants.gd")
+const vr_constants_const = preload("res://addons/sar1_vr_manager/vr_constants.gd")
 
 signal avatar_changed
 signal avatar_download_started(p_url)
