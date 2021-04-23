@@ -14,6 +14,8 @@ const gizmo_reference_const = preload("gizmo_reference.tscn")
 const attachment_point_3d_const = preload("res://addons/entity_manager/attachment_point_3d.gd")
 const vr_constants_const = preload("res://addons/sar1_vr_manager/vr_constants.gd")
 
+const avatar_setup_const = preload("avatar_setup.gd")
+
 signal avatar_changed
 signal avatar_download_started(p_url)
 signal avatar_load_stage(p_stage, p_stage_count)
@@ -71,6 +73,7 @@ var avatar_node: Spatial = null
 var avatar_path: String = ""
 var avatar_packed_scene: PackedScene = null
 
+const avatar_default_driver_const = preload("avatar_default_driver.gd")
 const bone_lib_const = preload("res://addons/vsk_avatar/bone_lib.gd")
 
 const VISUALISE_ATTACHMENTS = false
@@ -410,6 +413,34 @@ func setup_avatar_instance(p_avatar_node: Spatial) -> void:
 			pass
 		
 		_update_voice_player()
+		
+		if avatar_skeleton:
+			# Generate animation controller, tree, and player
+			var animation_player: AnimationPlayer = AnimationPlayer.new()
+			animation_player.set_name("AnimationPlayer")
+			avatar_node.add_child(animation_player)
+			animation_player.root_node = animation_player.get_path_to(avatar_node)
+			
+			animation_player = avatar_setup_const.setup_default_hand_animations(animation_player, avatar_node, avatar_skeleton, humanoid_data)
+
+			var animation_tree: AnimationTree = AnimationTree.new()
+			animation_tree.set_name("AnimationTree")
+			avatar_node.add_child(animation_tree)
+
+			animation_tree = avatar_setup_const.setup_animation_tree_hand_blend_tree(
+				avatar_node,
+				animation_tree,
+				animation_player,
+				avatar_skeleton,
+				humanoid_data
+			)
+			
+			var avatar_default_driver: Node = avatar_default_driver_const.new()
+			avatar_default_driver.set_name("DefaultAvatarDriver")
+			avatar_node.add_child(avatar_default_driver)
+			avatar_default_driver.anim_tree = avatar_default_driver.get_path_to(animation_tree)
+		
+			avatar_node.driver_node = avatar_default_driver
 		
 		emit_signal("avatar_changed")
 	else:

@@ -464,6 +464,11 @@ func execute_ik(p_delta: float) -> void:
 		if _avatar_display_node.avatar_node:
 			if _avatar_display_node.avatar_node._avatar_physics_node:
 				_avatar_display_node.avatar_node._avatar_physics_node.update(p_delta)
+				
+	# Custom gestures
+	if _avatar_display_node.avatar_node:
+		if _avatar_display_node.avatar_node.driver_node:
+			_avatar_display_node.avatar_node.driver_node.update(p_delta)
 	
 func transform_update(p_delta: float) -> void:
 	if is_inside_tree():

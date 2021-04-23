@@ -4,6 +4,8 @@ tool
 const avatar_physics_const = preload("avatar_physics.gd")
 const humanoid_data_const = preload("humanoid_data.gd")
 
+var driver_node: Node = null
+
 export(NodePath) var skeleton_path: NodePath = NodePath() setget set_skeleton_path
 var _skeleton_node: Skeleton = null
 

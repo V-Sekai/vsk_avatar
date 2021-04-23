@@ -7,6 +7,9 @@ const avatar_callback_const = preload("avatar_callback.gd")
 const bone_mapper_dialog_const = preload("bone_mapper_dialog.gd")
 const bone_lib_const = preload("bone_lib.gd")
 
+const hand_pose_const = preload("hand_pose.gd")
+const hand_pose_exporter_const = preload("hand_pose_extractor.gd")
+
 var editor_plugin : EditorPlugin = null
 
 var node : Node = null
@@ -27,9 +30,12 @@ const t_poser_const = preload("t_poser.gd")
 const external_transform_fixer_const = preload("external_transform_fixer.gd")
 
 const OUTPUT_SCENE_EXTENSION = "scn"
+const OUTPUT_HAND_RESOURCE_EXTENSION = "tres"
 
 enum {
 	MENU_OPTION_DEBUG_BONES
+	MENU_OPTION_EXPORT_LEFT_HAND_POSE,
+	MENU_OPTION_EXPORT_RIGHT_HAND_POSE,
 	MENU_OPTION_CORRECT_BONE_DIRECTIONS,
 	MENU_OPTION_ENFORCE_STANDARD_T_POSE,
 	MENU_OPTION_ENFORCE_STRICT_T_POSE,
@@ -38,6 +44,14 @@ enum {
 	MENU_OPTION_EXPORT_AVATAR
 	MENU_OPTION_UPLOAD_AVATAR
 }
+
+enum {
+	SAVE_OPTION_AVATAR,
+	SAVE_OPTION_LEFT_HAND_POSE,
+	SAVE_OPTION_RIGHT_HAND_POSE,
+}
+
+var save_option: int = SAVE_OPTION_AVATAR
 
 func debug_bones(p_skeleton: Skeleton) -> void:
 	avater_debug_const.debug_bones(node._skeleton_node)
@@ -69,6 +83,8 @@ func setup_bones_menu() -> int:
 	return avatar_callback_const.AVATAR_OK
 
 func export_avatar_local() -> void:
+	save_option = SAVE_OPTION_AVATAR
+	
 	save_dialog.add_filter("*.%s;%s" % [OUTPUT_SCENE_EXTENSION, OUTPUT_SCENE_EXTENSION.to_upper()]);
 	
 	save_dialog.popup_centered_ratio()
@@ -95,6 +111,18 @@ func export_avatar_upload() -> void:
 			printerr("Could not load VSKEditor!")
 	else:
 		printerr("Node is not valid!")
+		
+func export_hand_pose(p_is_right_hand: bool) -> void:
+	if node and node is Node:
+		if p_is_right_hand:
+			save_option = SAVE_OPTION_RIGHT_HAND_POSE
+		else:
+			save_option = SAVE_OPTION_LEFT_HAND_POSE
+		
+		save_dialog.add_filter("*.%s;%s" % [OUTPUT_HAND_RESOURCE_EXTENSION, OUTPUT_HAND_RESOURCE_EXTENSION.to_upper()]);
+		
+		save_dialog.popup_centered_ratio()
+		save_dialog.set_title("Save Hand Pose As...")
 
 
 func edit(p_node : Node) -> void:
@@ -161,18 +189,55 @@ func _menu_option(p_id : int) -> void:
 				export_avatar_upload()
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
+		MENU_OPTION_EXPORT_LEFT_HAND_POSE:
+			if check_if_avatar_is_valid():
+				export_hand_pose(false)
+			else:
+				err = avatar_callback_const.ROOT_IS_NULL
+		MENU_OPTION_EXPORT_RIGHT_HAND_POSE:
+			if check_if_avatar_is_valid():
+				export_hand_pose(true)
+			else:
+				err = avatar_callback_const.ROOT_IS_NULL
 				
 	error_callback(err)
 
-func _save_file_at_path(p_string : String) -> void:
+func _save_file_at_path(p_path : String) -> void:
 	var vsk_exporter: Node = get_node_or_null("/root/VSKExporter")
 	
-	var err: int = avatar_callback_const.EXPORTER_NOT_LOADED
-	if vsk_exporter:
-		err = vsk_exporter.export_avatar(editor_plugin.get_editor_interface().get_edited_scene_root(),\
-		node,\
-		p_string)
+	var err: int = avatar_callback_const.AVATAR_FAILED
 	
+	if save_option == SAVE_OPTION_AVATAR:
+		err = avatar_callback_const.EXPORTER_NOT_LOADED
+		if vsk_exporter:
+			err = vsk_exporter.export_avatar(editor_plugin.get_editor_interface().get_edited_scene_root(),\
+			node,\
+			p_path)
+		
+	elif save_option == SAVE_OPTION_LEFT_HAND_POSE or \
+		save_option == SAVE_OPTION_RIGHT_HAND_POSE:
+		err = avatar_callback_const.AVATAR_COULD_NOT_EXPORT_HANDS
+		if node:
+			var skeleton: Skeleton = node._skeleton_node
+			var humanoid_data: HumanoidData = node.humanoid_data
+			if skeleton and humanoid_data:
+				
+				var hand_pose: hand_pose_const = \
+				hand_pose_exporter_const.generate_hand_pose_from_skeleton(
+					skeleton,
+					humanoid_data,
+					true if save_option == SAVE_OPTION_RIGHT_HAND_POSE else false
+				)
+					
+				if hand_pose:
+					if ResourceSaver.save(
+						p_path,
+						hand_pose,
+						ResourceSaver.FLAG_RELATIVE_PATHS
+					) == OK:
+						
+						err = avatar_callback_const.AVATAR_OK
+						
 	error_callback(err)
 
 func _notification(what):
@@ -187,6 +252,8 @@ func update_menu_options() -> void:
 		
 		options.get_popup().add_item("Setup Bones", MENU_OPTION_SETUP_BONES)
 		if VSKDebugManager.developer_mode:
+			options.get_popup().add_item("Save Left Hand Pose", MENU_OPTION_EXPORT_LEFT_HAND_POSE)
+			options.get_popup().add_item("Save Right Hand Pose", MENU_OPTION_EXPORT_RIGHT_HAND_POSE)
 			options.get_popup().add_item("Debug Bones", MENU_OPTION_DEBUG_BONES)
 			options.get_popup().add_item("Correct Bone Directions", MENU_OPTION_CORRECT_BONE_DIRECTIONS)
 			options.get_popup().add_item("Enforce Standard T-Pose", MENU_OPTION_ENFORCE_STANDARD_T_POSE)
