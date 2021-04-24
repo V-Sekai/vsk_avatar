@@ -14,27 +14,7 @@ const hand_pose_open_const = preload("hand_poses/hand_pose_open.tres")
 const hand_pose_point_const = preload("hand_poses/hand_pose_point.tres")
 const hand_pose_thumbs_up_const = preload("hand_poses/hand_pose_thumbs_up.tres")
 const hand_pose_victory_const = preload("hand_poses/hand_pose_victory.tres")
-"""
-static func remap_default_animation(p_animation: Animation, p_new_path: NodePath) -> Animation:
-	var invalid_tracks: Array = []
-	var base_path: String = ""
-	
-	var name_count: int = p_new_path.get_name_count()
-	for i in range(0, name_count):
-		if i != 0:
-			base_path += "/"
-		base_path += p_new_path.get_name(i)
-	
-	var track_count: int = p_animation.get_track_count()
-	for i in range(0, track_count):
-		var node_path: NodePath = p_animation.track_get_path(i)
-		var subname: String = node_path.get_concatenated_subnames()
-		var final_path: String = base_path + ":" + node_path.get_concatenated_subnames()
-		
-		p_animation.track_set_path(i, final_path)
-	
-	return p_animation
-	"""
+
 static func create_pose_track_for_humanoid_bone(
 	p_animation: Animation,
 	p_base_path: String,
@@ -174,11 +154,11 @@ static func setup_animation_tree_hand_blend_tree(
 	p_animation_tree.process_mode = AnimationTree.ANIMATION_PROCESS_MANUAL
 	p_animation_tree.active = true
 	
-	var left_hand_add: AnimationNode = p_animation_tree.tree_root.get_node("LeftHandAdd")
-	var right_hand_add: AnimationNode = p_animation_tree.tree_root.get_node("RightHandAdd")
+	var left_hand_blend: AnimationNode = p_animation_tree.tree_root.get_node("LeftHandBlend")
+	var right_hand_blend: AnimationNode = p_animation_tree.tree_root.get_node("RightHandBlend")
 	
-	left_hand_add.filter_enabled = true
-	right_hand_add.filter_enabled = true
+	left_hand_blend.filter_enabled = true
+	right_hand_blend.filter_enabled = true
 	
 	var base_path: String = p_root.get_path_to(p_skeleton)
 	
@@ -189,12 +169,12 @@ static func setup_animation_tree_hand_blend_tree(
 			var left_bone_index: int = p_skeleton.find_bone(left_bone_name)
 			if left_bone_index != -1:
 				var filter_path: String = base_path + ":" + left_bone_name
-				left_hand_add.set_filter_path(filter_path, true)
+				left_hand_blend.set_filter_path(filter_path, true)
 			# Right
 			var right_bone_name: String = p_humanoid_data["%s_%s_right_bone_name" % [digit, joint]]
 			var right_bone_index: int = p_skeleton.find_bone(right_bone_name)
 			if right_bone_index != -1:
 				var filter_path: String = base_path + ":" + right_bone_name
-				right_hand_add.set_filter_path(filter_path, true)
+				right_hand_blend.set_filter_path(filter_path, true)
 				
 	return p_animation_tree

@@ -62,6 +62,7 @@ export (float) var default_avatar_height = 1.8
 export (NodePath) var _ren_ik_path: NodePath = NodePath()
 export (NodePath) var _ik_space_path: NodePath = NodePath()
 export (NodePath) var player_camera_controller_path: NodePath = NodePath()
+export (NodePath) var player_hand_controller_path: NodePath
 export (NodePath) var player_input_path: NodePath = NodePath()
 export (NodePath) var voice_player_path: NodePath
 
@@ -441,6 +442,11 @@ func setup_avatar_instance(p_avatar_node: Spatial) -> void:
 			avatar_default_driver.anim_tree = avatar_default_driver.get_path_to(animation_tree)
 		
 			avatar_node.driver_node = avatar_default_driver
+			
+			# Make the avatar's hand pose match the player internal
+			var player_hand_controller: Node = get_node_or_null(player_hand_controller_path)
+			if player_hand_controller:
+				player_hand_controller.update_driver()
 		
 		emit_signal("avatar_changed")
 	else:

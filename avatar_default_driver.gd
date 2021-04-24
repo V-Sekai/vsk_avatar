@@ -24,8 +24,8 @@ func _cache_anim_tree(p_path: NodePath) -> void:
 
 func _physics_process(p_delta: float):
 	if cached_anim_tree:
-		cached_anim_tree["parameters/LeftHandAdd/add_amount"] = 1.0
-		cached_anim_tree["parameters/RightHandAdd/add_amount"] = 1.0
+		cached_anim_tree["parameters/LeftHandBlend/blend_amount"] = 1.0
+		cached_anim_tree["parameters/RightHandBlend/blend_amount"] = 1.0
 		
 		cached_anim_tree["parameters/LeftHandStateMachine/conditions/point"] = true \
 		if left_hand_gesture_id == VSKAvatarManager.HAND_POSE_POINT else false
