@@ -106,6 +106,10 @@ func clear_avatar() -> void:
 		avatar_node.queue_free()
 		avatar_node.get_parent().remove_child(avatar_node)
 		avatar_node = null
+		
+		var ren_ik: Node = get_node_or_null(_ren_ik_path)
+		if ren_ik:
+			clear_ik_bone_assignments(ren_ik)
 
 
 func _avatar_load_finished() -> void:
@@ -256,6 +260,14 @@ func assign_ik_bone_assignments(
 	p_ren_ik_node.set_hand_right_bone(right_hand_id)
 	p_ren_ik_node.set_foot_left_bone(left_foot_id)
 	p_ren_ik_node.set_foot_right_bone(right_foot_id)
+	
+func clear_ik_bone_assignments(p_ren_ik_node: Node) -> void:
+	p_ren_ik_node.set_head_bone(-1)
+	p_ren_ik_node.set_hip_bone(-1)
+	p_ren_ik_node.set_hand_left_bone(-1)
+	p_ren_ik_node.set_hand_right_bone(-1)
+	p_ren_ik_node.set_foot_left_bone(-1)
+	p_ren_ik_node.set_foot_right_bone(-1)
 
 
 func calculate_proportions() -> void:
