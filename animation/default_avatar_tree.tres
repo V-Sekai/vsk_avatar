@@ -26,4 +26,4 @@ nodes/RightHandBlend/position = Vector2( 400, 80 )
 nodes/RightHandStateMachine/node = ExtResource( 1 )
 nodes/RightHandStateMachine/position = Vector2( 0, 400 )
 nodes/output/position = Vector2( 800, 120 )
-node_connections = [ "output", 0, "RightHandBlend", "LeftHandBlend", 0, "Animation", "LeftHandBlend", 1, "LeftHandStateMachine", "RightHandBlend", 0, "LeftHandBlend", "RightHandBlend", 1, "RightHandStateMachine" ]
+node_connections = [ "RightHandBlend", 0, "LeftHandBlend", "RightHandBlend", 1, "RightHandStateMachine", "LeftHandBlend", 0, "Animation", "LeftHandBlend", 1, "LeftHandStateMachine", "output", 0, "RightHandBlend" ]

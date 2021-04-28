@@ -66,6 +66,7 @@ export (NodePath) var player_hand_controller_path: NodePath
 export (NodePath) var player_input_path: NodePath = NodePath()
 export (NodePath) var voice_player_path: NodePath
 
+var _player_input_node: Node = null
 var _ik_space: Node = null
 var _player_camera_controller: Node = null
 
@@ -189,9 +190,12 @@ func setup_bone_attachments(p_humanoid_data: humanoid_data_const, p_skeleton: Sk
 	right_hand_bone_attachment.get_parent().remove_child(right_hand_bone_attachment)
 
 	if p_skeleton and p_humanoid_data:
-		var head_bone_id: int = p_skeleton.find_bone(p_humanoid_data.head_bone_name)
-		var left_bone_id: int = p_skeleton.find_bone(p_humanoid_data.hand_left_bone_name)
-		var right_bone_id: int = p_skeleton.find_bone(p_humanoid_data.hand_right_bone_name)
+		var head_bone_id: int = humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.head)
+		var left_bone_id: int = humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.hand_left)
+		var right_bone_id: int = humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.hand_right)
 
 		if head_bone_id != -1:
 			p_skeleton.add_child(head_bone_attachment)
@@ -247,12 +251,18 @@ func create_bone_attachments() -> void:
 func assign_ik_bone_assignments(
 	p_ren_ik_node: Node, p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const
 ) -> void:
-	head_id = p_skeleton.find_bone(p_humanoid_data.head_bone_name)
-	hip_id = p_skeleton.find_bone(p_humanoid_data.hips_bone_name)
-	left_hand_id = p_skeleton.find_bone(p_humanoid_data.hand_left_bone_name)
-	right_hand_id = p_skeleton.find_bone(p_humanoid_data.hand_right_bone_name)
-	left_foot_id = p_skeleton.find_bone(p_humanoid_data.foot_left_bone_name)
-	right_foot_id = p_skeleton.find_bone(p_humanoid_data.foot_right_bone_name)
+	head_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.head)
+	hip_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.hips)
+	left_hand_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.hand_left)
+	right_hand_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.hand_right)
+	left_foot_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.foot_left)
+	right_foot_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.foot_right)
 
 	p_ren_ik_node.set_head_bone(head_id)
 	p_ren_ik_node.set_hip_bone(hip_id)
@@ -298,12 +308,152 @@ func calculate_proportions() -> void:
 		avatar_wristspan = 0.0
 		VRManager.set_origin_world_scale(1.0)
 
+func _setup_avatar_eyes(
+	p_avatar_node: Spatial,
+	p_skeleton: Skeleton,
+	p_humanoid_data: humanoid_data_const
+	) -> void:
+	var eye_spatial: Spatial = avatar_node.get_node_or_null(avatar_node.eye_transform_node_path)
+	var eye_global_transform: Transform
+	if eye_spatial:
+		# Get the global transform of the eye relative to the avatar root
+		eye_global_transform = node_util_const.get_relative_global_transform(avatar_node, eye_spatial)
+	else:
+		var found_eyes: bool = false
+		if p_skeleton and humanoid_data:
+			var eye_left_bone_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.eye_left)
+			var eye_right_bone_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.eye_right)
+			
+			if eye_left_bone_id != -1 and eye_right_bone_id != -1:
+				var eye_left_global_transform: Transform = bone_lib_const.get_bone_global_rest_transform(eye_left_bone_id, p_skeleton)
+				var eye_right_global_transform: Transform = bone_lib_const.get_bone_global_rest_transform(eye_right_bone_id, p_skeleton)
+				
+				eye_global_transform =\
+				node_util_const.get_relative_global_transform(avatar_node, p_skeleton)\
+				* eye_left_global_transform.interpolate_with(eye_right_global_transform, 0.5)
+				
+				found_eyes = true
+			
+		if !found_eyes:
+			eye_global_transform = Transform(Basis(), Vector3(0.0, 1.0, 0.0) * (default_avatar_height - vr_constants_const.EYE_TO_TOP_OF_HEAD))
+		
+	eye_global_transform = Transform(Basis(), eye_global_transform.origin)
+		
+	avatar_eye_height = eye_global_transform.origin.y
+	if _player_input_node:
+		_player_input_node.camera_height = eye_global_transform.origin.y - AVATAR_LOWER_DISTANCE
+
+	var eye_offset_transform: Transform = Transform()
+
+	if p_humanoid_data and p_skeleton:
+		avatar_node.set_as_toplevel(true)
+		avatar_node.set_global_transform(Transform(AVATAR_BASIS, Vector3()))
+		var head_bone_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.head)
+		if head_bone_id != -1:
+			var head_global_rest_transfrom: Transform = \
+			node_util_const.get_relative_global_transform(avatar_node, p_skeleton)\
+			* bone_lib_const.get_bone_global_rest_transform(head_bone_id, p_skeleton)
+			
+			eye_offset_transform = head_global_rest_transfrom.affine_inverse() * eye_global_transform
+			
+		var left_hand_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.hand_left)
+		var right_hand_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.hand_right)
+		
+		if left_hand_bone_name_id != -1 and right_hand_bone_name_id != -1:
+			var left_wrist_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
+				left_hand_bone_name_id, p_skeleton
+			)
+			var right_wrist_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
+				right_hand_bone_name_id, p_skeleton
+			)
+			avatar_wristspan = left_wrist_transform.origin.distance_to(
+				right_wrist_transform.origin
+			)
+	else:
+		avatar_node.set_transform(Transform(AVATAR_BASIS, Vector3()))
+		avatar_node.set_as_toplevel(false)
+		avatar_wristspan = (VRManager.vr_user_preferences.custom_player_height
+		* VRManager.vr_user_preferences.custom_player_armspan_to_height_ratio
+		* vr_constants_const.ARMSPAN_WRIST_SPAN_CONVERSION)
+		
+	_ik_space.eye_offset = eye_offset_transform.origin
+
+func _setup_avatar_mouth(
+	p_avatar_node: Node,
+	p_skeleton: Skeleton,
+	p_humanoid_data: humanoid_data_const
+	) -> void:
+	var head_global_transform: Transform = Transform()
+	if head_id != -1 and p_skeleton:
+		head_global_transform =\
+		node_util_const.get_relative_global_transform(p_avatar_node, p_skeleton)\
+		* bone_lib_const.get_bone_global_rest_transform(head_id, p_skeleton)
+	else:
+		head_global_transform = Transform(Basis(), Vector3(0.0, 1.0, 0.0) * (default_avatar_height))
+	
+	var mouth_spatial: Spatial = p_avatar_node.get_node_or_null(p_avatar_node.mouth_transform_node_path)
+	var mouth_global_transform: Transform
+	if mouth_spatial:
+		# Get the global transform of the mouth relative to the avatar root
+		mouth_global_transform =\
+		node_util_const.get_relative_global_transform(p_avatar_node, p_skeleton)\
+		* mouth_spatial.transform
+	else:
+		mouth_global_transform = head_global_transform
+	
+	relative_mouth_transform = head_global_transform.affine_inverse() * mouth_global_transform
+
+	setup_bone_attachments(p_humanoid_data, p_skeleton)
+
+	# Change the world scale to match
+	if is_network_master():
+		calculate_proportions()
+	else:
+		pass
+	
+	_update_voice_player()
+
+func _setup_hand_poses(p_avatar_node: Node, p_skeleton: Skeleton) -> void:
+	if p_skeleton:
+		# Generate animation controller, tree, and player
+		var animation_player: AnimationPlayer = AnimationPlayer.new()
+		animation_player.set_name("AnimationPlayer")
+		p_avatar_node.add_child(animation_player)
+		animation_player.root_node = animation_player.get_path_to(p_avatar_node)
+		
+		animation_player = avatar_setup_const.setup_default_hand_animations(animation_player, p_avatar_node, avatar_skeleton, humanoid_data)
+
+		var animation_tree: AnimationTree = AnimationTree.new()
+		animation_tree.set_name("AnimationTree")
+		p_avatar_node.add_child(animation_tree)
+
+		animation_tree = avatar_setup_const.setup_animation_tree_hand_blend_tree(
+			p_avatar_node,
+			animation_tree,
+			animation_player,
+			p_skeleton,
+			humanoid_data
+		)
+		
+		var avatar_default_driver: Node = avatar_default_driver_const.new()
+		avatar_default_driver.set_name("DefaultAvatarDriver")
+		p_avatar_node.add_child(avatar_default_driver)
+		avatar_default_driver.anim_tree = avatar_default_driver.get_path_to(animation_tree)
+	
+		p_avatar_node.driver_node = avatar_default_driver
+		
+		# Make the avatar's hand pose match the player internal
+		var player_hand_controller: Node = get_node_or_null(player_hand_controller_path)
+		if player_hand_controller:
+			player_hand_controller.update_driver()
+
 func setup_avatar_instance(p_avatar_node: Spatial) -> void:
 	avatar_skeleton = null
-
-	var player_input_node: Node = get_node_or_null(player_input_path)
-	if player_input_node:
-		player_input_node.camera_height = default_avatar_height
 
 	if p_avatar_node and (\
 		p_avatar_node.get_script() == avatar_definition_const or\
@@ -314,157 +464,31 @@ func setup_avatar_instance(p_avatar_node: Spatial) -> void:
 
 		# Get the skeleton and humanoid data
 		humanoid_data = p_avatar_node.humanoid_data as humanoid_data_const
-		var skeleton: Skeleton = (
+		avatar_skeleton = (
 			p_avatar_node.get_node_or_null(avatar_node.skeleton_path) as Skeleton
 		)
 
 		# Eye
-		var eye_spatial: Spatial = avatar_node.get_node_or_null(avatar_node.eye_transform_node_path)
-		var eye_global_transform: Transform
-		if eye_spatial:
-			# Get the global transform of the eye relative to the avatar root
-			eye_global_transform = node_util_const.get_relative_global_transform(avatar_node, eye_spatial)
-		else:
-			var found_eyes: bool = false
-			if skeleton and humanoid_data:
-				var eye_left_bone_name: String = humanoid_data.eye_left_bone_name
-				var eye_right_bone_name: String = humanoid_data.eye_right_bone_name
-				
-				var eye_left_bone_id: int = skeleton.find_bone(eye_left_bone_name)
-				var eye_right_bone_id: int = skeleton.find_bone(eye_right_bone_name)
-				
-				if eye_left_bone_id != -1 and eye_right_bone_id != -1:
-					var eye_left_global_transform: Transform = bone_lib_const.get_bone_global_rest_transform(eye_left_bone_id, skeleton)
-					var eye_right_global_transform: Transform = bone_lib_const.get_bone_global_rest_transform(eye_right_bone_id, skeleton)
-					
-					eye_global_transform =\
-					node_util_const.get_relative_global_transform(avatar_node, skeleton)\
-					* eye_left_global_transform.interpolate_with(eye_right_global_transform, 0.5)
-					
-					found_eyes = true
-				
-			if !found_eyes:
-				eye_global_transform = Transform(Basis(), Vector3(0.0, 1.0, 0.0) * (default_avatar_height - vr_constants_const.EYE_TO_TOP_OF_HEAD))
-			
-		eye_global_transform = Transform(Basis(), eye_global_transform.origin)
-			
-		avatar_eye_height = eye_global_transform.origin.y
-		if player_input_node:
-			player_input_node.camera_height = eye_global_transform.origin.y - AVATAR_LOWER_DISTANCE
-
-		var eye_offset_transform: Transform = Transform()
-
-		if humanoid_data and skeleton:
-			avatar_node.set_as_toplevel(true)
-			avatar_node.set_global_transform(Transform(AVATAR_BASIS, Vector3()))
-			var head_bone_name: String = humanoid_data.head_bone_name
-			var head_bone_id: int = skeleton.find_bone(head_bone_name)
-			if head_bone_id != -1:
-				var head_global_rest_transfrom: Transform = \
-				node_util_const.get_relative_global_transform(avatar_node, skeleton)\
-				* bone_lib_const.get_bone_global_rest_transform(head_bone_id, skeleton)
-				
-				eye_offset_transform = head_global_rest_transfrom.affine_inverse() * eye_global_transform
-				
-			var left_hand_bone_name_id: int = skeleton.find_bone(humanoid_data.hand_left_bone_name)
-			var right_hand_bone_name_id: int = skeleton.find_bone(
-				humanoid_data.hand_right_bone_name
-			)
-			
-			if left_hand_bone_name_id != -1 and right_hand_bone_name_id != -1:
-				var left_wrist_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
-					left_hand_bone_name_id, skeleton
-				)
-				var right_wrist_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
-					right_hand_bone_name_id, skeleton
-				)
-				avatar_wristspan = left_wrist_transform.origin.distance_to(
-					right_wrist_transform.origin
-				)
-		else:
-			avatar_node.set_transform(Transform(AVATAR_BASIS, Vector3()))
-			avatar_node.set_as_toplevel(false)
-			avatar_wristspan = (VRManager.vr_user_preferences.custom_player_height
-			* VRManager.vr_user_preferences.custom_player_armspan_to_height_ratio
-			* vr_constants_const.ARMSPAN_WRIST_SPAN_CONVERSION)
-				
-		var ren_ik: Node = get_node_or_null(_ren_ik_path)
-		if ren_ik and _ik_space:
-			_ik_space.eye_offset = eye_offset_transform.origin
-			avatar_skeleton = avatar_node.get_node_or_null(avatar_node.skeleton_path)
-			if avatar_skeleton:
-				ren_ik.set("armature_skeleton_path", ren_ik.get_path_to(avatar_skeleton))
-				assign_ik_bone_assignments(ren_ik, avatar_skeleton, avatar_node.humanoid_data)
+		_setup_avatar_eyes(avatar_node, avatar_skeleton, humanoid_data)
 
 		# Mouth
-		var head_global_transform: Transform = Transform()
-		if head_id != -1 and avatar_skeleton:
-			head_global_transform =\
-			node_util_const.get_relative_global_transform(avatar_node, skeleton)\
-			* bone_lib_const.get_bone_global_rest_transform(head_id, avatar_skeleton)
-		else:
-			head_global_transform = Transform(Basis(), Vector3(0.0, 1.0, 0.0) * (default_avatar_height))
+		_setup_avatar_mouth(avatar_node, avatar_skeleton, humanoid_data)
 		
-		var mouth_spatial: Spatial = avatar_node.get_node_or_null(avatar_node.mouth_transform_node_path)
-		var mouth_global_transform: Transform
-		if mouth_spatial:
-			# Get the global transform of the mouth relative to the avatar root
-			mouth_global_transform =\
-			node_util_const.get_relative_global_transform(avatar_node, skeleton)\
-			* mouth_spatial.transform
-		else:
-			mouth_global_transform = head_global_transform
+		# Hands
+		_setup_hand_poses(avatar_node, avatar_skeleton)
 		
-		relative_mouth_transform = head_global_transform.affine_inverse() * mouth_global_transform
-
-		setup_bone_attachments(humanoid_data, avatar_skeleton)
-
-		# Change the world scale to match
-		if is_network_master():
-			calculate_proportions()
-		else:
-			pass
-		
-		_update_voice_player()
-		
-		if avatar_skeleton:
-			# Generate animation controller, tree, and player
-			var animation_player: AnimationPlayer = AnimationPlayer.new()
-			animation_player.set_name("AnimationPlayer")
-			avatar_node.add_child(animation_player)
-			animation_player.root_node = animation_player.get_path_to(avatar_node)
-			
-			animation_player = avatar_setup_const.setup_default_hand_animations(animation_player, avatar_node, avatar_skeleton, humanoid_data)
-
-			var animation_tree: AnimationTree = AnimationTree.new()
-			animation_tree.set_name("AnimationTree")
-			avatar_node.add_child(animation_tree)
-
-			animation_tree = avatar_setup_const.setup_animation_tree_hand_blend_tree(
-				avatar_node,
-				animation_tree,
-				animation_player,
-				avatar_skeleton,
-				humanoid_data
-			)
-			
-			var avatar_default_driver: Node = avatar_default_driver_const.new()
-			avatar_default_driver.set_name("DefaultAvatarDriver")
-			avatar_node.add_child(avatar_default_driver)
-			avatar_default_driver.anim_tree = avatar_default_driver.get_path_to(animation_tree)
-		
-			avatar_node.driver_node = avatar_default_driver
-			
-			# Make the avatar's hand pose match the player internal
-			var player_hand_controller: Node = get_node_or_null(player_hand_controller_path)
-			if player_hand_controller:
-				player_hand_controller.update_driver()
+		# IK assignments
+		var ren_ik: Node = get_node_or_null(_ren_ik_path)
+		if ren_ik and _ik_space:
+			if avatar_skeleton:
+				ren_ik.set("armature_skeleton_path", ren_ik.get_path_to(avatar_skeleton))
+				assign_ik_bone_assignments(ren_ik, avatar_skeleton, humanoid_data)
 		
 		emit_signal("avatar_changed")
 	else:
 		printerr("Avatar %s is not valid!" % get_avatar_model_path())
 		load_error_avatar()
-
+		
 func try_head_shrink() -> void:
 	if shrink_mode == shrink_enum.SHRINK or \
 	(shrink_mode == shrink_enum.DETERMINED_BY_VIEW and _player_camera_controller and _player_camera_controller.camera_mode == player_camera_controller_const.CAMERA_FIRST_PERSON):
@@ -515,6 +539,7 @@ func _entity_ready() -> void:
 
 	_player_camera_controller = get_node_or_null(player_camera_controller_path)
 	_ik_space = get_node_or_null(_ik_space_path)
+	_player_input_node = get_node_or_null(player_input_path)
 	
 	_instance_avatar()
 
