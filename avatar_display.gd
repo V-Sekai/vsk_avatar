@@ -363,6 +363,107 @@ func calculate_proportions() -> void:
 		avatar_eye_height = 0.0
 		avatar_wristspan = 0.0
 		VRManager.set_origin_world_scale(1.0)
+		
+static func _calculate_humanoid_wristspan(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> float:
+	var current_wristspan: float = 0.0
+	
+	var left_shoulder_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+		p_skeleton, humanoid_data_const.shoulder_left)
+	var right_shoulder_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+		p_skeleton, humanoid_data_const.shoulder_right)
+	
+	var left_upper_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+		p_skeleton, humanoid_data_const.upper_arm_left)
+	var right_upper_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+		p_skeleton, humanoid_data_const.upper_arm_right)
+	
+	if left_upper_bone_name_id != -1 and right_upper_bone_name_id != -1:
+		var left_upper_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
+			left_upper_bone_name_id, p_skeleton
+		)
+		var right_upper_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
+			right_upper_bone_name_id, p_skeleton
+		)
+		
+		if left_shoulder_bone_name_id != -1 and right_shoulder_bone_name_id != -1:
+			var left_shoulder_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
+				left_shoulder_bone_name_id, p_skeleton
+			)
+			var right_shoulder_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
+				right_shoulder_bone_name_id, p_skeleton
+			)
+			
+			current_wristspan += left_shoulder_transform.origin.distance_to(
+				right_shoulder_transform.origin
+			)
+			
+			var shld_to_upper = left_shoulder_transform.origin.distance_to(
+				left_upper_transform.origin)
+			print(shld_to_upper)
+			
+			current_wristspan += left_shoulder_transform.origin.distance_to(
+				left_upper_transform.origin
+			)
+			current_wristspan += right_shoulder_transform.origin.distance_to(
+				right_upper_transform.origin
+			)
+		else:
+			current_wristspan += left_upper_transform.origin.distance_to(
+				right_upper_transform.origin
+			)
+	
+		var left_lower_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.forearm_left)
+		var right_lower_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.forearm_right)
+		
+		if left_lower_bone_name_id != -1 and right_lower_bone_name_id != -1:
+			var left_lower_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
+				left_lower_bone_name_id, p_skeleton
+			)
+			var right_lower_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
+				right_lower_bone_name_id, p_skeleton
+			)
+			
+			var upper_to_lower = left_upper_transform.origin.distance_to(
+				left_lower_transform.origin
+			)
+			print(upper_to_lower)
+			
+			current_wristspan += left_upper_transform.origin.distance_to(
+				left_lower_transform.origin
+			)
+			
+			current_wristspan += right_upper_transform.origin.distance_to(
+				right_lower_transform.origin
+			)
+			
+			var left_hand_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+				p_skeleton, humanoid_data_const.hand_left)
+			var right_hand_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+				p_skeleton, humanoid_data_const.hand_right)
+			
+			if left_hand_bone_name_id != -1 and right_hand_bone_name_id != -1:
+				var left_wrist_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
+					left_hand_bone_name_id, p_skeleton
+				)
+				var right_wrist_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
+					right_hand_bone_name_id, p_skeleton
+				)
+				
+				var lower_to_hand = left_lower_transform.origin.distance_to(
+					left_wrist_transform.origin
+				)
+				print(lower_to_hand)
+				
+				current_wristspan += left_lower_transform.origin.distance_to(
+					left_wrist_transform.origin
+				)
+				current_wristspan += right_lower_transform.origin.distance_to(
+					right_wrist_transform.origin
+				)
+		
+	return current_wristspan
 
 func _setup_avatar_eyes(
 	p_avatar_node: Spatial,
@@ -415,21 +516,7 @@ func _setup_avatar_eyes(
 			
 			eye_offset_transform = head_global_rest_transfrom.affine_inverse() * eye_global_transform
 			
-		var left_hand_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
-			p_skeleton, humanoid_data_const.hand_left)
-		var right_hand_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
-			p_skeleton, humanoid_data_const.hand_right)
-		
-		if left_hand_bone_name_id != -1 and right_hand_bone_name_id != -1:
-			var left_wrist_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
-				left_hand_bone_name_id, p_skeleton
-			)
-			var right_wrist_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
-				right_hand_bone_name_id, p_skeleton
-			)
-			avatar_wristspan = left_wrist_transform.origin.distance_to(
-				right_wrist_transform.origin
-			)
+		avatar_wristspan = _calculate_humanoid_wristspan(p_skeleton, p_humanoid_data)
 	else:
 		avatar_node.set_transform(Transform(AVATAR_BASIS, Vector3()))
 		avatar_node.set_as_toplevel(false)
