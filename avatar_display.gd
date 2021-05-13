@@ -292,7 +292,7 @@ func assign_ik_bone_assignments(
 			
 	left_lower_leg_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.shin_left)
-	right_lower_arm_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+	right_lower_leg_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.shin_right)
 	
 	left_upper_leg_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
