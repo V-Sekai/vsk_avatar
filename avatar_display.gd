@@ -42,10 +42,21 @@ var relative_mouth_transform: Transform = Transform()
 
 var head_id: int = -1
 var hip_id: int = -1
+
 var left_hand_id: int = -1
 var right_hand_id: int = -1
+var left_lower_arm_id: int = -1
+var right_lower_arm_id: int = -1
+var left_upper_arm_id: int = -1
+var right_upper_arm_id: int = -1
+
 var left_foot_id: int = -1
 var right_foot_id: int = -1
+var left_lower_leg_id: int = -1
+var right_lower_leg_id: int = -1
+var left_upper_leg_id: int = -1
+var right_upper_leg_id: int = -1
+
 
 var head_bone_attachment: BoneAttachment = null
 var left_hand_bone_attachment: BoneAttachment = null
@@ -251,33 +262,78 @@ func create_bone_attachments() -> void:
 func assign_ik_bone_assignments(
 	p_ren_ik_node: Node, p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const
 ) -> void:
+	# Spine
 	head_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.head)
 	hip_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.hips)
+			
+	# Arm
 	left_hand_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.hand_left)
 	right_hand_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.hand_right)
+	
+	left_lower_arm_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.forearm_left)
+	right_lower_arm_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.forearm_right)
+	
+	left_upper_arm_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.upper_arm_left)
+	right_upper_arm_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.upper_arm_right)
+			
+	# Leg
 	left_foot_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.foot_left)
 	right_foot_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.foot_right)
+			
+	left_lower_leg_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.shin_left)
+	right_lower_arm_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.shin_right)
+	
+	left_upper_leg_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.thigh_left)
+	right_upper_leg_id = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
+			p_skeleton, humanoid_data_const.thigh_right)
 
 	p_ren_ik_node.set_head_bone(head_id)
 	p_ren_ik_node.set_hip_bone(hip_id)
+	
 	p_ren_ik_node.set_hand_left_bone(left_hand_id)
 	p_ren_ik_node.set_hand_right_bone(right_hand_id)
+	p_ren_ik_node.set_lower_arm_left_bone(left_lower_arm_id)
+	p_ren_ik_node.set_lower_arm_right_bone(right_lower_arm_id)
+	p_ren_ik_node.set_upper_arm_left_bone(left_upper_arm_id)
+	p_ren_ik_node.set_upper_arm_right_bone(right_upper_arm_id)
+	#
 	p_ren_ik_node.set_foot_left_bone(left_foot_id)
 	p_ren_ik_node.set_foot_right_bone(right_foot_id)
+	p_ren_ik_node.set_lower_leg_left_bone(left_lower_leg_id)
+	p_ren_ik_node.set_lower_leg_right_bone(right_lower_leg_id)
+	p_ren_ik_node.set_upper_leg_left_bone(left_upper_leg_id)
+	p_ren_ik_node.set_upper_leg_right_bone(right_upper_leg_id)
 	
 func clear_ik_bone_assignments(p_ren_ik_node: Node) -> void:
 	p_ren_ik_node.set_head_bone(-1)
 	p_ren_ik_node.set_hip_bone(-1)
+
 	p_ren_ik_node.set_hand_left_bone(-1)
 	p_ren_ik_node.set_hand_right_bone(-1)
+	p_ren_ik_node.set_lower_arm_left_bone(-1)
+	p_ren_ik_node.set_lower_arm_right_bone(-1)
+	p_ren_ik_node.set_upper_arm_left_bone(-1)
+	p_ren_ik_node.set_upper_arm_right_bone(-1)
+
 	p_ren_ik_node.set_foot_left_bone(-1)
 	p_ren_ik_node.set_foot_right_bone(-1)
+	p_ren_ik_node.set_lower_leg_left_bone(-1)
+	p_ren_ik_node.set_lower_leg_right_bone(-1)
+	p_ren_ik_node.set_upper_leg_left_bone(-1)
+	p_ren_ik_node.set_upper_leg_right_bone(-1)
 
 
 func calculate_proportions() -> void:
