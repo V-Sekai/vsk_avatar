@@ -87,6 +87,13 @@ static func straighten_chain(p_skeleton: Skeleton, p_direction: Vector3, p_chain
 	
 	return p_t_pose_transform_array
 
+
+static func get_direction_for_humanoid_bone(p_humanoid_data: HumanoidData, p_skeleton: Skeleton, p_humanoid_bone: int) -> Vector3:
+	var bone_idx: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(p_skeleton, p_humanoid_bone)
+	var bone_gt: Transform = p_skeleton.get_bone_global_pose(bone_idx)
+	
+	return Vector3()
+
 """
 static func get_relative_global_transform_for_bone(p_skeleton: Skeleton, p_root_bone_name: String, p_bone_name: String) -> Transform:
 	# Stub

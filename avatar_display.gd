@@ -335,6 +335,8 @@ func clear_ik_bone_assignments(p_ren_ik_node: Node) -> void:
 	p_ren_ik_node.set_upper_leg_left_bone(-1)
 	p_ren_ik_node.set_upper_leg_right_bone(-1)
 
+func _xr_mode_changed() -> void:
+	calculate_proportions()
 
 func calculate_proportions() -> void:
 	if VRManager.is_xr_active():
@@ -360,8 +362,6 @@ func calculate_proportions() -> void:
 		height_offset = lerp(0.0, stilts, VRManager.vr_user_preferences.eye_to_arm_ratio)
 	else:
 		height_offset = 0.0
-		avatar_eye_height = 0.0
-		avatar_wristspan = 0.0
 		VRManager.set_origin_world_scale(1.0)
 		
 static func _calculate_humanoid_wristspan(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> float:
@@ -673,7 +673,8 @@ func _setup_voice() -> void:
 	
 func _entity_ready() -> void:
 	if !Engine.is_editor_hint():
-		assert(VRManager.connect("xr_mode_changed", self, "calculate_proportions") == OK)
+		if is_network_master():
+			assert(VRManager.connect("xr_mode_changed", self, "_xr_mode_changed") == OK)
 	
 	set_as_toplevel(false)
 	set_transform(Transform(AVATAR_BASIS, Vector3()))

@@ -117,8 +117,30 @@ func _external_trackers_updated():
 	if NetworkManager.is_server():
 		_create_output_trackers()
 				
+func free_trackers() -> void:
+	if tracker_collection_input.head_spatial:
+		tracker_collection_input.head_spatial.queue_free()
+		tracker_collection_input.head_spatial = null
+	if tracker_collection_input.left_hand_spatial:
+		tracker_collection_input.left_hand_spatial.queue_free()
+		tracker_collection_input.left_hand_spatial = null
+	if tracker_collection_input.right_hand_spatial:
+		tracker_collection_input.right_hand_spatial.queue_free()
+		tracker_collection_input.right_hand_spatial = null
+	if tracker_collection_input.hips_spatial:
+		tracker_collection_input.hips_spatial.queue_free()
+		tracker_collection_input.hips_spatial = null
+	if tracker_collection_input.left_foot_spatial:
+		tracker_collection_input.left_foot_spatial.queue_free()
+		tracker_collection_input.left_foot_spatial = null
+	if tracker_collection_input.right_foot_spatial:
+		tracker_collection_input.right_foot_spatial.queue_free()
+		tracker_collection_input.right_foot_spatial = null
+				
 func update_trackers() -> void:
 	if is_network_master():
+		free_trackers()
+		
 		if VRManager.is_xr_active():
 			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform(Basis(), Vector3()), false)
 			
@@ -146,18 +168,43 @@ func update_ik_controller() -> void:
 	# This causes a memory a leak! Static memory is allocated and never released!
 	if _ren_ik:
 		if tracker_collection_input:
+			
+			if _avatar_display_node.avatar_skeleton:
+				_avatar_display_node.avatar_skeleton.clear_bones_global_pose_override()
+			
 			if tracker_collection_input.head_spatial:
 				_ren_ik.set_head_target_path(_ren_ik.get_path_to(tracker_collection_input.head_spatial))
+			else:
+				_ren_ik.set_head_target_path(NodePath())
+			
 			if tracker_collection_input.left_hand_spatial:
 				_ren_ik.set_hand_left_target_path(_ren_ik.get_path_to(tracker_collection_input.left_hand_spatial))
+			else:
+				_ren_ik.set_hand_left_target_path(NodePath())
+			
 			if tracker_collection_input.right_hand_spatial:
 				_ren_ik.set_hand_right_target_path(_ren_ik.get_path_to(tracker_collection_input.right_hand_spatial))
+			else:
+				_ren_ik.set_hand_right_target_path(NodePath())
+			
 			if tracker_collection_input.hips_spatial:
 				_ren_ik.set_hip_target_path(_ren_ik.get_path_to(tracker_collection_input.hips_spatial.get_node_or_null("Rotation")))
+			else:
+				_ren_ik.set_hip_target_path(NodePath())
+			
 			if tracker_collection_input.left_foot_spatial:
 				_ren_ik.set_foot_left_target_path(_ren_ik.get_path_to(tracker_collection_input.left_foot_spatial.get_node_or_null("Rotation")))
+			else:
+				_ren_ik.set_foot_left_target_path(NodePath())
+				
 			if tracker_collection_input.right_foot_spatial:
 				_ren_ik.set_foot_right_target_path(_ren_ik.get_path_to(tracker_collection_input.right_foot_spatial.get_node_or_null("Rotation")))
+			else:
+				_ren_ik.set_foot_right_target_path(NodePath())
+
+func _xr_mode_changed() -> void:
+	update_trackers()
+	update_ik_controller()
 
 func create_new_spatial_point(p_name : String, p_transform : Transform, p_no_debug : bool = false) -> Spatial:
 	var spatial : Spatial = Spatial.new()
@@ -520,7 +567,8 @@ func setup() -> void:
 			_create_output_trackers()
 			
 			if !Engine.is_editor_hint():
-				assert(VRManager.connect("xr_mode_changed", self, "update_trackers") == OK)
+				if is_network_master():
+					assert(VRManager.connect("xr_mode_changed", self, "_xr_mode_changed") == OK)
 			
 			update_trackers()
 			update_ik_controller()
