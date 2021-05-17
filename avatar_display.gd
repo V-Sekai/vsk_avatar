@@ -337,6 +337,9 @@ func clear_ik_bone_assignments(p_ren_ik_node: Node) -> void:
 
 func _xr_mode_changed() -> void:
 	calculate_proportions()
+	
+func _proportions_changed() -> void:
+	calculate_proportions()
 
 func calculate_proportions() -> void:
 	if VRManager.is_xr_active():
@@ -675,7 +678,8 @@ func _entity_ready() -> void:
 	if !Engine.is_editor_hint():
 		if is_network_master():
 			assert(VRManager.connect("xr_mode_changed", self, "_xr_mode_changed") == OK)
-	
+			assert(VRManager.connect("proportions_changed", self, "_proportions_changed") == OK)
+			
 	set_as_toplevel(false)
 	set_transform(Transform(AVATAR_BASIS, Vector3()))
 	
