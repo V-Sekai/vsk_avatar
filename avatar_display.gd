@@ -662,6 +662,18 @@ func restore_head() -> void:
 		custom_head_pose = Transform(custom_head_pose.basis.orthonormalized().scaled(saved_head_transform.basis.get_scale()), custom_head_pose.origin)
 		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0)
 
+func get_head_forward_transform() -> Transform:
+	var head_transform: Transform
+	
+	if avatar_skeleton and head_id != -1:
+		head_transform = avatar_skeleton.global_transform\
+		* avatar_skeleton.get_bone_global_pose(head_id)
+	else:
+		head_transform = global_transform * Transform(Basis(), Vector3.UP)
+		
+	head_transform.basis.z = -head_transform.basis.z
+	return head_transform
+
 func _setup_voice() -> void:
 	if ! is_network_master():
 		var godot_speech: Node = get_node_or_null("/root/GodotSpeech")
