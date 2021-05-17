@@ -16,9 +16,8 @@ const vr_constants_const = preload("res://addons/sar1_vr_manager/vr_constants.gd
 
 const avatar_setup_const = preload("avatar_setup.gd")
 
-signal avatar_changed
-signal avatar_download_started(p_url)
-signal avatar_load_stage(p_stage, p_stage_count)
+signal avatar_setup_complete
+signal avatar_setup_failed
 
 var simulation_logic: Node = null
 
@@ -81,10 +80,7 @@ var _player_input_node: Node = null
 var _ik_space: Node = null
 var _player_camera_controller: Node = null
 
-var avatar_pending: bool = false
 var avatar_node: Spatial = null
-var avatar_path: String = ""
-var avatar_packed_scene: PackedScene = null
 
 const avatar_default_driver_const = preload("avatar_default_driver.gd")
 const bone_lib_const = preload("res://addons/vsk_avatar/bone_lib.gd")
@@ -94,22 +90,6 @@ const VISUALISE_ATTACHMENTS = false
 const AVATAR_BASIS = Basis(Vector3(1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0))
 # This is totally abitrary, please find a better way to calculate this
 const AVATAR_LOWER_DISTANCE = 0.05
-
-func load_error_avatar() -> void:
-	clear_avatar()
-	set_avatar_model_path(VSKAssetManager.avatar_error_path)
-	load_model(true)
-
-func get_avatar_model_path() -> String:
-	return avatar_path
-
-
-func set_avatar_model_path(p_path: String) -> void:
-	if avatar_path != p_path:
-		if avatar_path != "":
-			VSKAvatarManager.cancel_avatar(avatar_path)
-
-		avatar_path = p_path
 
 
 func clear_avatar() -> void:
@@ -123,58 +103,15 @@ func clear_avatar() -> void:
 		if ren_ik:
 			clear_ik_bone_assignments(ren_ik)
 
+func _on_avatar_cleared():
+	clear_avatar()
 
-func _avatar_load_finished() -> void:
-	VSKAvatarManager.disconnect("avatar_download_started", self, "_avatar_download_started")
-	VSKAvatarManager.disconnect("avatar_load_callback", self, "_avatar_load_callback")
-	VSKAvatarManager.disconnect("avatar_load_update", self, "_avatar_load_update")
-
-	avatar_pending = false
-
-
-func _avatar_load_succeeded(p_url: String, p_packed_scene: PackedScene) -> void:
-	var url_is_loading_avatar: bool = p_url == VSKAssetManager.loading_avatar_path
-	
-	if avatar_pending and (p_url == avatar_path or url_is_loading_avatar):
-		if avatar_packed_scene != p_packed_scene:
-			avatar_packed_scene = p_packed_scene
-			if ! url_is_loading_avatar:
-				_avatar_load_finished()
-			call_deferred("_instance_avatar")
-
-
-func _avatar_load_failed(p_url: String, p_err: int) -> void:
-	printerr("Avatar load failed with error code: %s" % str(p_err))
-	if avatar_pending and p_url == avatar_path:
-		_avatar_load_finished()
-		
-		if p_url != VSKAssetManager.avatar_error_path:
-			load_error_avatar()
-		else:
-			clear_avatar()
-			printerr("Could not load failed avatar!")
-
-func _avatar_download_started(p_url: String) -> void:
-	if avatar_pending and p_url == avatar_path:
-		emit_signal("avatar_download_started", p_url)
-
-func _avatar_load_callback(p_url: String, p_err: int, p_packed_scene: PackedScene) -> void:
-	if p_err == VSKAssetManager.ASSET_OK:
-		_avatar_load_succeeded(p_url, p_packed_scene)
-	else:
-		_avatar_load_failed(p_url, p_err)
-
-func _avatar_load_update(p_url: String, p_stage: int, p_stage_count: int) -> void:
-	if avatar_pending and p_url == avatar_path:
-		emit_signal("avatar_load_stage", p_stage, p_stage_count)
-
-func _instance_avatar() -> void:
+func _avatar_ready(p_packed_scene: PackedScene) -> void:
 	if is_inside_tree():
-		if avatar_packed_scene:
+		if p_packed_scene:
 			clear_avatar()
 			
-			setup_avatar_instance(avatar_packed_scene.instance())
-			avatar_packed_scene = null
+			setup_avatar_instance(p_packed_scene.instance())
 
 func _update_voice_player() -> void:
 	if voice_player:
@@ -184,15 +121,6 @@ func _update_voice_player() -> void:
 				
 			head_bone_attachment.add_child(voice_player)
 		voice_player.transform = relative_mouth_transform * Transform().rotated(Vector3(0.0, 1.0, 0.0), PI)
-
-func load_model(p_bypass_whitelist: bool) -> void:
-	if ! avatar_pending:
-		assert(VSKAvatarManager.connect("avatar_download_started", self, "_avatar_download_started") == OK)
-		assert(VSKAvatarManager.connect("avatar_load_callback", self, "_avatar_load_callback") == OK)
-		assert(VSKAvatarManager.connect("avatar_load_update", self, "_avatar_load_update") == OK)
-		
-		avatar_pending = true
-	VSKAvatarManager.call_deferred("request_avatar", avatar_path, p_bypass_whitelist)
 
 
 func setup_bone_attachments(p_humanoid_data: humanoid_data_const, p_skeleton: Skeleton) -> void:
@@ -637,10 +565,9 @@ func setup_avatar_instance(p_avatar_node: Spatial) -> void:
 				ren_ik.set("armature_skeleton_path", ren_ik.get_path_to(avatar_skeleton))
 				assign_ik_bone_assignments(ren_ik, avatar_skeleton, humanoid_data)
 		
-		emit_signal("avatar_changed")
+		emit_signal("avatar_setup_complete")
 	else:
-		printerr("Avatar %s is not valid!" % get_avatar_model_path())
-		load_error_avatar()
+		emit_signal("avatar_setup_failed")
 		
 func try_head_shrink() -> void:
 	if shrink_mode == shrink_enum.SHRINK or \
@@ -708,8 +635,12 @@ func _entity_ready() -> void:
 	_ik_space = get_node_or_null(_ik_space_path)
 	_player_input_node = get_node_or_null(player_input_path)
 	
-	_instance_avatar()
+	#_instance_avatar()
 
 func _threaded_instance_setup() -> void:
 	create_bone_attachments()
 	setup_bone_attachments(null, null)
+
+
+func _on_avatar_ready(p_packed_scene: PackedScene):
+	_avatar_ready(p_packed_scene)

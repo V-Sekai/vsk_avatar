@@ -578,7 +578,7 @@ func setup() -> void:
 	else:
 		pass
 		
-func _on_AvatarDisplay_avatar_changed():
+func _on_avatar_changed():
 	if (is_network_master() or NetworkManager.is_server()) and\
 	_avatar_display_node and\
 	_avatar_display_node.avatar_skeleton:
