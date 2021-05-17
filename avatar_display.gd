@@ -40,22 +40,22 @@ var voice_player: Node = null
 # The transform of the voice player relative the head bone
 var relative_mouth_transform: Transform = Transform()
 
-var head_id: int = -1
-var hip_id: int = -1
+var head_id: int = bone_lib_const.NO_BONE
+var hip_id: int = bone_lib_const.NO_BONE
 
-var left_hand_id: int = -1
-var right_hand_id: int = -1
-var left_lower_arm_id: int = -1
-var right_lower_arm_id: int = -1
-var left_upper_arm_id: int = -1
-var right_upper_arm_id: int = -1
+var left_hand_id: int = bone_lib_const.NO_BONE
+var right_hand_id: int = bone_lib_const.NO_BONE
+var left_lower_arm_id: int = bone_lib_const.NO_BONE
+var right_lower_arm_id: int = bone_lib_const.NO_BONE
+var left_upper_arm_id: int = bone_lib_const.NO_BONE
+var right_upper_arm_id: int = bone_lib_const.NO_BONE
 
-var left_foot_id: int = -1
-var right_foot_id: int = -1
-var left_lower_leg_id: int = -1
-var right_lower_leg_id: int = -1
-var left_upper_leg_id: int = -1
-var right_upper_leg_id: int = -1
+var left_foot_id: int = bone_lib_const.NO_BONE
+var right_foot_id: int = bone_lib_const.NO_BONE
+var left_lower_leg_id: int = bone_lib_const.NO_BONE
+var right_lower_leg_id: int = bone_lib_const.NO_BONE
+var left_upper_leg_id: int = bone_lib_const.NO_BONE
+var right_upper_leg_id: int = bone_lib_const.NO_BONE
 
 
 var head_bone_attachment: BoneAttachment = null
@@ -208,17 +208,17 @@ func setup_bone_attachments(p_humanoid_data: humanoid_data_const, p_skeleton: Sk
 		var right_bone_id: int = humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.hand_right)
 
-		if head_bone_id != -1:
+		if head_bone_id != bone_lib_const.NO_BONE:
 			p_skeleton.add_child(head_bone_attachment)
 			head_bone_attachment.bone_name = p_humanoid_data.head_bone_name
 		else:
 			add_child(head_bone_attachment)
-		if left_bone_id != -1:
+		if left_bone_id != bone_lib_const.NO_BONE:
 			p_skeleton.add_child(left_hand_bone_attachment)
 			left_hand_bone_attachment.bone_name = p_humanoid_data.hand_left_bone_name
 		else:
 			add_child(left_hand_bone_attachment)
-		if right_bone_id != -1:
+		if right_bone_id != bone_lib_const.NO_BONE:
 			p_skeleton.add_child(right_hand_bone_attachment)
 			right_hand_bone_attachment.bone_name = p_humanoid_data.hand_right_bone_name
 		else:
@@ -318,22 +318,22 @@ func assign_ik_bone_assignments(
 	p_ren_ik_node.set_upper_leg_right_bone(right_upper_leg_id)
 	
 func clear_ik_bone_assignments(p_ren_ik_node: Node) -> void:
-	p_ren_ik_node.set_head_bone(-1)
-	p_ren_ik_node.set_hip_bone(-1)
+	p_ren_ik_node.set_head_bone(bone_lib_const.NO_BONE)
+	p_ren_ik_node.set_hip_bone(bone_lib_const.NO_BONE)
 
-	p_ren_ik_node.set_hand_left_bone(-1)
-	p_ren_ik_node.set_hand_right_bone(-1)
-	p_ren_ik_node.set_lower_arm_left_bone(-1)
-	p_ren_ik_node.set_lower_arm_right_bone(-1)
-	p_ren_ik_node.set_upper_arm_left_bone(-1)
-	p_ren_ik_node.set_upper_arm_right_bone(-1)
+	p_ren_ik_node.set_hand_left_bone(bone_lib_const.NO_BONE)
+	p_ren_ik_node.set_hand_right_bone(bone_lib_const.NO_BONE)
+	p_ren_ik_node.set_lower_arm_left_bone(bone_lib_const.NO_BONE)
+	p_ren_ik_node.set_lower_arm_right_bone(bone_lib_const.NO_BONE)
+	p_ren_ik_node.set_upper_arm_left_bone(bone_lib_const.NO_BONE)
+	p_ren_ik_node.set_upper_arm_right_bone(bone_lib_const.NO_BONE)
 
-	p_ren_ik_node.set_foot_left_bone(-1)
-	p_ren_ik_node.set_foot_right_bone(-1)
-	p_ren_ik_node.set_lower_leg_left_bone(-1)
-	p_ren_ik_node.set_lower_leg_right_bone(-1)
-	p_ren_ik_node.set_upper_leg_left_bone(-1)
-	p_ren_ik_node.set_upper_leg_right_bone(-1)
+	p_ren_ik_node.set_foot_left_bone(bone_lib_const.NO_BONE)
+	p_ren_ik_node.set_foot_right_bone(bone_lib_const.NO_BONE)
+	p_ren_ik_node.set_lower_leg_left_bone(bone_lib_const.NO_BONE)
+	p_ren_ik_node.set_lower_leg_right_bone(bone_lib_const.NO_BONE)
+	p_ren_ik_node.set_upper_leg_left_bone(bone_lib_const.NO_BONE)
+	p_ren_ik_node.set_upper_leg_right_bone(bone_lib_const.NO_BONE)
 
 func _xr_mode_changed() -> void:
 	calculate_proportions()
@@ -380,7 +380,8 @@ static func _calculate_humanoid_wristspan(p_skeleton: Skeleton, p_humanoid_data:
 	var right_upper_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 		p_skeleton, humanoid_data_const.upper_arm_right)
 	
-	if left_upper_bone_name_id != -1 and right_upper_bone_name_id != -1:
+	if left_upper_bone_name_id != bone_lib_const.NO_BONE and \
+	right_upper_bone_name_id != bone_lib_const.NO_BONE:
 		var left_upper_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
 			left_upper_bone_name_id, p_skeleton
 		)
@@ -388,7 +389,8 @@ static func _calculate_humanoid_wristspan(p_skeleton: Skeleton, p_humanoid_data:
 			right_upper_bone_name_id, p_skeleton
 		)
 		
-		if left_shoulder_bone_name_id != -1 and right_shoulder_bone_name_id != -1:
+		if left_shoulder_bone_name_id != bone_lib_const.NO_BONE and \
+		right_shoulder_bone_name_id != bone_lib_const.NO_BONE:
 			var left_shoulder_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
 				left_shoulder_bone_name_id, p_skeleton
 			)
@@ -420,7 +422,8 @@ static func _calculate_humanoid_wristspan(p_skeleton: Skeleton, p_humanoid_data:
 		var right_lower_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.forearm_right)
 		
-		if left_lower_bone_name_id != -1 and right_lower_bone_name_id != -1:
+		if left_lower_bone_name_id != bone_lib_const.NO_BONE \
+		and right_lower_bone_name_id != bone_lib_const.NO_BONE:
 			var left_lower_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
 				left_lower_bone_name_id, p_skeleton
 			)
@@ -446,7 +449,8 @@ static func _calculate_humanoid_wristspan(p_skeleton: Skeleton, p_humanoid_data:
 			var right_hand_bone_name_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 				p_skeleton, humanoid_data_const.hand_right)
 			
-			if left_hand_bone_name_id != -1 and right_hand_bone_name_id != -1:
+			if left_hand_bone_name_id != bone_lib_const.NO_BONE \
+			and right_hand_bone_name_id != bone_lib_const.NO_BONE:
 				var left_wrist_transform: Transform = bone_lib_const.get_bone_global_rest_transform(
 					left_hand_bone_name_id, p_skeleton
 				)
@@ -486,7 +490,8 @@ func _setup_avatar_eyes(
 			var eye_right_bone_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.eye_right)
 			
-			if eye_left_bone_id != -1 and eye_right_bone_id != -1:
+			if eye_left_bone_id != bone_lib_const.NO_BONE \
+			and eye_right_bone_id != bone_lib_const.NO_BONE:
 				var eye_left_global_transform: Transform = bone_lib_const.get_bone_global_rest_transform(eye_left_bone_id, p_skeleton)
 				var eye_right_global_transform: Transform = bone_lib_const.get_bone_global_rest_transform(eye_right_bone_id, p_skeleton)
 				
@@ -512,7 +517,7 @@ func _setup_avatar_eyes(
 		avatar_node.set_global_transform(Transform(AVATAR_BASIS, Vector3()))
 		var head_bone_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.head)
-		if head_bone_id != -1:
+		if head_bone_id != bone_lib_const.NO_BONE:
 			var head_global_rest_transfrom: Transform = \
 			node_util_const.get_relative_global_transform(avatar_node, p_skeleton)\
 			* bone_lib_const.get_bone_global_rest_transform(head_bone_id, p_skeleton)
@@ -534,14 +539,16 @@ func _setup_avatar_mouth(
 	p_skeleton: Skeleton,
 	p_humanoid_data: humanoid_data_const
 	) -> void:
+	# Head
 	var head_global_transform: Transform = Transform()
-	if head_id != -1 and p_skeleton:
+	if head_id != bone_lib_const.NO_BONE and p_skeleton:
 		head_global_transform =\
 		node_util_const.get_relative_global_transform(p_avatar_node, p_skeleton)\
 		* bone_lib_const.get_bone_global_rest_transform(head_id, p_skeleton)
 	else:
 		head_global_transform = Transform(Basis(), Vector3(0.0, 1.0, 0.0) * (default_avatar_height))
 	
+	# Mouth
 	var mouth_spatial: Spatial = p_avatar_node.get_node_or_null(p_avatar_node.mouth_transform_node_path)
 	var mouth_global_transform: Transform
 	if mouth_spatial:
@@ -642,7 +649,7 @@ func try_head_shrink() -> void:
 
 
 func shrink_head() -> void:
-	if avatar_skeleton and head_id != -1:
+	if avatar_skeleton and head_id != bone_lib_const.NO_BONE:
 		var custom_head_pose: Transform = avatar_skeleton.get_bone_global_pose(head_id)
 		var custom_head_pose_parent: Transform = avatar_skeleton.get_bone_global_pose(avatar_skeleton.get_bone_parent(head_id))
 		custom_head_pose = Transform(custom_head_pose.basis.orthonormalized().scaled(Vector3(0.000001, 0.000001, 0.000001)), custom_head_pose_parent.origin)
@@ -653,11 +660,11 @@ func shrink_head() -> void:
 		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0)
 
 func save_head() -> void:
-	if avatar_skeleton and head_id != -1:
+	if avatar_skeleton and head_id != bone_lib_const.NO_BONE:
 		saved_head_transform = avatar_skeleton.get_bone_global_pose(head_id)
 
 func restore_head() -> void:
-	if avatar_skeleton and head_id != -1:
+	if avatar_skeleton and head_id != bone_lib_const.NO_BONE:
 		var custom_head_pose: Transform = avatar_skeleton.get_bone_global_pose(head_id)
 		custom_head_pose = Transform(custom_head_pose.basis.orthonormalized().scaled(saved_head_transform.basis.get_scale()), custom_head_pose.origin)
 		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0)
@@ -665,7 +672,7 @@ func restore_head() -> void:
 func get_head_forward_transform() -> Transform:
 	var head_transform: Transform
 	
-	if avatar_skeleton and head_id != -1:
+	if avatar_skeleton and head_id != bone_lib_const.NO_BONE:
 		head_transform = avatar_skeleton.global_transform\
 		* avatar_skeleton.get_bone_global_pose(head_id)
 	else:

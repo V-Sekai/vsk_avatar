@@ -3,6 +3,8 @@ extends Reference
 const node_util_const = preload("res://addons/gdutil/node_util.gd")
 const humanoid_data_const = preload("res://addons/vsk_avatar/humanoid_data.gd")
 
+const NO_BONE = -1
+
 static func get_bone_global_transform(p_id: int, p_skeleton: Skeleton, p_local_transform_array: Array) -> Transform:
 	var return_transform: Transform = Transform()
 	var parent_id: int = p_skeleton.get_bone_parent(p_id)
