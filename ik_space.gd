@@ -174,10 +174,16 @@ func update_ik_controller() -> void:
 			if _avatar_display_node.avatar_skeleton:
 				_avatar_display_node.avatar_skeleton.clear_bones_global_pose_override()
 				for i in range(0, _avatar_display_node.avatar_skeleton.get_bone_count()):
-					if i == 0:
-						_avatar_display_node.avatar_skeleton.set_bone_pose(i, global_transform)
-					else:
-						_avatar_display_node.avatar_skeleton.set_bone_pose(i, Transform())
+					_avatar_display_node.avatar_skeleton.set_bone_pose(i, Transform())
+				
+				# If we're in callibration mode, set the global transform to
+				# that of the display node. Otherwise, the identity transform
+				# since RenIK drives position of the skeleton via its bones.
+				if pending_calibration:
+					_avatar_display_node.avatar_skeleton.global_transform = _avatar_display_node.global_transform
+				else:
+					_avatar_display_node.avatar_skeleton.global_transform = Transform()
+			
 			
 			if tracker_collection_input.head_spatial and !pending_calibration:
 				_ren_ik.set_head_target_path(_ren_ik.get_path_to(tracker_collection_input.head_spatial))
