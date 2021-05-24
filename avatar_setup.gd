@@ -22,6 +22,9 @@ static func create_pose_track_for_humanoid_bone(
 	p_humanoid_data: HumanoidData,
 	p_humanoid_bone_name: String,
 	p_transform: Transform) -> Animation:
+		
+	if !p_skeleton or !p_humanoid_data:
+		return p_animation
 	
 	var bone_name: String = p_humanoid_data[p_humanoid_bone_name]
 	var bone_index: int = p_skeleton.find_bone(bone_name)
@@ -148,6 +151,9 @@ static func setup_animation_tree_hand_blend_tree(
 	p_animation_player: AnimationPlayer,
 	p_skeleton: Skeleton,
 	p_humanoid_data: HumanoidData) -> AnimationTree:
+		
+	if !p_skeleton or !p_humanoid_data:
+		return p_animation_tree
 		
 	p_animation_tree.anim_player = p_animation_tree.get_path_to(p_animation_player)
 	p_animation_tree.tree_root = default_avatar_tree_const

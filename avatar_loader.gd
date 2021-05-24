@@ -70,19 +70,23 @@ func set_avatar_model_path(p_path: String) -> void:
 
 		avatar_path = p_path
 
-func load_model(p_bypass_whitelist: bool) -> void:
+func load_model(p_bypass_whitelist: bool, p_skip_validation: bool) -> void:
 	if ! avatar_pending:
 		assert(VSKAvatarManager.connect("avatar_download_started", self, "_avatar_download_started") == OK)
 		assert(VSKAvatarManager.connect("avatar_load_callback", self, "_avatar_load_callback") == OK)
 		assert(VSKAvatarManager.connect("avatar_load_update", self, "_avatar_load_update") == OK)
 		
 		avatar_pending = true
-	VSKAvatarManager.call_deferred("request_avatar", avatar_path, p_bypass_whitelist)
+	VSKAvatarManager.call_deferred(
+		"request_avatar",
+		avatar_path,
+		p_bypass_whitelist,
+		p_skip_validation)
 
 func load_error_avatar() -> void:
 	emit_signal("avatar_cleared")
 	set_avatar_model_path(VSKAssetManager.avatar_error_path)
-	load_model(true)
+	load_model(true, true)
 
 func _on_avatar_setup_complete():
 	emit_signal("avatar_changed")
