@@ -15,12 +15,8 @@ const INTERMEDIATE_NAME = "intermediate"
 const DISTAL_NAME = "distal"
 const ENDPOINT_NAME = "endpoint"
 
-var digit_names: PackedStringArray = PackedStringArray(
-	[THUMB_NAME, INDEX_NAME, MIDDLE_NAME, RING_NAME, LITTLE_NAME]
-)
-var digit_joint_names: PackedStringArray = PackedStringArray(
-	[PROXIMAL_NAME, INTERMEDIATE_NAME, DISTAL_NAME]
-)
+const digit_names: PackedStringArray = [THUMB_NAME, INDEX_NAME, MIDDLE_NAME, RING_NAME, LITTLE_NAME]
+const digit_joint_names: PackedStringArray = [PROXIMAL_NAME, INTERMEDIATE_NAME, DISTAL_NAME]
 
 enum { DIGIT_JOINT_PROXIMAL, DIGIT_JOINT_INTERMEDIATE, DIGIT_JOINT_DISTAL, DIGIT_JOINT_ENDPOINT }
 

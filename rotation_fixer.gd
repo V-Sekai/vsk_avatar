@@ -2,11 +2,11 @@
 extends RefCounted
 
 const math_funcs_const = preload("res://addons/math_util/math_funcs.gd")
-const node_util_const = preload("res://addons/gdutil/node_util.gd")
+const node_util_const = preload("res://addons/gd_util/node_util.gd")
 const avatar_lib_const = preload("avatar_lib.gd")
 const avatar_constants_const = preload("avatar_constants.gd")
 const avatar_callback_const = preload("avatar_callback.gd")
-const array_util_const = preload("res://addons/gdutil/array_util.gd")
+const array_util_const = preload("res://addons/gd_util/array_util.gd")
 const humanoid_data_const = preload("res://addons/vsk_avatar/humanoid_data.gd")
 const bone_lib_const = preload("bone_lib.gd")
 
@@ -47,7 +47,7 @@ static func fix_bone_chain(
 		
 	return p_rotation_fix_data
 	
-static func get_fixed_rotations(p_root: Node3D, p_skeleton: Skeleton3D, p_humanoid_data: humanoid_data_const, p_base_pose_local_offsets: Array, p_t_pose_local_offsets: Array) -> Dictionary:
+static func get_fixed_rotations(p_root: Node3D, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_base_pose_local_offsets: Array, p_t_pose_local_offsets: Array) -> Dictionary:
 	
 	var base_transform: Transform3D = \
 	node_util_const.get_relative_global_transform(p_root, p_skeleton)
@@ -115,7 +115,7 @@ static func get_fixed_rotations(p_root: Node3D, p_skeleton: Skeleton3D, p_humano
 				
 	return rotation_fix_data
 	
-static func fix_rotations(p_root: Node3D, p_skeleton: Skeleton3D, p_humanoid_data: humanoid_data_const, p_t_pose_local_offsets: Array) -> int:
+static func fix_rotations(p_root: Node3D, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_t_pose_local_offsets: Array) -> int:
 	print("---Running RotationFixer---")
 	
 	var err: int = avatar_callback_const.generic_error_check(p_root, p_skeleton)
@@ -154,7 +154,7 @@ static func fix_rotations(p_root: Node3D, p_skeleton: Skeleton3D, p_humanoid_dat
 			var bone_index:int  = skin.get_bind_bone(bind_i)
 			if (bone_index == -1):
 				var bind_name: String = skin.get_bind_name(bind_i)
-				if bind_name.empty():
+				if bind_name.is_empty():
 					continue
 				bone_index = p_skeleton.find_bone(bind_name)
 				

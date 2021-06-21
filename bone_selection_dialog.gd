@@ -96,13 +96,13 @@ func _about_to_show() -> void:
 
 func _notification(p_what: int) -> void:
 	match p_what:
-		NOTIFICATION_POST_POPUP:
+		NOTIFICATION_WM_WINDOW_FOCUS_IN:
 			filter_lineedit.grab_focus()
 
 
 func _init(p_bone_icon: Texture, p_clear_icon: Texture):
-	connect("about_to_show", self, "_about_to_show")
-	connect("confirmed", self, "_confirmed")
+	connect("about_to_show", Callable(self, "_about_to_show"))
+	connect("confirmed", Callable(self, "_confirmed"))
 
 	set_title("Select bone...")
 	set_size(Vector2(DIALOG_WIDTH, DIALOG_HEIGHT))
@@ -110,19 +110,19 @@ func _init(p_bone_icon: Texture, p_clear_icon: Texture):
 	bone_icon = p_bone_icon
 	clear_icon = p_clear_icon
 
-	resizable = true
+	unresizable = false
 
 	vbox_container = VBoxContainer.new()
 	add_child(vbox_container)
 
 	filter_lineedit = LineEdit.new()
-	filter_lineedit.set_h_size_flags(SIZE_EXPAND_FILL)
+	filter_lineedit.set_h_size_flags(LineEdit.SIZE_EXPAND_FILL)
 	filter_lineedit.set_placeholder("Filter bones")
 	filter_lineedit.add_constant_override("minimum_spaces", 0)
-	filter_lineedit.connect("text_changed", self, "_filter_changed")
+	filter_lineedit.connect("text_changed", Callable(self, "_filter_changed"))
 	vbox_container.add_child(filter_lineedit)
 
 	tree = Tree.new()
-	tree.set_v_size_flags(SIZE_EXPAND_FILL)
-	tree.connect("item_activated", self, "_select")
+	tree.set_v_size_flags(Tree.SIZE_EXPAND_FILL)
+	tree.connect("item_activated", Callable(self, "_select"))
 	vbox_container.add_child(tree)

@@ -18,7 +18,7 @@ var err_dialog : AcceptDialog = null
 
 var save_dialog : FileDialog = null
 
-var bone_mapper_dialog : bone_mapper_dialog_const = null
+var bone_mapper_dialog : AcceptDialog = null
 
 const humanoid_data_const = preload("humanoid_data.gd")
 

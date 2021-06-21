@@ -41,7 +41,7 @@ var head_bone_names: PackedStringArray = PackedStringArray(
 	["eye_left_bone_name", "eye_right_bone_name", "jaw_bone_name"]
 )
 
-var bone_selection_dialog: bone_selection_dialog_const = null
+var bone_selection_dialog: ConfirmationDialog = null
 
 var left_hand_bone_names: PackedStringArray = PackedStringArray()
 var right_hand_bone_names: PackedStringArray = PackedStringArray()
@@ -71,7 +71,7 @@ var left_hand_bone_buttons: Array = []
 var right_hand_bone_buttons: Array = []
 
 var skeleton: Skeleton3D = null
-var humanoid_data: humanoid_data_const = null
+var humanoid_data: HumanoidData = null
 
 var tab_container: TabContainer = null
 
@@ -81,7 +81,7 @@ var left_hand_bone_control: Control = null
 var right_hand_bone_control: Control = null
 
 
-func set_humanoid_data(p_humanoid_data: humanoid_data_const) -> void:
+func set_humanoid_data(p_humanoid_data: HumanoidData) -> void:
 	humanoid_data = p_humanoid_data
 
 
@@ -113,8 +113,8 @@ func selected(p_bone_name: String) -> void:
 func setup_list(p_tab: Control, p_bones: PackedStringArray, p_button_array: Array) -> void:
 	var vbox_container: VBoxContainer = VBoxContainer.new()
 	p_tab.add_child(vbox_container)
-	vbox_container.set_anchors_and_margins_preset(PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
-	vbox_container.size_flags_horizontal = SIZE_EXPAND_FILL
+	vbox_container.set_anchors_and_margins_preset(VBoxContainer.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
+	vbox_container.size_flags_horizontal = VBoxContainer.SIZE_EXPAND_FILL
 
 	for i in range(0, p_bones.size()):
 		var hbox_container: HBoxContainer = HBoxContainer.new()
@@ -125,17 +125,18 @@ func setup_list(p_tab: Control, p_bones: PackedStringArray, p_button_array: Arra
 		label.valign = Label.VALIGN_CENTER
 
 		var bone_mapper_button = bone_mapper_button_const.new()
-		
-		bone_mapper_button.select_bone_button.connect("pressed", self, "button_pressed", [p_bones[i]])
-		bone_mapper_button.clear_bone_button.connect("pressed", self, "clear_pressed", [p_bones[i]])
+		var button_pressed_callable = Callable(self, "button_pressed")
+		var clear_pressed_callable = Callable(self, "clear_pressed")
+		bone_mapper_button.select_bone_button.connect("pressed", button_pressed_callable.bind([p_bones[i]]))
+		bone_mapper_button.clear_bone_button.connect("pressed", clear_pressed_callable.bind([p_bones[i]]))
 
 		p_button_array.push_back(bone_mapper_button)
 
 		hbox_container.add_child(label)
 		hbox_container.add_child(bone_mapper_button)
 
-		label.size_flags_horizontal = SIZE_EXPAND_FILL
-		bone_mapper_button.size_flags_horizontal = SIZE_EXPAND_FILL
+		label.size_flags_horizontal = Label.SIZE_EXPAND_FILL
+		bone_mapper_button.size_flags_horizontal = Label.SIZE_EXPAND_FILL
 
 		vbox_container.add_child(hbox_container)
 
@@ -169,18 +170,18 @@ func update_all_buttons() -> void:
 
 
 func _ready() -> void:
-	if connect("about_to_show", self, "_about_to_show") != OK:
+	if connect("about_to_show", Callable(self, "_about_to_show")) != OK:
 		printerr("Could not connect to about_to_show")
 
-	if bone_selection_dialog.connect("selected", self, "selected") != OK:
+	if bone_selection_dialog.connect("selected", Callable(self, "selected")) != OK:
 		printerr("Could not connect signal!")
 
 
-func _init(p_bone_icon: Texture, p_clear_icon: Texture) -> void:
+func _init(p_bone_icon: Texture, p_clear_icon: Texture):
 	set_title("Assign bones")
 	set_size(Vector2(DIALOG_WIDTH, DIALOG_HEIGHT))
 
-	resizable = true
+	unresizable = false
 
 	bone_icon = p_bone_icon
 	clear_icon = p_clear_icon
@@ -214,18 +215,18 @@ func _init(p_bone_icon: Texture, p_clear_icon: Texture) -> void:
 	tab_container.add_child(left_hand_bone_control)
 	tab_container.add_child(right_hand_bone_control)
 
-	tab_container.set_anchors_and_margins_preset(PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
-	body_control.set_anchors_and_margins_preset(PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
-	head_control.set_anchors_and_margins_preset(PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
+	tab_container.set_anchors_and_margins_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
+	body_control.set_anchors_and_margins_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
+	head_control.set_anchors_and_margins_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
 	left_hand_bone_control.set_anchors_and_margins_preset(
-		PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0
+		Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0
 	)
 	right_hand_bone_control.set_anchors_and_margins_preset(
-		PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0
+		Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0
 	)
 	
 	tab_container.use_hidden_tabs_for_min_size = true
-	rect_min_size = tab_container.get_minimum_size()
+	min_size = tab_container.get_minimum_size()
 
 	setup_list(body_control, body_bone_names, body_bone_buttons)
 	setup_list(head_control, head_bone_names, head_bone_buttons)

@@ -15,7 +15,7 @@ static func get_runtime_avatar_info_for_node(p_node: Node, p_dictionary: Diction
 			p_dictionary["MeshInstance3DWithSkinCount"] += 1
 		
 		
-	if p_node is Particles3D:
+	if p_node is GPUParticles3D:
 		p_dictionary["ParticleEmitterCount"] += 1
 	
 	if p_node is CPUParticles3D:
