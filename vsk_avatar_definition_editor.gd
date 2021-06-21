@@ -1,7 +1,7 @@
 extends Control
 
 const avater_debug_const = preload("avatar_debug.gd")
-const vsk_types_const = preload("res://addons/vsk_importer_exporter/vsk_types.gd")
+#const vsk_types_const = preload("res://addons/vsk_importer_exporter/vsk_types.gd")
 const avatar_callback_const = preload("avatar_callback.gd")
 
 const bone_mapper_dialog_const = preload("bone_mapper_dialog.gd")
@@ -33,16 +33,16 @@ const OUTPUT_SCENE_EXTENSION = "scn"
 const OUTPUT_HAND_RESOURCE_EXTENSION = "tres"
 
 enum {
-	MENU_OPTION_DEBUG_BONES
+	MENU_OPTION_DEBUG_BONES,
 	MENU_OPTION_EXPORT_LEFT_HAND_POSE,
 	MENU_OPTION_EXPORT_RIGHT_HAND_POSE,
 	MENU_OPTION_CORRECT_BONE_DIRECTIONS,
 	MENU_OPTION_ENFORCE_STANDARD_T_POSE,
 	MENU_OPTION_ENFORCE_STRICT_T_POSE,
-	MENU_OPTION_SETUP_BONES
-	MENU_OPTION_FIX_ALL
-	MENU_OPTION_EXPORT_AVATAR
-	MENU_OPTION_UPLOAD_AVATAR
+	MENU_OPTION_SETUP_BONES,
+	MENU_OPTION_FIX_ALL,
+	MENU_OPTION_EXPORT_AVATAR,
+	MENU_OPTION_UPLOAD_AVATAR,
 }
 
 enum {

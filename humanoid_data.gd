@@ -1,5 +1,5 @@
 @tool
-class_name HumanoidData extends Resource
+class_name HumanoidData extends RefCounted
 
 
 var _skeleton_node: Skeleton3D = null
