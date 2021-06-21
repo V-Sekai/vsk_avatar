@@ -1,5 +1,5 @@
+@tool
 extends AcceptDialog
-tool
 
 const DIALOG_WIDTH = 600
 const DIALOG_HEIGHT = 800
@@ -10,7 +10,7 @@ const avatar_constants_const = preload("avatar_constants.gd")
 
 const bone_mapper_button_const = preload("bone_mapper_button.gd")
 
-var body_bone_names: PoolStringArray = PoolStringArray(
+var body_bone_names: PackedStringArray = PackedStringArray(
 	[
 		"head_bone_name",
 		"neck_bone_name",
@@ -37,22 +37,22 @@ var body_bone_names: PoolStringArray = PoolStringArray(
 	]
 )
 
-var head_bone_names: PoolStringArray = PoolStringArray(
+var head_bone_names: PackedStringArray = PackedStringArray(
 	["eye_left_bone_name", "eye_right_bone_name", "jaw_bone_name"]
 )
 
 var bone_selection_dialog: bone_selection_dialog_const = null
 
-var left_hand_bone_names: PoolStringArray = PoolStringArray()
-var right_hand_bone_names: PoolStringArray = PoolStringArray()
+var left_hand_bone_names: PackedStringArray = PackedStringArray()
+var right_hand_bone_names: PackedStringArray = PackedStringArray()
 
 var currently_selected_humanoid_bone: String = ""
 
 var clear_icon: Texture = null
 var bone_icon: Texture = null
 
-static func get_hand_name_list(p_side: int) -> PoolStringArray:
-	var bone_names: PoolStringArray
+static func get_hand_name_list(p_side: int) -> PackedStringArray:
+	var bone_names: PackedStringArray
 
 	var side_name: String = avatar_constants_const.get_name_for_side(p_side)
 
@@ -70,7 +70,7 @@ var head_bone_buttons: Array = []
 var left_hand_bone_buttons: Array = []
 var right_hand_bone_buttons: Array = []
 
-var skeleton: Skeleton = null
+var skeleton: Skeleton3D = null
 var humanoid_data: humanoid_data_const = null
 
 var tab_container: TabContainer = null
@@ -85,7 +85,7 @@ func set_humanoid_data(p_humanoid_data: humanoid_data_const) -> void:
 	humanoid_data = p_humanoid_data
 
 
-func set_skeleton(p_skeleton: Skeleton) -> void:
+func set_skeleton(p_skeleton: Skeleton3D) -> void:
 	skeleton = p_skeleton
 	bone_selection_dialog.set_skeleton(skeleton)
 
@@ -110,7 +110,7 @@ func selected(p_bone_name: String) -> void:
 		update_all_buttons()
 
 
-func setup_list(p_tab: Control, p_bones: PoolStringArray, p_button_array: Array) -> void:
+func setup_list(p_tab: Control, p_bones: PackedStringArray, p_button_array: Array) -> void:
 	var vbox_container: VBoxContainer = VBoxContainer.new()
 	p_tab.add_child(vbox_container)
 	vbox_container.set_anchors_and_margins_preset(PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
@@ -140,7 +140,7 @@ func setup_list(p_tab: Control, p_bones: PoolStringArray, p_button_array: Array)
 		vbox_container.add_child(hbox_container)
 
 
-func update_button_group(p_names: PoolStringArray, p_buttons: Array) -> void:
+func update_button_group(p_names: PackedStringArray, p_buttons: Array) -> void:
 	if p_names.size() != p_buttons.size():
 		printerr("Button name size mismatch!")
 

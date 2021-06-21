@@ -1,2 +1,2 @@
+@tool
 extends ConfirmationDialog
-tool

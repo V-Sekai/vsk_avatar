@@ -1,8 +1,8 @@
-extends Resource
-class_name HumanoidData
-tool
+@tool
+class_name HumanoidData extends Resource
 
-var _skeleton_node: Skeleton = null
+
+var _skeleton_node: Skeleton3D = null
 
 enum {
 	head,
@@ -313,7 +313,7 @@ func get_skeleton_bone_name(p_humanoid_bone_id: int) -> String:
 			printerr("Invald index")
 			return ""
 
-func find_skeleton_bone_for_humanoid_bone(p_skeleton: Skeleton, p_humanoid_id: int) -> int:
+func find_skeleton_bone_for_humanoid_bone(p_skeleton: Skeleton3D, p_humanoid_id: int) -> int:
 	return p_skeleton.find_bone(get_skeleton_bone_name(p_humanoid_id))
 
 func is_skeleton_bone_empty(p_humanoid_bone_id: int) -> bool:

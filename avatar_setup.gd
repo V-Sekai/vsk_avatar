@@ -18,10 +18,10 @@ const hand_pose_victory_const = preload("hand_poses/hand_pose_victory.tres")
 static func create_pose_track_for_humanoid_bone(
 	p_animation: Animation,
 	p_base_path: String,
-	p_skeleton: Skeleton,
+	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData,
 	p_humanoid_bone_name: String,
-	p_transform: Transform) -> Animation:
+	p_transform: Transform3D) -> Animation:
 		
 	if !p_skeleton or !p_humanoid_data:
 		return p_animation
@@ -49,7 +49,7 @@ static func create_pose_track_for_humanoid_bone(
 	
 static func create_animation_from_hand_pose(
 	p_root_node: Node,
-	p_skeleton: Skeleton,
+	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData,
 	p_hand_pose: hand_pose_const) -> Animation:
 		
@@ -59,7 +59,7 @@ static func create_animation_from_hand_pose(
 		for digit in ["thumb", "index", "middle", "ring", "little"]:
 			for joint in ["proximal", "intermediate", "distal"]:
 				
-				var transform: Transform = Transform()
+				var transform: Transform3D = Transform3D()
 				if side == "left":
 					transform = p_hand_pose.get(
 						"%s_%s" % [digit, joint])
@@ -71,7 +71,7 @@ static func create_animation_from_hand_pose(
 					euler.z = -euler.z
 					euler.y = -euler.y
 					
-					transform = Transform(Basis(euler), Vector3())
+					transform = Transform3D(Basis(euler), Vector3())
 				
 				animation = create_pose_track_for_humanoid_bone(
 					animation,
@@ -86,7 +86,7 @@ static func create_animation_from_hand_pose(
 static func setup_animation_from_hand_pose(
 	p_animation_player: AnimationPlayer,
 	p_root_node: Node,
-	p_skeleton: Skeleton,
+	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData,
 	p_hand_pose_name: String,
 	p_hand_pose: hand_pose_const) -> void:
@@ -106,7 +106,7 @@ static func setup_animation_from_hand_pose(
 static func setup_animation_from_hand_pose_dictionary(
 	p_animation_player: AnimationPlayer,
 	p_root_node: Node,
-	p_skeleton: Skeleton,
+	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData,
 	p_pose_dictionary: Dictionary) -> void:
 	
@@ -122,7 +122,7 @@ static func setup_animation_from_hand_pose_dictionary(
 static func setup_default_hand_animations(
 	p_animation_player: AnimationPlayer,
 	p_root_node: Node,
-	p_skeleton: Skeleton,
+	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData) -> AnimationPlayer:
 	#
 	setup_animation_from_hand_pose_dictionary(
@@ -149,7 +149,7 @@ static func setup_animation_tree_hand_blend_tree(
 	p_root: Node,
 	p_animation_tree: AnimationTree,
 	p_animation_player: AnimationPlayer,
-	p_skeleton: Skeleton,
+	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData) -> AnimationTree:
 		
 	if !p_skeleton or !p_humanoid_data:

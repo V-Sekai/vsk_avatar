@@ -43,14 +43,14 @@ static func get_length_for_transform_array(p_transforms: Array) -> float:
 		last = current
 		current = i
 		if last != -1:
-			var current_transform: Transform = p_transforms[current]
-			var last_transform: Transform = p_transforms[last]
+			var current_transform: Transform3D = p_transforms[current]
+			var last_transform: Transform3D = p_transforms[last]
 
 			length += current_transform.origin.distance_to(last_transform.origin)
 			
 	return length
 
-static func get_chain_length(p_skeleton: Skeleton, p_chain: Array, p_rest_transform_array: Array, p_pose_transform_array: Array) -> float:
+static func get_chain_length(p_skeleton: Skeleton3D, p_chain: Array, p_rest_transform_array: Array, p_pose_transform_array: Array) -> float:
 	# Get the overall length of the chain
 	var original_gt_array: Array = []
 	for bone_id in p_chain:
@@ -61,55 +61,55 @@ static func get_chain_length(p_skeleton: Skeleton, p_chain: Array, p_rest_transf
 	return chain_length
 	
 
-static func straighten_chain(p_skeleton: Skeleton, p_direction: Vector3, p_chain: Array, p_rest_transform_array: Array, p_t_pose_transform_array: Array, p_inverse_children: bool) -> Array:
+static func straighten_chain(p_skeleton: Skeleton3D, p_direction: Vector3, p_chain: Array, p_rest_transform_array: Array, p_t_pose_transform_array: Array, p_inverse_children: bool) -> Array:
 	#print("STRAIGHTEN_CHAIN")
 	
 	for bone_id in p_chain:
 		#print("chain bone id: " + str(bone_id))
 		
-		var bone_gt: Transform = bone_lib_const.get_bone_global_transform(bone_id, p_skeleton, [p_rest_transform_array, p_t_pose_transform_array])
-		var corrected_bone_gt: Transform = Transform(get_basis_rotated_towards_normal(bone_gt.basis, p_direction), bone_gt.origin)
+		var bone_gt: Transform3D = bone_lib_const.get_bone_global_transform(bone_id, p_skeleton, [p_rest_transform_array, p_t_pose_transform_array])
+		var corrected_bone_gt: Transform3D = Transform3D(get_basis_rotated_towards_normal(bone_gt.basis, p_direction), bone_gt.origin)
 		
 		var bone_parent_id: int = p_skeleton.get_bone_parent(bone_id)
 		if bone_parent_id != -1:
-			var parent_bone_gt: Transform = bone_lib_const.get_bone_global_transform(bone_parent_id, p_skeleton, [p_rest_transform_array, p_t_pose_transform_array])
+			var parent_bone_gt: Transform3D = bone_lib_const.get_bone_global_transform(bone_parent_id, p_skeleton, [p_rest_transform_array, p_t_pose_transform_array])
 			p_t_pose_transform_array[bone_id] = (parent_bone_gt * p_rest_transform_array[bone_id]).inverse() * corrected_bone_gt
 		else:
 			p_t_pose_transform_array[bone_id] = p_rest_transform_array[bone_id].inverse() * corrected_bone_gt
 		
 		# Apply the inverse to all the bones not in this chain
 		if p_inverse_children:
-			var bone_rest_gt: Transform = bone_lib_const.get_bone_global_transform(bone_id, p_skeleton, [p_rest_transform_array])
+			var bone_rest_gt: Transform3D = bone_lib_const.get_bone_global_transform(bone_id, p_skeleton, [p_rest_transform_array])
 			for child_id in p_skeleton.get_bone_children(bone_id):
 				if !p_chain.has(child_id):
-					var child_rest_transform : Transform = p_rest_transform_array[child_id]
+					var child_rest_transform : Transform3D = p_rest_transform_array[child_id]
 					p_t_pose_transform_array[child_id] *= (corrected_bone_gt * child_rest_transform).inverse() * (bone_rest_gt * child_rest_transform)
 	
 	return p_t_pose_transform_array
 
 
-static func get_direction_for_humanoid_bone(p_humanoid_data: HumanoidData, p_skeleton: Skeleton, p_humanoid_bone: int) -> Vector3:
+static func get_direction_for_humanoid_bone(p_humanoid_data: HumanoidData, p_skeleton: Skeleton3D, p_humanoid_bone: int) -> Vector3:
 	var bone_idx: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(p_skeleton, p_humanoid_bone)
-	var bone_gt: Transform = p_skeleton.get_bone_global_pose(bone_idx)
+	var bone_gt: Transform3D = p_skeleton.get_bone_global_pose(bone_idx)
 	
 	return Vector3()
 
 """
-static func get_relative_global_transform_for_bone(p_skeleton: Skeleton, p_root_bone_name: String, p_bone_name: String) -> Transform:
+static func get_relative_global_transform_for_bone(p_skeleton: Skeleton3D, p_root_bone_name: String, p_bone_name: String) -> Transform3D:
 	# Stub
-	return Transform()
+	return Transform3D()
 
-static func enforce_standard_t_pose(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> void:
+static func enforce_standard_t_pose(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
 	pass
 """
 
-static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_base_pose_array: Array) -> Array:
+static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_base_pose_array: Array) -> Array:
 	var t_pose_transform_array: Array = []
 	
-	var base_transform: Transform = node_util_const.get_relative_global_transform(p_root, p_skeleton)
+	var base_transform: Transform3D = node_util_const.get_relative_global_transform(p_root, p_skeleton)
 	
 	for _i in range(0, p_skeleton.get_bone_count()):
-		t_pose_transform_array.push_back(Transform())
+		t_pose_transform_array.push_back(Transform3D())
 		
 	# Correct any root bones between the root and hip
 	t_pose_transform_array = straighten_chain(
@@ -164,9 +164,9 @@ static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton, p_humanoid_dat
 	
 	return t_pose_transform_array
 
-static func enforce_strict_t_pose(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_base_pose_array: Array) -> void:
+static func enforce_strict_t_pose(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_base_pose_array: Array) -> void:
 	for i in range(0, p_skeleton.get_bone_count()):
-		p_skeleton.set_bone_pose(i, Transform())
+		p_skeleton.set_bone_pose(i, Transform3D())
 	
 	var t_pose_rotations: Array = get_strict_t_pose(p_root, p_skeleton, p_humanoid_data, p_base_pose_array)
 		

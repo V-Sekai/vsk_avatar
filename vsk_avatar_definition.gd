@@ -1,4 +1,4 @@
-tool
+@tool
 extends "vsk_avatar_definition_runtime.gd"
 
 const vsk_user_content_definition_helper_conest = preload("res://addons/vsk_importer_exporter/vsk_user_content_definition_helper.gd")

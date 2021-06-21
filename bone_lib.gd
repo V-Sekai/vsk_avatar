@@ -1,12 +1,12 @@
-extends Reference
+extends RefCounted
 
 const node_util_const = preload("res://addons/gdutil/node_util.gd")
 const humanoid_data_const = preload("res://addons/vsk_avatar/humanoid_data.gd")
 
 const NO_BONE = -1
 
-static func get_bone_global_transform(p_id: int, p_skeleton: Skeleton, p_local_transform_array: Array) -> Transform:
-	var return_transform: Transform = Transform()
+static func get_bone_global_transform(p_id: int, p_skeleton: Skeleton3D, p_local_transform_array: Array) -> Transform3D:
+	var return_transform: Transform3D = Transform3D()
 	var parent_id: int = p_skeleton.get_bone_parent(p_id)
 	if parent_id != -1:
 		return_transform = get_bone_global_transform(parent_id, p_skeleton, p_local_transform_array)
@@ -16,20 +16,20 @@ static func get_bone_global_transform(p_id: int, p_skeleton: Skeleton, p_local_t
 
 	return return_transform
 
-static func get_bone_global_rest_transform(p_id: int, p_skeleton: Skeleton) -> Transform:
+static func get_bone_global_rest_transform(p_id: int, p_skeleton: Skeleton3D) -> Transform3D:
 	var rest_local_transforms: Array = []
 	for i in range(0, p_skeleton.get_bone_count()):
 		rest_local_transforms.push_back(p_skeleton.get_bone_rest(i))
 
 	return get_bone_global_transform(p_id, p_skeleton, [rest_local_transforms])
 
-static func get_full_bone_chain(p_skeleton: Skeleton, p_first: int, p_last: int) -> PoolIntArray:
-	var bone_chain: PoolIntArray = get_bone_chain(p_skeleton, p_first, p_last)
+static func get_full_bone_chain(p_skeleton: Skeleton3D, p_first: int, p_last: int) -> PackedInt32Array:
+	var bone_chain: PackedInt32Array = get_bone_chain(p_skeleton, p_first, p_last)
 	bone_chain.push_back(p_last)
 
 	return bone_chain
 
-static func get_bone_chain(p_skeleton: Skeleton, p_first: int, p_last: int) -> PoolIntArray:
+static func get_bone_chain(p_skeleton: Skeleton3D, p_first: int, p_last: int) -> PackedInt32Array:
 	var bone_chain: Array = []
 
 	if p_first != -1 and p_last != -1:
@@ -42,12 +42,12 @@ static func get_bone_chain(p_skeleton: Skeleton, p_first: int, p_last: int) -> P
 				p_first:
 					break
 				-1:
-					return PoolIntArray()
+					return PackedInt32Array()
 
-	return PoolIntArray(bone_chain)
+	return PackedInt32Array(bone_chain)
 
 static func get_internal_bone_name_for_humanoid_bone(
-	p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const, p_bone_name: String
+	p_skeleton: Skeleton3D, p_humanoid_data: humanoid_data_const, p_bone_name: String
 ) -> String:
 	if p_skeleton and p_humanoid_data:
 		var internal_bone_name: String = p_humanoid_data.get(p_bone_name)
@@ -56,7 +56,7 @@ static func get_internal_bone_name_for_humanoid_bone(
 	return ""
 
 static func get_bone_id_for_humanoid_bone(
-	p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const, p_bone_name: String
+	p_skeleton: Skeleton3D, p_humanoid_data: humanoid_data_const, p_bone_name: String
 ) -> int:
 	if p_skeleton and p_humanoid_data:
 		var internal_bone_name: String = get_internal_bone_name_for_humanoid_bone(
@@ -66,7 +66,7 @@ static func get_bone_id_for_humanoid_bone(
 
 	return -1
 
-static func is_bone_parent_of(p_skeleton: Skeleton, p_parent_id: int, p_child_id: int) -> bool:
+static func is_bone_parent_of(p_skeleton: Skeleton3D, p_parent_id: int, p_child_id: int) -> bool:
 	var p: int = p_skeleton.get_bone_parent(p_child_id)
 	while (p != -1):
 		if (p == p_parent_id):
@@ -75,14 +75,14 @@ static func is_bone_parent_of(p_skeleton: Skeleton, p_parent_id: int, p_child_id
 		
 	return false
 	
-static func is_bone_parent_of_or_self(p_skeleton: Skeleton, p_parent_id: int, p_child_id: int) -> bool:
+static func is_bone_parent_of_or_self(p_skeleton: Skeleton3D, p_parent_id: int, p_child_id: int) -> bool:
 	if p_parent_id == p_child_id:
 		return true
 		
 	return is_bone_parent_of(p_skeleton, p_parent_id, p_child_id)
 
 static func rename_skeleton_to_humanoid_bones(
-	p_skeleton: Skeleton, p_humanoid_data: humanoid_data_const, p_skins: Array
+	p_skeleton: Skeleton3D, p_humanoid_data: humanoid_data_const, p_skins: Array
 ) -> bool:
 	if p_skeleton == null or p_humanoid_data == null:
 		return false

@@ -3,24 +3,24 @@ extends Node
 const avatar_constants_const = preload("avatar_constants.gd")
 const bone_lib_const = preload("bone_lib.gd")
 
-static func find_mesh_instances_for_avatar_skeleton(p_node: Node, p_skeleton: Skeleton, p_valid_mesh_instances: Array) -> Array:
-	if p_skeleton and p_node is MeshInstance:
+static func find_mesh_instantiates_for_avatar_skeleton(p_node: Node, p_skeleton: Skeleton3D, p_valid_mesh_instantiates: Array) -> Array:
+	if p_skeleton and p_node is MeshInstance3D:
 		var skeleton: Node = p_node.get_node_or_null(p_node.skeleton)
 		if skeleton == p_skeleton:
-			p_valid_mesh_instances.push_back(p_node)
+			p_valid_mesh_instantiates.push_back(p_node)
 			
 	for child in p_node.get_children():
-		p_valid_mesh_instances = find_mesh_instances_for_avatar_skeleton(child, p_skeleton, p_valid_mesh_instances)
+		p_valid_mesh_instantiates = find_mesh_instantiates_for_avatar_skeleton(child, p_skeleton, p_valid_mesh_instantiates)
 	
-	return p_valid_mesh_instances
+	return p_valid_mesh_instantiates
 
 static func get_chain(
-	p_skeleton: Skeleton,
+	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData,
 	p_side: int,
 	p_start_name: String,
 	p_end_name: String,
-	p_alt_start_name: String) -> PoolIntArray:
+	p_alt_start_name: String) -> PackedInt32Array:
 		
 		
 	var direction_name : String = ""
@@ -45,13 +45,13 @@ static func get_chain(
 		start_bone_name = alt_start_bone_name
 		
 	if start_bone_name == "" or end_bone_name == "":
-		return PoolIntArray()
+		return PackedInt32Array()
 
 	var start_id : int = p_skeleton.find_bone(start_bone_name)
 	var end_id : int = p_skeleton.find_bone(end_bone_name)
 	
 	if start_id == -1 or end_id == -1:
-		return PoolIntArray()
+		return PackedInt32Array()
 	
 	return bone_lib_const.get_full_bone_chain(p_skeleton, start_id, end_id)
 
@@ -63,36 +63,36 @@ static func find_bone_in_chain_array(p_bone_id: int, p_chains: Array) -> Diction
 			
 	return {}
 
-static func get_arm_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_side: int) -> PoolIntArray:
+static func get_arm_chain(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_side: int) -> PackedInt32Array:
 	return get_chain(p_skeleton, p_humanoid_data, p_side, "shoulder", "hand", "upper_arm")
 	
-static func get_leg_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_side: int) -> PoolIntArray:
+static func get_leg_chain(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_side: int) -> PackedInt32Array:
 	return get_chain(p_skeleton, p_humanoid_data, p_side, "thigh", "foot", "")
 	
 # Get all the bones in the spine chain aside from the head
-static func get_spine_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> PoolIntArray:
-	var chain: PoolIntArray = get_chain(p_skeleton, p_humanoid_data, avatar_constants_const.SIDE_CENTER, "hips", "head", "")
+static func get_spine_chain(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> PackedInt32Array:
+	var chain: PackedInt32Array = get_chain(p_skeleton, p_humanoid_data, avatar_constants_const.SIDE_CENTER, "hips", "head", "")
 	chain.resize(chain.size() - 1)
 	
 	return chain
 	
-static func get_full_spine_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> PoolIntArray:
+static func get_full_spine_chain(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> PackedInt32Array:
 	return get_chain(p_skeleton, p_humanoid_data, avatar_constants_const.SIDE_CENTER, "hips", "head", "")
 	
-static func get_hips(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> int:
+static func get_hips(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> int:
 	return p_skeleton.find_bone(p_humanoid_data.hips_bone_name)
 	
-static func get_root_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> PoolIntArray:
+static func get_root_chain(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> PackedInt32Array:
 	var hips_bone_id: int = get_hips(p_skeleton, p_humanoid_data)
 	var parent_id: int = p_skeleton.get_bone_parent(hips_bone_id)
-	var chain: PoolIntArray = PoolIntArray()
+	var chain: PackedInt32Array = PackedInt32Array()
 	while(parent_id != -1):
 		chain.append(parent_id)
 		parent_id = p_skeleton.get_bone_parent(parent_id)
 	
 	return chain
 	
-static func get_digit_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_side: int, p_digit) -> PoolIntArray:
+static func get_digit_chain(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_side: int, p_digit) -> PackedInt32Array:
 	return get_chain(p_skeleton, p_humanoid_data, p_side,\
 	"%s_%s" % [
 		avatar_constants_const.get_name_for_digit(p_digit),
@@ -104,8 +104,8 @@ static func get_digit_chain(p_skeleton: Skeleton, p_humanoid_data: HumanoidData,
 	],
 	"")
 	
-static func get_root_transform(p_skeleton: Skeleton, p_bone_id: int) -> Transform:
-	var cumulative_transform: Transform = Transform()
+static func get_root_transform(p_skeleton: Skeleton3D, p_bone_id: int) -> Transform3D:
+	var cumulative_transform: Transform3D = Transform3D()
 	if (p_bone_id != -1):
 		cumulative_transform = p_skeleton.get_bone_rest(p_bone_id)
 

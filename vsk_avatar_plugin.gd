@@ -1,5 +1,5 @@
+@tool
 extends EditorPlugin
-tool
 
 const avatar_definition_editor_const = preload("vsk_avatar_definition_editor.gd")
 const avatar_definition_const = preload("vsk_avatar_definition.gd")

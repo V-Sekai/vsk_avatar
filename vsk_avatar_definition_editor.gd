@@ -53,17 +53,17 @@ enum {
 
 var save_option: int = SAVE_OPTION_AVATAR
 
-func debug_bones(p_skeleton: Skeleton) -> void:
+func debug_bones(p_skeleton: Skeleton3D) -> void:
 	avater_debug_const.debug_bones(node._skeleton_node)
 	
 	
-func correct_bone_directions(p_root: Node, p_skeleton_node: Skeleton, p_humanoid_data: HumanoidData) -> void:
+func correct_bone_directions(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
 	bone_direction_const.fix_skeleton(p_root, p_skeleton_node, p_humanoid_data)
 
-func enforce_standard_t_pose(p_root: Node, p_skeleton_node: Skeleton, p_humanoid_data: HumanoidData) -> void:
+func enforce_standard_t_pose(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
 	t_poser_const.enforce_standard_t_pose(p_root, p_skeleton_node, p_humanoid_data)
 
-func enforce_strict_t_pose(p_root: Node, p_skeleton_node: Skeleton, p_humanoid_data: HumanoidData) -> void:
+func enforce_strict_t_pose(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
 	var base_pose_array: Array = []
 	for i in range(0, p_skeleton_node.get_bone_count()):
 		base_pose_array.push_back(p_skeleton_node.get_bone_rest(i))
@@ -214,7 +214,7 @@ func _save_file_at_path(p_path : String) -> void:
 		save_option == SAVE_OPTION_RIGHT_HAND_POSE:
 		err = avatar_callback_const.AVATAR_COULD_NOT_EXPORT_HANDS
 		if node:
-			var skeleton: Skeleton = node._skeleton_node
+			var skeleton: Skeleton3D = node._skeleton_node
 			var humanoid_data: HumanoidData = node.humanoid_data
 			if skeleton and humanoid_data:
 				

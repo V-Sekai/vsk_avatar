@@ -11,10 +11,10 @@ const external_transform_fixer_const = preload("external_transform_fixer.gd")
 
 const avatar_callback_const = preload("avatar_callback.gd")
 
-static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> void:
+static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instantiates: Array) -> void:
 	print("bone_direction: _fix_meshes")
 	
-	for mi in p_mesh_instances:
+	for mi in p_mesh_instantiates:
 		var skin: Skin = mi.get_skin();
 		if skin == null:
 			continue
@@ -23,7 +23,7 @@ static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> voi
 		mi.set_skin(skin)
 		var skeleton_path: NodePath = mi.get_skeleton_path()
 		var node: Node = mi.get_node_or_null(skeleton_path)
-		var skeleton: Skeleton = node
+		var skeleton: Skeleton3D = node
 		for bind_i in range(0, skin.get_bind_count()):
 			var bone_index:int  = skin.get_bind_bone(bind_i)
 			if (bone_index == -1):
@@ -36,7 +36,7 @@ static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> voi
 				continue
 			skin.set_bind_pose(bind_i, p_bind_fix_array[bone_index] * skin.get_bind_pose(bind_i))
 
-static func fix_avatar(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> int:
+static func fix_avatar(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> int:
 	var err: int = avatar_callback_const.AVATAR_OK
 	
 	# First, copy the base rest pose from the skeleton into the base_pose array
@@ -78,8 +78,8 @@ static func fix_avatar(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: Huma
 		final_bind_pose.append(rotation_fix_data["bind_pose_fixes"][i] * fortune_offsets["bind_pose_offsets"][i])
 
 	# Search for all mesh instances with the associated skeleton and apply the bind pose fix to their respective meshes
-	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])
-	_fix_meshes(final_bind_pose, mesh_instances)
+	var mesh_instantiates: Array = avatar_lib_const.find_mesh_instantiates_for_avatar_skeleton(p_root, p_skeleton, [])
+	_fix_meshes(final_bind_pose, mesh_instantiates)
 
 	# Apply the inverse transform of any nodes between the skeleton and the root node to fix any models
 	err = external_transform_fixer_const.fix_external_transform(p_root, p_skeleton)

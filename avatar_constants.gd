@@ -1,5 +1,5 @@
-extends Reference
-tool
+@tool
+extends RefCounted
 
 const LEFT_SIDE_NAME = "left"
 const RIGHT_SIDE_NAME = "right"
@@ -15,10 +15,10 @@ const INTERMEDIATE_NAME = "intermediate"
 const DISTAL_NAME = "distal"
 const ENDPOINT_NAME = "endpoint"
 
-const digit_names: PoolStringArray = PoolStringArray(
+const digit_names: PackedStringArray = PackedStringArray(
 	[THUMB_NAME, INDEX_NAME, MIDDLE_NAME, RING_NAME, LITTLE_NAME]
 )
-const digit_joint_names: PoolStringArray = PoolStringArray(
+const digit_joint_names: PackedStringArray = PackedStringArray(
 	[PROXIMAL_NAME, INTERMEDIATE_NAME, DISTAL_NAME]
 )
 

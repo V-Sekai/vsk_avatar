@@ -65,8 +65,8 @@ const LEAN_RELAXATION_PERIOD = 0.25  #seconds
 
 const LOOKING_AT_ME_GAP_ALLOWED = (5 * 1000 * 1000) / 60  # n frames, in microseconds
 
-export (NodePath) var avatar_display_path: NodePath = NodePath()
-var _avatar_display: Spatial = null
+@export  var avatar_display_path: NodePath = NodePath()
+ # (NodePath)var _avatar_display: Node3D = null
 
 var left_eye_blink: float = 0.0
 var right_eye_blink: float = 0.0
@@ -169,7 +169,7 @@ enum Blendshapes {
 	BlendshapeCount
 }
 
-var transient_blendshape_coefficents: PoolRealArray = PoolRealArray()
+var transient_blendshape_coefficents: PackedFloat32Array = PackedFloat32Array()
 
 static func should_do(p_desired_interval: float, p_delta: float) -> bool:
 	return randf() < p_delta / p_desired_interval
@@ -179,7 +179,7 @@ static func rand_vector3() -> Vector3:
 
 static func update_fake_coefficients(
 	p_left_blink, p_right_blink, p_brow_up, p_jaw_open, p_mouth2, p_mouth3, p_mouth4, p_coefficients
-) -> PoolRealArray:
+) -> PackedFloat32Array:
 	p_coefficients.resize(max(p_coefficients.size(), Blendshapes.BlendshapeCount))
 
 	p_coefficients[Blendshapes.EyeBlink_L] = p_left_blink
@@ -196,9 +196,9 @@ static func update_fake_coefficients(
 	return p_coefficients
 
 
-func get_orientation() -> Quat:
+func get_orientation() -> Quaternion:
 	printerr("get_orientation not implemented!")
-	return Quat()
+	return Quaternion()
 
 
 func calculate_mouth_shapes(p_delta: float) -> void:
@@ -249,7 +249,7 @@ func get_look_at_position() -> Vector3:
 	return look_at_position
 
 
-func apply_eyelid_offset(p_head_orientation: Quat) -> void:
+func apply_eyelid_offset(p_head_orientation: Quaternion) -> void:
 	# Adjusts the eyelid blendshape coefficients so that the eyelid follows the iris as the head pitches.
 	var is_blinking: bool = right_eye_blink_velocity != 0.0 and left_eye_blink_velocity != 0.0
 	if disable_eyelid_adjustment or is_blinking:

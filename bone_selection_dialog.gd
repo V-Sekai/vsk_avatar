@@ -1,12 +1,12 @@
+@tool
 extends ConfirmationDialog
-tool
 
 const DIALOG_WIDTH = 800
 const DIALOG_HEIGHT = 600
 
 signal selected(p_bone_name)
 
-var skeleton: Skeleton = null
+var skeleton: Skeleton3D = null
 
 var vbox_container: VBoxContainer = null
 
@@ -19,7 +19,7 @@ var clear_icon: Texture = null
 var bone_icon: Texture = null
 
 
-func set_skeleton(p_skeleton: Skeleton) -> void:
+func set_skeleton(p_skeleton: Skeleton3D) -> void:
 	skeleton = p_skeleton
 
 
@@ -53,7 +53,7 @@ func is_bone_name_valid(p_bone_name: String) -> bool:
 	return false
 
 
-func update_tree(p_tree: Tree, p_skeleton: Skeleton) -> void:
+func update_tree(p_tree: Tree, p_skeleton: Skeleton3D) -> void:
 	if p_tree and p_skeleton:
 		var skeleton_bones = []
 		skeleton_bones.resize(p_skeleton.get_bone_count())

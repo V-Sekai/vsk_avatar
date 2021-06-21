@@ -1,5 +1,5 @@
-extends Reference
-tool
+@tool
+extends RefCounted
 
 enum {
 	AVATAR_OK,
@@ -57,7 +57,7 @@ static func get_error_string(p_err: int) -> String:
 		SKELETON_IS_NULL:
 			error_string = "Humanoid avatar requires a skeleton to be assigned!"
 		ROOT_NOT_PARENT_OF_SKELETON:
-			error_string = "Skeleton is not a child of the root node!"
+			error_string = "Skeleton3D is not a child of the root node!"
 		ROOT_NOT_PARENT_OF_VISEME_MESH:
 			error_string = "Viseme mesh is not a child of the root node!"
 		NO_HUMANOID_DATA:
@@ -67,7 +67,7 @@ static func get_error_string(p_err: int) -> String:
 		NO_MUSCLE_DATA:
 			error_string = "Humanoid avatars require MuscleData resource!"
 		SKIN_MESH_INSTANCE_SIZE_MISMATCH:
-			error_string = "The number of Skin resources do not match the number of MeshInstances!"
+			error_string = "The number of Skin resources do not match the number of MeshInstance3Ds!"
 		AVATAR_COULD_NOT_SANITISE:
 			error_string = "Could not remove forbidden nodes in avatar!"
 			
@@ -120,7 +120,7 @@ static func get_error_string(p_err: int) -> String:
 	
 	return error_string
 
-static func generic_error_check(p_root: Spatial, p_skeleton: Skeleton) -> int:
+static func generic_error_check(p_root: Node3D, p_skeleton: Skeleton3D) -> int:
 	if p_root == null:
 		return ROOT_IS_NULL
 		

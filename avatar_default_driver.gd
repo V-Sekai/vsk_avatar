@@ -2,12 +2,14 @@ extends Node
 
 # Hardcoded nonsense until I figure out the customisable animation tree driver
 
-export(NodePath) var anim_tree: NodePath = NodePath() setget set_anim_tree
-var cached_anim_tree: AnimationTree = null
+@export var anim_tree: NodePath = NodePath() :
+    set = set_anim_tree
 
-export(int) var left_hand_gesture_id: int = 0
-export(int) var right_hand_gesture_id: int = 0
+ # (NodePath)var cached_anim_tree: AnimationTree = null
 
+@export var left_hand_gesture_id: int = 0
+ # (int)@export var right_hand_gesture_id: int = 0
+ # (int)
 func update(p_delta: float) -> void:
 	if cached_anim_tree:
 		cached_anim_tree.advance(p_delta)

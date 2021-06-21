@@ -9,10 +9,10 @@ const avatar_lib_const = preload("avatar_lib.gd")
 
 const VECTOR_DIRECTION = Vector3.UP
 
-class RestBone extends Reference:
-	var rest_local_before: Transform = Transform()
-	var rest_local_after: Transform = Transform()
-	var rest_delta: Quat = Quat()
+class RestBone extends RefCounted:
+	var rest_local_before: Transform3D = Transform3D()
+	var rest_local_after: Transform3D = Transform3D()
+	var rest_delta: Quaternion = Quaternion()
 	var children_centroid_direction: Vector3 = Vector3()
 	var parent_index: int = -1
 	var children: Array = []
@@ -27,7 +27,7 @@ static func _get_perpendicular_vector(p_v: Vector3) -> Vector3:
 	
 	return perpendicular
 	
-static func _align_vectors(a: Vector3, b: Vector3) -> Quat:
+static func _align_vectors(a: Vector3, b: Vector3) -> Quaternion:
 	a = a.normalized()
 	b = b.normalized()
 	if (a.length_squared() != 0.0 and b.length_squared() != 0.0):
@@ -36,12 +36,12 @@ static func _align_vectors(a: Vector3, b: Vector3) -> Quat:
 		var angle_diff: float = a.angle_to(b)
 		if (perpendicular.length_squared() == 0):
 			perpendicular = _get_perpendicular_vector(a)
-		return Quat(perpendicular, angle_diff)
+		return Quaternion(perpendicular, angle_diff)
 	else:
-		return Quat()
+		return Quaternion()
 
 static func _fortune_with_chains(
-	p_skeleton: Skeleton,
+	p_skeleton: Skeleton3D,
 	r_rest_bones: Dictionary,
 	p_fixed_chains: Array,
 	p_ignore_unchained_bones: bool,
@@ -117,14 +117,14 @@ static func _fortune_with_chains(
 			# Iterate through the children and rotate them in the opposite direction.
 			for j in range(0, r_rest_bones[i].children.size()):
 				var child_index: int = r_rest_bones[i].children[j]
-				r_rest_bones[child_index].rest_local_after = Transform(r_rest_bones[i].rest_delta.inverse(), Vector3()) * r_rest_bones[child_index].rest_local_after
+				r_rest_bones[child_index].rest_local_after = Transform3D(r_rest_bones[i].rest_delta.inverse(), Vector3()) * r_rest_bones[child_index].rest_local_after
 	
 	return r_rest_bones
 
-static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> void:
+static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instantiates: Array) -> void:
 	print("bone_direction: _fix_meshes")
 	
-	for mi in p_mesh_instances:
+	for mi in p_mesh_instantiates:
 		var skin: Skin = mi.get_skin();
 		if skin == null:
 			continue
@@ -133,7 +133,7 @@ static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> voi
 		mi.set_skin(skin)
 		var skeleton_path: NodePath = mi.get_skeleton_path()
 		var node: Node = mi.get_node_or_null(skeleton_path)
-		var skeleton: Skeleton = node
+		var skeleton: Skeleton3D = node
 		for bind_i in range(0, skin.get_bind_count()):
 			var bone_index:int  = skin.get_bind_bone(bind_i)
 			if (bone_index == -1):
@@ -146,7 +146,7 @@ static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> voi
 				continue
 			skin.set_bind_pose(bind_i, p_bind_fix_array[bone_index] * skin.get_bind_pose(bind_i))
 			
-static func get_humanoid_chains(p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> Array:
+static func get_humanoid_chains(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> Array:
 	var chains: Array = []
 	
 	# Spine
@@ -168,7 +168,7 @@ static func get_humanoid_chains(p_skeleton: Skeleton, p_humanoid_data: HumanoidD
 	
 	return chains
 	
-static func print_chain_names(p_skeleton: Skeleton, p_chains: Array) -> void:
+static func print_chain_names(p_skeleton: Skeleton3D, p_chains: Array) -> void:
 	var idx: int = 0
 	for chain in p_chains:
 		var bone_string: String = ""
@@ -179,7 +179,7 @@ static func print_chain_names(p_skeleton: Skeleton, p_chains: Array) -> void:
 		
 		idx += 1
 		
-static func get_fortune_with_chain_offsets(p_skeleton: Skeleton, p_humanoid_data: HumanoidData, p_base_pose: Array) -> Dictionary:
+static func get_fortune_with_chain_offsets(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_base_pose: Array) -> Dictionary:
 	# Get the 5 bone chains nessecary for a valid humanoid rig
 	
 	var humanoid_chains: Array = get_humanoid_chains(p_skeleton, p_humanoid_data)
@@ -189,11 +189,11 @@ static func get_fortune_with_chain_offsets(p_skeleton: Skeleton, p_humanoid_data
 	
 	for key in rest_bones.keys():
 		offsets["base_pose_offsets"].append(rest_bones[key].rest_local_before.inverse() * rest_bones[key].rest_local_after)
-		offsets["bind_pose_offsets"].append(Transform(rest_bones[key].rest_delta.inverse()))
+		offsets["bind_pose_offsets"].append(Transform3D(rest_bones[key].rest_delta.inverse()))
 		
 	return offsets
 
-static func fix_skeleton(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: HumanoidData) -> void:
+static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
 	print("bone_direction: fix_skeleton")
 	
 	var base_pose: Array = []
@@ -207,5 +207,5 @@ static func fix_skeleton(p_root: Node, p_skeleton: Skeleton, p_humanoid_data: Hu
 		p_skeleton.set_bone_rest(i, p_skeleton.get_bone_rest(i) * offsets["base_pose_offsets"][i])
 	
 	# Correct the bind poses
-	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])
-	_fix_meshes(offsets["bind_pose_offsets"], mesh_instances)
+	var mesh_instantiates: Array = avatar_lib_const.find_mesh_instantiates_for_avatar_skeleton(p_root, p_skeleton, [])
+	_fix_meshes(offsets["bind_pose_offsets"], mesh_instantiates)

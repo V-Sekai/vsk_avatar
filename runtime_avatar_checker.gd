@@ -9,16 +9,16 @@ static func get_runtime_info_mesh(p_mesh: Mesh, p_dictionary: Dictionary = {}) -
 	return p_dictionary
 
 static func get_runtime_avatar_info_for_node(p_node: Node, p_dictionary: Dictionary = {}) -> Dictionary:
-	if p_node is MeshInstance:
-		p_dictionary["MeshInstanceCount"] += 1
+	if p_node is MeshInstance3D:
+		p_dictionary["MeshInstance3DCount"] += 1
 		if p_node.skin:
-			p_dictionary["MeshInstanceWithSkinCount"] += 1
+			p_dictionary["MeshInstance3DWithSkinCount"] += 1
 		
 		
-	if p_node is Particles:
+	if p_node is Particles3D:
 		p_dictionary["ParticleEmitterCount"] += 1
 	
-	if p_node is CPUParticles:
+	if p_node is CPUParticles3D:
 		p_dictionary["CPUParticleEmitterCount"] += 1
 	
 	for node in p_node.get_children():

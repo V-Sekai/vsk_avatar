@@ -1,24 +1,30 @@
-extends Spatial
-tool
+@tool
+extends Node3D
 
 const avatar_physics_const = preload("avatar_physics.gd")
 const humanoid_data_const = preload("humanoid_data.gd")
 
 var driver_node: Node = null
 
-export(NodePath) var skeleton_path: NodePath = NodePath() setget set_skeleton_path
-var _skeleton_node: Skeleton = null
+@export var skeleton_path: NodePath = NodePath() :
+    set = set_skeleton_path
 
-export(NodePath) var avatar_physics_path: NodePath = NodePath() setget set_avatar_physics_path
-var _avatar_physics_node: Node = get_node_or_null(avatar_physics_path)
+ # (NodePath)var _skeleton_node: Skeleton3D = null
 
-export(NodePath) var eye_transform_node_path: NodePath = NodePath()
-onready var _eye_transform_node: Spatial = get_node_or_null(eye_transform_node_path)
+@export var avatar_physics_path: NodePath = NodePath() :
+    set = set_avatar_physics_path
 
-export(NodePath) var mouth_transform_node_path: NodePath = NodePath()
-onready var _mouth_transform_node: Spatial = get_node_or_null(mouth_transform_node_path)
+ # (NodePath)var _avatar_physics_node: Node = get_node_or_null(avatar_physics_path)
 
-var humanoid_data: HumanoidData = null setget set_humanoid_data
+@export var eye_transform_node_path: NodePath = NodePath()
+ # (NodePath)onready var _eye_transform_node: Node3D = get_node_or_null(eye_transform_node_path)
+
+@export var mouth_transform_node_path: NodePath = NodePath()
+ # (NodePath)onready var _mouth_transform_node: Node3D = get_node_or_null(mouth_transform_node_path)
+
+var humanoid_data: HumanoidData = null :
+    set = set_humanoid_data
+
 
 func _get_property_list() -> Array:
 	var property_list: Array = []
@@ -45,8 +51,8 @@ func set_skeleton_path(p_skeleton_path: NodePath) -> void:
 	skeleton_path = p_skeleton_path
 	_skeleton_node = null
 	
-	var skeleton_node: Skeleton = get_node_or_null(skeleton_path)
-	if skeleton_node is Skeleton:
+	var skeleton_node: Skeleton3D = get_node_or_null(skeleton_path)
+	if skeleton_node is Skeleton3D:
 		_skeleton_node = skeleton_node
 	else:
 		_skeleton_node = null

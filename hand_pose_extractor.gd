@@ -3,19 +3,19 @@ extends Node
 const hand_pose_const = preload("hand_pose.gd")
 
 static func get_transform_for_humanoid_bone(
-	p_skeleton: Skeleton,
+	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData,
-	p_humanoid_bone_name: String) -> Transform:
+	p_humanoid_bone_name: String) -> Transform3D:
 	
 	var humanoid_bone_name: String = p_humanoid_data.get(p_humanoid_bone_name)
 	var bone_id: int = p_skeleton.find_bone(humanoid_bone_name)
 	if bone_id != -1:
 		return p_skeleton.get_bone_pose(bone_id)
 	
-	return Transform()
+	return Transform3D()
 
 static func generate_hand_pose_from_skeleton(
-	p_skeleton: Skeleton,
+	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData,
 	p_right_hand: bool) -> hand_pose_const:
 	

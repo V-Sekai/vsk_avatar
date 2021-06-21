@@ -10,7 +10,7 @@ var avatar_packed_scene: PackedScene = null
 var avatar_path: String = ""
 var avatar_pending: bool = false
 
-func _instance_avatar() -> void:
+func _instantiate_avatar() -> void:
 	if is_inside_tree():
 		if avatar_packed_scene:
 			emit_signal("avatar_ready", avatar_packed_scene)
@@ -32,7 +32,7 @@ func _avatar_load_succeeded(p_url: String, p_packed_scene: PackedScene) -> void:
 			avatar_packed_scene = p_packed_scene
 			if ! url_is_loading_avatar:
 				_avatar_load_finished()
-			call_deferred("_instance_avatar")
+			call_deferred("_instantiate_avatar")
 
 
 func _avatar_load_failed(p_url: String, p_err: int) -> void:

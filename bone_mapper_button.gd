@@ -1,5 +1,5 @@
+@tool
 extends HBoxContainer
-tool
 
 var select_bone_button: Button = null
 var clear_bone_button: Button = null
