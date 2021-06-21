@@ -8,7 +8,7 @@ var editor_interface : EditorInterface = null
 var avatar_definition_editor : Control = null
 
 
-func _init() -> void:
+func _init():
 	print("Initialising VSKAvatar plugin")
 
 

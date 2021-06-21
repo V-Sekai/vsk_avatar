@@ -100,7 +100,7 @@ func _notification(p_what: int) -> void:
 			filter_lineedit.grab_focus()
 
 
-func _init(p_bone_icon: Texture, p_clear_icon: Texture) -> void:
+func _init(p_bone_icon: Texture, p_clear_icon: Texture):
 	connect("about_to_show", self, "_about_to_show")
 	connect("confirmed", self, "_confirmed")
 

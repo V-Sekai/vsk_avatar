@@ -9,15 +9,16 @@ var driver_node: Node = null
 @export var skeleton_path: NodePath = NodePath() :
 	set = set_skeleton_path
 
- # (NodePath)var _skeleton_node: Skeleton3D = null
+var _skeleton_node: Skeleton3D = null
 
 @export var avatar_physics_path: NodePath = NodePath() :
 	set = set_avatar_physics_path
 
- # (NodePath)var _avatar_physics_node: Node = get_node_or_null(avatar_physics_path)
+var _avatar_physics_node: Node = get_node_or_null(avatar_physics_path)
 
 @export var eye_transform_node_path: NodePath = NodePath()
- # (NodePath)onready var _eye_transform_node: Node3D = get_node_or_null(eye_transform_node_path)
+ 
+var _eye_transform_node: Node3D = get_node_or_null(eye_transform_node_path)
 
 @export var mouth_transform_node_path: NodePath = NodePath()
  # (NodePath)onready var _mouth_transform_node: Node3D = get_node_or_null(mouth_transform_node_path)
@@ -56,8 +57,6 @@ func set_skeleton_path(p_skeleton_path: NodePath) -> void:
 		_skeleton_node = skeleton_node
 	else:
 		_skeleton_node = null
-			
-	property_list_changed_notify()
 	
 
 func set_avatar_physics_path(p_avatar_physics_path: NodePath) -> void:
@@ -70,8 +69,6 @@ func set_avatar_physics_path(p_avatar_physics_path: NodePath) -> void:
 			_avatar_physics_node = avatar_physics_node
 		else:
 			_avatar_physics_node = null
-			
-	property_list_changed_notify()
 
 
 func _ready() -> void:
