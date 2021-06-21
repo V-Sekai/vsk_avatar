@@ -99,14 +99,14 @@ func get_export_data() -> Dictionary:
 
 
 func export_avatar_upload() -> void:
-	if node and node is Node:
-		var vsk_editor = get_node_or_null("/root/VSKEditor")
-		if vsk_editor:
-			vsk_editor.show_upload_panel(funcref(self, "get_export_data"), vsk_types_const.UserContentType.Avatar)
-		else:
-			printerr("Could not load VSKEditor!")
-	else:
-		printerr("Node is not valid!")
+#	if node and node is Node:
+#		var vsk_editor = get_node_or_null("/root/VSKEditor")
+#		if vsk_editor:
+#			vsk_editor.show_upload_panel(Callable(self, "get_export_data"), vsk_types_const.UserContentType.Avatar)
+#		else:
+#			printerr("Could not load VSKEditor!")
+#	else:
+#		printerr("Node is not valid!")
 		
 func export_hand_pose(p_is_right_hand: bool) -> void:
 	if node and node is Node:
@@ -258,7 +258,7 @@ func update_menu_options() -> void:
 		options.get_popup().add_item("Export Avatar Locally", MENU_OPTION_EXPORT_AVATAR)
 		options.get_popup().add_item("Upload Avatar", MENU_OPTION_UPLOAD_AVATAR)
 
-func _init(p_editor_plugin : EditorPlugin) -> void:
+func _init(p_editor_plugin : EditorPlugin):
 	editor_plugin = p_editor_plugin
 	
 	err_dialog = AcceptDialog.new()
