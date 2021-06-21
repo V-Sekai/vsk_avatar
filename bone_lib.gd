@@ -1,6 +1,6 @@
 extends RefCounted
 
-const node_util_const = preload("res://addons/gdutil/node_util.gd")
+const node_util_const = preload("res://addons/gd_util/node_util.gd")
 const humanoid_data_const = preload("res://addons/vsk_avatar/humanoid_data.gd")
 
 const NO_BONE = -1

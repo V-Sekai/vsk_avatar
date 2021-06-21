@@ -15,10 +15,10 @@ const INTERMEDIATE_NAME = "intermediate"
 const DISTAL_NAME = "distal"
 const ENDPOINT_NAME = "endpoint"
 
-const digit_names: PackedStringArray = PackedStringArray(
+var digit_names: PackedStringArray = PackedStringArray(
 	[THUMB_NAME, INDEX_NAME, MIDDLE_NAME, RING_NAME, LITTLE_NAME]
 )
-const digit_joint_names: PackedStringArray = PackedStringArray(
+var digit_joint_names: PackedStringArray = PackedStringArray(
 	[PROXIMAL_NAME, INTERMEDIATE_NAME, DISTAL_NAME]
 )
 

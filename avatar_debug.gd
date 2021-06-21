@@ -11,7 +11,7 @@ static func debug_bones(p_skeleton: Skeleton3D) -> void:
 	for i in range(0, p_skeleton.get_bone_count()):
 		var bone_name: String = p_skeleton.get_bone_name(i)
 		
-		var bone_attachment: BoneAttachment = BoneAttachment.new()
+		var bone_attachment: BoneAttachment3D = BoneAttachment3D.new()
 		bone_attachment.name = "attachment_" + bone_name
 		
 		p_skeleton.add_child(bone_attachment)

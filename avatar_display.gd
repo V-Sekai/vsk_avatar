@@ -1,9 +1,9 @@
 @tool
 extends Node3D
 
-const node_util_const = preload("res://addons/gdutil/node_util.gd")
+const node_util_const = preload("res://addons/gd_util/node_util.gd")
 
-const player_camera_controller_const = preload("res://addons/actor/player_camera_controller.gd")
+# const player_camera_controller_const = preload("res://addons/actor/player_camera_controller.gd")
 
 const avatar_definition_const = preload("vsk_avatar_definition.gd")
 const avatar_definition_runtime_const = preload("vsk_avatar_definition_runtime.gd")
@@ -11,8 +11,8 @@ const avatar_definition_runtime_const = preload("vsk_avatar_definition_runtime.g
 const humanoid_data_const = preload("humanoid_data.gd")
 const gizmo_reference_const = preload("gizmo_reference.tscn")
 
-const attachment_point_3d_const = preload("res://addons/entity_manager/attachment_point_3d.gd")
-const vr_constants_const = preload("res://addons/sar1_vr_manager/vr_constants.gd")
+#const attachment_point_3d_const = preload("res://addons/entity_manager/attachment_point_3d.gd")
+#const vr_constants_const = preload("res://addons/sar1_vr_manager/vr_constants.gd")
 
 const avatar_setup_const = preload("avatar_setup.gd")
 
@@ -67,9 +67,10 @@ enum shrink_enum {
 	UNSHRINK
 }
 
-@export  var shrink_mode : int, "Determined by View", "Shrink", "Unshrink" = false
-@export  var default_avatar_height : float = 1.8
-@export  var _ren_ik_path: NodePath = NodePath()
+@export_enum("Determined by View", "Shrink", "Unshrink")
+var shrink_mode : int
+@export var default_avatar_height : float = 1.8
+@export var _ren_ik_path: NodePath = NodePath()
  # (NodePath)@export  var _ik_space_path: NodePath = NodePath()
  # (NodePath)@export  var player_camera_controller_path: NodePath = NodePath()
  # (NodePath)@export  var player_hand_controller_path: NodePath

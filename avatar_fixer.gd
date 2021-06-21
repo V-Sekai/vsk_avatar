@@ -28,7 +28,7 @@ static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instantiates: Array) -> 
 			var bone_index:int  = skin.get_bind_bone(bind_i)
 			if (bone_index == -1):
 				var bind_name: String = skin.get_bind_name(bind_i)
-				if bind_name.empty():
+				if bind_name.is_empty():
 					continue
 				bone_index = skeleton.find_bone(bind_name)
 				

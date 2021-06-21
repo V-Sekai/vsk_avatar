@@ -7,12 +7,12 @@ const humanoid_data_const = preload("humanoid_data.gd")
 var driver_node: Node = null
 
 @export var skeleton_path: NodePath = NodePath() :
-    set = set_skeleton_path
+	set = set_skeleton_path
 
  # (NodePath)var _skeleton_node: Skeleton3D = null
 
 @export var avatar_physics_path: NodePath = NodePath() :
-    set = set_avatar_physics_path
+	set = set_avatar_physics_path
 
  # (NodePath)var _avatar_physics_node: Node = get_node_or_null(avatar_physics_path)
 
@@ -23,7 +23,7 @@ var driver_node: Node = null
  # (NodePath)onready var _mouth_transform_node: Node3D = get_node_or_null(mouth_transform_node_path)
 
 var humanoid_data: HumanoidData = null :
-    set = set_humanoid_data
+	set = set_humanoid_data
 
 
 func _get_property_list() -> Array:
