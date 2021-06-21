@@ -26,19 +26,19 @@ static func create_pose_track_for_humanoid_bone(
 	if !p_skeleton or !p_humanoid_data:
 		return p_animation
 	
-	var bone_name: String = p_humanoid_data[p_humanoid_bone_name]
-	var bone_index: int = p_skeleton.find_bone(bone_name)
+	var humanoid_bone_name : String = p_humanoid_data.get(p_humanoid_bone_name)
+	var bone_index : int = p_skeleton.find_bone(humanoid_bone_name)
 	if bone_index == -1:
 		return p_animation
 	
 	var track_index = p_animation.add_track(Animation.TYPE_TRANSFORM)
-	
+	var bone_name : String = p_skeleton.get_bone_name(bone_index)
 	p_animation.track_set_path(track_index, p_base_path + ":" + bone_name)
 	p_animation.transform_track_insert_key(
 		track_index,
 		0.0,
 		Vector3(),
-		p_transform.basis.get_rotation_quat(),
+		p_transform.basis.get_rotation_quaternion(),
 		Vector3(1.0, 1.0, 1.0))
 		
 	p_animation.track_set_enabled(track_index, true)
@@ -51,7 +51,7 @@ static func create_animation_from_hand_pose(
 	p_root_node: Node,
 	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData,
-	p_hand_pose: hand_pose_const) -> Animation:
+	p_hand_pose: RefCounted) -> Animation:
 		
 	var animation: Animation = Animation.new()
 	animation.length = 0.001
@@ -89,7 +89,7 @@ static func setup_animation_from_hand_pose(
 	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData,
 	p_hand_pose_name: String,
-	p_hand_pose: hand_pose_const) -> void:
+	p_hand_pose: RefCounted) -> void:
 		
 	var animation: Animation = create_animation_from_hand_pose(
 		p_root_node,
@@ -171,13 +171,13 @@ static func setup_animation_tree_hand_blend_tree(
 	for digit in ["thumb", "index", "middle", "ring", "little"]:
 		for joint in ["proximal", "intermediate", "distal"]:
 			# Left
-			var left_bone_name: String = p_humanoid_data["%s_%s_left_bone_name" % [digit, joint]]
+			var left_bone_name: String = p_humanoid_data.get("%s_%s_left_bone_name" % [digit, joint])
 			var left_bone_index: int = p_skeleton.find_bone(left_bone_name)
 			if left_bone_index != -1:
 				var filter_path: String = base_path + ":" + left_bone_name
 				left_hand_blend.set_filter_path(filter_path, true)
 			# Right
-			var right_bone_name: String = p_humanoid_data["%s_%s_right_bone_name" % [digit, joint]]
+			var right_bone_name: String = p_humanoid_data.get("%s_%s_right_bone_name" % [digit, joint])
 			var right_bone_index: int = p_skeleton.find_bone(right_bone_name)
 			if right_bone_index != -1:
 				var filter_path: String = base_path + ":" + right_bone_name

@@ -107,7 +107,8 @@ func export_avatar_upload() -> void:
 #			printerr("Could not load VSKEditor!")
 #	else:
 #		printerr("Node is not valid!")
-		
+	pass
+
 func export_hand_pose(p_is_right_hand: bool) -> void:
 	if node and node is Node:
 		if p_is_right_hand:
@@ -218,7 +219,7 @@ func _save_file_at_path(p_path : String) -> void:
 			var humanoid_data: HumanoidData = node.humanoid_data
 			if skeleton and humanoid_data:
 				
-				var hand_pose: hand_pose_const = \
+				var hand_pose: RefCounted = \
 				hand_pose_exporter_const.generate_hand_pose_from_skeleton(
 					skeleton,
 					humanoid_data,
@@ -247,16 +248,15 @@ func update_menu_options() -> void:
 		options.get_popup().clear()
 		
 		options.get_popup().add_item("Setup Bones", MENU_OPTION_SETUP_BONES)
-		if VSKDebugManager.developer_mode:
-			options.get_popup().add_item("Save Left Hand Pose", MENU_OPTION_EXPORT_LEFT_HAND_POSE)
-			options.get_popup().add_item("Save Right Hand Pose", MENU_OPTION_EXPORT_RIGHT_HAND_POSE)
-			options.get_popup().add_item("Debug Bones", MENU_OPTION_DEBUG_BONES)
-			options.get_popup().add_item("Correct Bone Directions", MENU_OPTION_CORRECT_BONE_DIRECTIONS)
-			options.get_popup().add_item("Enforce Standard T-Pose", MENU_OPTION_ENFORCE_STANDARD_T_POSE)
-			options.get_popup().add_item("Enforce Strict T-Pose", MENU_OPTION_ENFORCE_STRICT_T_POSE)
-			options.get_popup().add_item("Fix All", MENU_OPTION_FIX_ALL)
 		options.get_popup().add_item("Export Avatar Locally", MENU_OPTION_EXPORT_AVATAR)
 		options.get_popup().add_item("Upload Avatar", MENU_OPTION_UPLOAD_AVATAR)
+		options.get_popup().add_item("Save Left Hand Pose (Debug)", MENU_OPTION_EXPORT_LEFT_HAND_POSE)
+		options.get_popup().add_item("Save Right Hand Pose (Debug)", MENU_OPTION_EXPORT_RIGHT_HAND_POSE)
+		options.get_popup().add_item("Debug Bones (Debug)", MENU_OPTION_DEBUG_BONES)
+		options.get_popup().add_item("Correct Bone Directions (Debug)", MENU_OPTION_CORRECT_BONE_DIRECTIONS)
+		options.get_popup().add_item("Enforce Standard T-Pose (Debug)", MENU_OPTION_ENFORCE_STANDARD_T_POSE)
+		options.get_popup().add_item("Enforce Strict T-Pose (Debug)", MENU_OPTION_ENFORCE_STRICT_T_POSE)
+		options.get_popup().add_item("Fix All (Debug)", MENU_OPTION_FIX_ALL)
 
 func _init(p_editor_plugin : EditorPlugin):
 	editor_plugin = p_editor_plugin
@@ -268,7 +268,7 @@ func _init(p_editor_plugin : EditorPlugin):
 	save_dialog.mode = FileDialog.MODE_SAVE_FILE
 	save_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	save_dialog.popup_exclusive = true
-	save_dialog.connect("file_selected", self, "_save_file_at_path")
+	save_dialog.connect("file_selected", Callable(self, "_save_file_at_path"))
 	add_child(save_dialog)
 	
 	var clear_icon: Texture = editor_plugin.get_editor_interface().get_base_control().get_icon("Clear", "EditorIcons")
@@ -283,5 +283,5 @@ func _init(p_editor_plugin : EditorPlugin):
 	editor_plugin.add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, options)
 	options.set_text("Avater Definition")
 	
-	options.get_popup().connect("id_pressed", self, "_menu_option")
+	options.get_popup().connect("id_pressed", Callable(self, "_menu_option"))
 	options.hide()
