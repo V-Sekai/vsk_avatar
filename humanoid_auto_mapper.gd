@@ -3,35 +3,35 @@ extends Node
 
 const humanoid_data_const = preload("humanoid_data.gd")
 
-const HIP_NAMES = PackedStringArray(["hips", "hip", "pelvis"])
-const SPINE_NAMES = PackedStringArray(["spine"])
-const CHEST_NAMES = PackedStringArray(["chest"])
-const NECK_NAMES = PackedStringArray(["neck", "collar"])
-const HEAD_NAMES = PackedStringArray(["head"])
-const EYE_NAMES = PackedStringArray(["eye"])
+var HIP_NAMES = PackedStringArray(["hips", "hip", "pelvis"])
+var SPINE_NAMES = PackedStringArray(["spine"])
+var CHEST_NAMES = PackedStringArray(["chest"])
+var NECK_NAMES = PackedStringArray(["neck", "collar"])
+var HEAD_NAMES = PackedStringArray(["head"])
+var EYE_NAMES = PackedStringArray(["eye"])
 
-const UPPER_NAMES = PackedStringArray(["up", "upper"])
-const LOWER_NAMES = PackedStringArray(["lower"])
+var UPPER_NAMES = PackedStringArray(["up", "upper"])
+var LOWER_NAMES = PackedStringArray(["lower"])
 
-const SHOULDER_NAMES = PackedStringArray(["shoulder", "clavicle"])
-const ARM_NAMES = PackedStringArray(["arm"])
-const UPPER_ARM_NAMES = PackedStringArray(["upperarm", "uparm", "bicep"])
-const LOWER_ARM_NAMES = PackedStringArray(["lowerarm", "forearm", "elbow"])
+var SHOULDER_NAMES = PackedStringArray(["shoulder", "clavicle"])
+var ARM_NAMES = PackedStringArray(["arm"])
+var UPPER_ARM_NAMES = PackedStringArray(["upperarm", "uparm", "bicep"])
+var LOWER_ARM_NAMES = PackedStringArray(["lowerarm", "forearm", "elbow"])
 
-const LEG_NAMES = PackedStringArray(["leg"])
-const UPPER_LEG_NAMES = PackedStringArray(["upleg", "upperleg", "thigh"])
-const LOWER_LEG_NAMES = PackedStringArray(["knee", "calf"])
+var LEG_NAMES = PackedStringArray(["leg"])
+var UPPER_LEG_NAMES = PackedStringArray(["upleg", "upperleg", "thigh"])
+var LOWER_LEG_NAMES = PackedStringArray(["knee", "calf"])
 
-const FOOT_NAMES = PackedStringArray(["foot", "ankle"])
-const TOE_NAMES = PackedStringArray(["toe"])
+var FOOT_NAMES = PackedStringArray(["foot", "ankle"])
+var TOE_NAMES = PackedStringArray(["toe"])
 
-const THUMB_NAMES = PackedStringArray(["thumb"])
-const INDEX_FINGER_NAMES = PackedStringArray(["index"])
-const MIDDLE_FINGER_NAMES = PackedStringArray(["middle"])
-const RING_FINGER_NAMES = PackedStringArray(["ring"])
-const PINKY_FINGER_NAMES = PackedStringArray(["pinky"])
+var THUMB_NAMES = PackedStringArray(["thumb"])
+var INDEX_FINGER_NAMES = PackedStringArray(["index"])
+var MIDDLE_FINGER_NAMES = PackedStringArray(["middle"])
+var RING_FINGER_NAMES = PackedStringArray(["ring"])
+var PINKY_FINGER_NAMES = PackedStringArray(["pinky"])
 
-const TWIST_BONE_NAME = PackedStringArray(["twist", "roll"])
+var TWIST_BONE_NAME = PackedStringArray(["twist", "roll"])
 
 static func get_sanitisied_bone_name_list(p_skeleton: Skeleton3D) -> PackedStringArray:
 	var sanitised_names: PackedStringArray = PackedStringArray()
@@ -56,8 +56,8 @@ class BoneInfo extends RefCounted:
 	var bone_length: float = 0.0
 	var bone_direction: Vector3 = Vector3()
 
-func gather_bone_info(p_skeleton: Skeleton3D) -> humanoid_data_const:
-	var humanoid_data: humanoid_data_const = humanoid_data_const.new()
+func gather_bone_info(p_skeleton: Skeleton3D) -> RefCounted:
+	var humanoid_data : RefCounted = humanoid_data_const.new()
 	var bone_info_list: Array = []
 
 	for i in range(0, p_skeleton.get_bone_count()):

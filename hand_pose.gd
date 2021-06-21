@@ -1,5 +1,5 @@
 @tool
-extends Resource
+extends RefCounted
 
 @export  var thumb_proximal: Transform3D = Transform3D()
  # (Transform)@export  var thumb_intermediate: Transform3D = Transform3D()

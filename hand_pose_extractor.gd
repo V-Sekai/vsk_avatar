@@ -17,9 +17,9 @@ static func get_transform_for_humanoid_bone(
 static func generate_hand_pose_from_skeleton(
 	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData,
-	p_right_hand: bool) -> hand_pose_const:
+	p_right_hand: bool) -> RefCounted:
 	
-	var hand_pose: hand_pose_const = hand_pose_const.new()
+	var hand_pose: RefCounted = hand_pose_const.new()
 	
 	if p_right_hand:
 		hand_pose.thumb_proximal = get_transform_for_humanoid_bone(

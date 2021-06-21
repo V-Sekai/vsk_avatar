@@ -1,6 +1,6 @@
 extends Node
 
-"""
+var docstring = """
 Based of Head.cpp from High Fidelity
 Copyright 2013 High Fidelity, Inc.
 
@@ -433,7 +433,6 @@ func update_eye_look_at() -> void:
 
 
 func cache_nodes() -> void:
-	.cache_nodes()
-
 	# Node caching
-	_avatar_display = get_node_or_null(avatar_display_path)
+#	_avatar_display = get_node_or_null(avatar_display_path)
+	pass

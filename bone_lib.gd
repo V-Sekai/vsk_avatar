@@ -1,7 +1,6 @@
 extends RefCounted
 
 const node_util_const = preload("res://addons/gd_util/node_util.gd")
-const humanoid_data_const = preload("res://addons/vsk_avatar/humanoid_data.gd")
 
 const NO_BONE = -1
 
@@ -38,16 +37,15 @@ static func get_bone_chain(p_skeleton: Skeleton3D, p_first: int, p_last: int) ->
 		while 1:
 			current_bone_index = p_skeleton.get_bone_parent(current_bone_index)
 			bone_chain.push_front(current_bone_index)
-			match current_bone_index:
-				p_first:
-					break
-				-1:
+			if current_bone_index == p_first:
+				break
+			elif current_bone_index == -1:
 					return PackedInt32Array()
 
 	return PackedInt32Array(bone_chain)
 
 static func get_internal_bone_name_for_humanoid_bone(
-	p_skeleton: Skeleton3D, p_humanoid_data: humanoid_data_const, p_bone_name: String
+	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_bone_name: String
 ) -> String:
 	if p_skeleton and p_humanoid_data:
 		var internal_bone_name: String = p_humanoid_data.get(p_bone_name)
@@ -56,7 +54,7 @@ static func get_internal_bone_name_for_humanoid_bone(
 	return ""
 
 static func get_bone_id_for_humanoid_bone(
-	p_skeleton: Skeleton3D, p_humanoid_data: humanoid_data_const, p_bone_name: String
+	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_bone_name: String
 ) -> int:
 	if p_skeleton and p_humanoid_data:
 		var internal_bone_name: String = get_internal_bone_name_for_humanoid_bone(
@@ -82,7 +80,7 @@ static func is_bone_parent_of_or_self(p_skeleton: Skeleton3D, p_parent_id: int, 
 	return is_bone_parent_of(p_skeleton, p_parent_id, p_child_id)
 
 static func rename_skeleton_to_humanoid_bones(
-	p_skeleton: Skeleton3D, p_humanoid_data: humanoid_data_const, p_skins: Array
+	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_skins: Array
 ) -> bool:
 	if p_skeleton == null or p_humanoid_data == null:
 		return false
@@ -102,7 +100,7 @@ static func rename_skeleton_to_humanoid_bones(
 		bone_parents.push_back(p_skeleton.get_bone_parent(i))
 
 	# Rename all the bones with the humanoid_mappings
-	for name in humanoid_data_const.skeleton_mappings:
+	for name in HumanoidData.skeleton_mappings:
 		var bone_id: int = get_bone_id_for_humanoid_bone(
 			p_skeleton, p_humanoid_data, "%s_bone_name" % name
 		)

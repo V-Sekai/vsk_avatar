@@ -25,7 +25,7 @@ static func fix_external_transform(p_root: Node, p_skeleton: Skeleton3D) -> int:
 				if ! skeleton_parent_array.has(child):
 					# Do not apply transform to skeleton's bone attachments
 					# but apply to its children
-					if child is BoneAttachment and child.get_parent() == p_skeleton:
+					if child is BoneAttachment3D and child.get_parent() == p_skeleton:
 						printerr("BoneAttachments are still funky, complain to Saracen!")
 						continue
 						

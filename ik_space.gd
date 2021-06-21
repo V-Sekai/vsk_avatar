@@ -22,25 +22,25 @@ const IK_POINT_RIGHT_HAND_BASIS_GLOBAL = Basis(Vector3(0.0, 0.707, -0.707), Vect
 
 const IK_HAND_OFFSET = Vector3(0.01, 0.014, 0.13) # Right hand
 
-enum ik_points {
-	HEAD_ID = 0,
-	LEFT_HAND_ID,
-	RIGHT_HAND_ID,
-	LEFT_FOOT_ID,
-	RIGHT_FOOT_ID,
-	HIPS_ID,
-	CHEST_ID
+var ik_points : Dictionary = {
+	"HEAD_ID": 0,
+	"LEFT_HAND_ID": 1,
+	"RIGHT_HAND_ID": 2,
+	"LEFT_FOOT_ID": 3,
+	"RIGHT_FOOT_ID": 4,
+	"HIPS_ID": 5,
+	"CHEST_ID": 6,
 }
 
 const MOCAP_RECORDING_ENABLED: bool = false
 
-const HEAD_BIT = (1 << ik_points.HEAD_ID)
-const LEFT_HAND_BIT = (1 << ik_points.LEFT_HAND_ID)
-const RIGHT_HAND_BIT = (1 << ik_points.RIGHT_HAND_ID)
-const LEFT_FOOT_BIT = (1 << ik_points.LEFT_FOOT_ID)
-const RIGHT_FOOT_BIT = (1 << ik_points.RIGHT_FOOT_ID)
-const HIPS_BIT = (1 << ik_points.HIPS_ID)
-const CHEST_BIT = (1 << ik_points.CHEST_ID)
+var HEAD_BIT = (1 << ik_points.HEAD_ID)
+var LEFT_HAND_BIT = (1 << ik_points.LEFT_HAND_ID)
+var RIGHT_HAND_BIT = (1 << ik_points.RIGHT_HAND_ID)
+var LEFT_FOOT_BIT = (1 << ik_points.LEFT_FOOT_ID)
+var RIGHT_FOOT_BIT = (1 << ik_points.RIGHT_FOOT_ID)
+var HIPS_BIT = (1 << ik_points.HIPS_ID)
+var CHEST_BIT = (1 << ik_points.CHEST_ID)
 
 var previous_external_mask: int = 0
 var current_external_mask: int = 0
@@ -116,8 +116,9 @@ func _create_output_trackers() -> void:
 		tracker_collection_output.right_foot_spatial = create_new_spatial_point("RightFootOutput", Transform3D(), true)
 				
 func _external_trackers_updated():
-	if NetworkManager.is_server():
-		_create_output_trackers()
+#	if NetworkManager.is_server():
+#		_create_output_trackers()
+	pass
 				
 func free_trackers() -> void:
 	if tracker_collection_input.head_spatial:
@@ -143,29 +144,30 @@ func update_trackers() -> void:
 	if is_network_master():
 		free_trackers()
 		
-		if VRManager.is_xr_active():
-			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform3D(Basis(), Vector3()), false)
-			
-			if VRManager.xr_origin.left_hand_controller:
-				tracker_collection_input.left_hand_spatial = create_new_spatial_point("LeftHandInput", Transform3D(Basis(), Vector3()), false)
-				
-			if VRManager.xr_origin.right_hand_controller:
-				tracker_collection_input.right_hand_spatial = create_new_spatial_point("RightHandInput", Transform3D(Basis(), Vector3()), false)
-				
-			if VRManager.xr_origin.connect("tracker_added", self, "_on_tracker_added") != OK:
-				printerr("Could not connect tracker_added!")
-			if VRManager.xr_origin.connect("tracker_removed", self, "_on_tracker_removed") != OK:
-				printerr("Could not connect tracker_removed!")
-			
-			update_local_transforms()
-			# Connect to the IK system
-		else:
-			if VRManager.xr_origin.is_connected("tracker_added", self, "_on_tracker_added"):
-				VRManager.xr_origin.disconnect("tracker_added", self, "_on_tracker_added")
-			if VRManager.xr_origin.is_connected("tracker_removed", self, "_on_tracker_removed"):
-				VRManager.xr_origin.disconnect("tracker_removed", self, "_on_tracker_removed")
-			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform3D(Basis(), Vector3()), false)
-				
+#		if VRManager.is_xr_active():
+#			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform3D(Basis(), Vector3()), false)
+#
+#			if VRManager.xr_origin.left_hand_controller:
+#				tracker_collection_input.left_hand_spatial = create_new_spatial_point("LeftHandInput", Transform3D(Basis(), Vector3()), false)
+#
+#			if VRManager.xr_origin.right_hand_controller:
+#				tracker_collection_input.right_hand_spatial = create_new_spatial_point("RightHandInput", Transform3D(Basis(), Vector3()), false)
+#
+#			if VRManager.xr_origin.connect("tracker_added", self, "_on_tracker_added") != OK:
+#				printerr("Could not connect tracker_added!")
+#			if VRManager.xr_origin.connect("tracker_removed", self, "_on_tracker_removed") != OK:
+#				printerr("Could not connect tracker_removed!")
+#
+#			update_local_transforms()
+#			# Connect to the IK system
+#		else:
+#			if VRManager.xr_origin.is_connected("tracker_added", self, "_on_tracker_added"):
+#				VRManager.xr_origin.disconnect("tracker_added", self, "_on_tracker_added")
+#			if VRManager.xr_origin.is_connected("tracker_removed", self, "_on_tracker_removed"):
+#				VRManager.xr_origin.disconnect("tracker_removed", self, "_on_tracker_removed")
+#			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform3D(Basis(), Vector3()), false)
+	pass
+	
 func update_ik_controller() -> void:
 	# This causes a memory a leak! Static memory is allocated and never released!
 	if _ren_ik:
@@ -216,11 +218,12 @@ func update_ik_controller() -> void:
 				_ren_ik.set_foot_right_target_path(NodePath())
 
 func _xr_mode_changed() -> void:
-	if !VRManager.xr_active:
-		pending_calibration = false
-		
-	update_trackers()
-	update_ik_controller()
+#	if !VRManager.xr_active:
+#		pending_calibration = false
+#
+#	update_trackers()
+#	update_ik_controller()
+	pass
 	
 func _request_vr_calibration() -> void:
 	if 1:
@@ -255,55 +258,57 @@ func create_new_spatial_point(p_name: String, p_transform: Transform3D, p_no_deb
 	return spatial
 
 func _on_tracker_added(p_tracker: Node3D) -> void:
-	var arvr_controller: ARVRController = p_tracker
-	
-	if arvr_controller:
-		var should_update_ik_controller: bool = false
-		print("Tracker added to IK space: %s" % p_tracker.get_name())
-		
-		var hand: int = arvr_controller.get_hand()
-		match hand:
-			ARVRPositionalTracker.TRACKER_LEFT_HAND:
-				if VRManager.xr_origin.left_hand_controller:
-					if tracker_collection_input.left_hand_spatial == null:
-						tracker_collection_input.left_hand_spatial = create_new_spatial_point("LeftHandInput", Transform3D(Basis(), Vector3()), false)
-						should_update_ik_controller = true
-			ARVRPositionalTracker.TRACKER_RIGHT_HAND:
-				if VRManager.xr_origin.right_hand_controller:
-					if tracker_collection_input.right_hand_spatial == null:
-						tracker_collection_input.right_hand_spatial = create_new_spatial_point("RightHandInput", Transform3D(Basis(), Vector3()), false)
-						should_update_ik_controller = true
-				
-		
-		if should_update_ik_controller:
-			update_ik_controller()
+#	var arvr_controller: ARVRController = p_tracker
+#
+#	if arvr_controller:
+#		var should_update_ik_controller: bool = false
+#		print("Tracker added to IK space: %s" % p_tracker.get_name())
+#
+#		var hand: int = arvr_controller.get_hand()
+#		match hand:
+#			ARVRPositionalTracker.TRACKER_LEFT_HAND:
+#				if VRManager.xr_origin.left_hand_controller:
+#					if tracker_collection_input.left_hand_spatial == null:
+#						tracker_collection_input.left_hand_spatial = create_new_spatial_point("LeftHandInput", Transform3D(Basis(), Vector3()), false)
+#						should_update_ik_controller = true
+#			ARVRPositionalTracker.TRACKER_RIGHT_HAND:
+#				if VRManager.xr_origin.right_hand_controller:
+#					if tracker_collection_input.right_hand_spatial == null:
+#						tracker_collection_input.right_hand_spatial = create_new_spatial_point("RightHandInput", Transform3D(Basis(), Vector3()), false)
+#						should_update_ik_controller = true
+#
+#
+#		if should_update_ik_controller:
+#			update_ik_controller()
+	pass
 
 func _on_tracker_removed(p_tracker: Node3D) -> void:
-	var arvr_controller: ARVRController = p_tracker
-	
-	if arvr_controller:
-		var should_update_ik_controller: bool = false
-		print("Tracker removed from IK space: %s" % p_tracker.get_name())
-		
-		var hand: int = arvr_controller.get_hand()
-		match hand:
-			ARVRPositionalTracker.TRACKER_LEFT_HAND:
-				if VRManager.xr_origin.left_hand_controller == null:
-					if tracker_collection_input.left_hand_spatial:
-						tracker_collection_input.left_hand_spatial.queue_free()
-						tracker_collection_input.left_hand_spatial.get_parent().remove_child(tracker_collection_input.left_hand_spatial)
-						tracker_collection_input.left_hand_spatial = null
-						should_update_ik_controller = true
-			ARVRPositionalTracker.TRACKER_RIGHT_HAND:
-				if VRManager.xr_origin.right_hand_controller == null:
-					if tracker_collection_input.right_hand_controller:
-						tracker_collection_input.right_hand_controller.queue_free()
-						tracker_collection_input.right_hand_controller.get_parent().remove_child(tracker_collection_input.right_hand_controller)
-						tracker_collection_input.right_hand_controller = null
-						should_update_ik_controller = true
-		
-		if should_update_ik_controller:
-			update_ik_controller()
+#	var arvr_controller: ARVRController = p_tracker
+#
+#	if arvr_controller:
+#		var should_update_ik_controller: bool = false
+#		print("Tracker removed from IK space: %s" % p_tracker.get_name())
+#
+#		var hand: int = arvr_controller.get_hand()
+#		match hand:
+#			ARVRPositionalTracker.TRACKER_LEFT_HAND:
+#				if VRManager.xr_origin.left_hand_controller == null:
+#					if tracker_collection_input.left_hand_spatial:
+#						tracker_collection_input.left_hand_spatial.queue_free()
+#						tracker_collection_input.left_hand_spatial.get_parent().remove_child(tracker_collection_input.left_hand_spatial)
+#						tracker_collection_input.left_hand_spatial = null
+#						should_update_ik_controller = true
+#			ARVRPositionalTracker.TRACKER_RIGHT_HAND:
+#				if VRManager.xr_origin.right_hand_controller == null:
+#					if tracker_collection_input.right_hand_controller:
+#						tracker_collection_input.right_hand_controller.queue_free()
+#						tracker_collection_input.right_hand_controller.get_parent().remove_child(tracker_collection_input.right_hand_controller)
+#						tracker_collection_input.right_hand_controller = null
+#						should_update_ik_controller = true
+#
+#		if should_update_ik_controller:
+#			update_ik_controller()
+	pass
 
 func update_external_transform(p_mask: int, p_transform_array: Array) -> void:
 	if is_inside_tree() and !is_network_master() and tracker_collection_input:
@@ -314,82 +319,79 @@ func update_external_transform(p_mask: int, p_transform_array: Array) -> void:
 		for i in range(0, ik_points.size()):
 			if current_external_mask & (1 << i):
 				var spatial: Node3D = null
-				match i:
-					ik_points.HEAD_ID:
+				if  i == ik_points.HEAD_ID:
 						spatial = tracker_collection_input.head_spatial
-					ik_points.LEFT_HAND_ID:
+				elif i == ik_points.LEFT_HAND_ID:
 						spatial = tracker_collection_input.left_hand_spatial
-					ik_points.RIGHT_HAND_ID:
+				elif i == ik_points.RIGHT_HAND_ID:
 						spatial = tracker_collection_input.right_hand_spatial
-					ik_points.LEFT_FOOT_ID:
+				elif i == ik_points.LEFT_FOOT_ID:
 						spatial = tracker_collection_input.left_foot_spatial
-					ik_points.RIGHT_FOOT_ID:
+				elif i == ik_points.RIGHT_FOOT_ID:
 						spatial = tracker_collection_input.right_foot_spatial
-					ik_points.HIPS_ID:
+				elif i == ik_points.HIPS_ID:
 						spatial = tracker_collection_input.hips_spatial
-					ik_points.CHEST_ID:
+				elif i == ik_points.CHEST_ID:
 						spatial = tracker_collection_input.chest_spatial
 						
 				if spatial == null:
 					var spatial_name: String = ""
-					match i:
-						ik_points.HEAD_ID:
+					if i == ik_points.HEAD_ID:
 							spatial_name = "HeadInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.head_spatial = spatial
-						ik_points.LEFT_HAND_ID:
+					elif i == ik_points.LEFT_HAND_ID:
 							spatial_name = "LeftHandInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.left_hand_spatial = spatial
-						ik_points.RIGHT_HAND_ID:
+					elif i == ik_points.RIGHT_HAND_ID:
 							spatial_name = "RightHandInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.right_hand_spatial = spatial
-						ik_points.LEFT_FOOT_ID:
+					elif i == ik_points.LEFT_FOOT_ID:
 							spatial_name = "LeftFootInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.left_foot_spatial = spatial
-						ik_points.RIGHT_FOOT_ID:
+					elif i == ik_points.RIGHT_FOOT_ID:
 							spatial_name = "RightFootInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.right_foot_spatial = spatial
-						ik_points.HIPS_ID:
+					elif i == ik_points.HIPS_ID:
 							spatial_name = "HipsInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.hips_spatial = spatial
-						ik_points.CHEST_ID:
+					elif i == ik_points.CHEST_ID:
 							spatial_name = "ChestInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.chest_spatial = spatial
 					spatial.set_transform(p_transform_array[i])
 				target_transforms[i] = p_transform_array[i]
 			else:
-				match i:
-					ik_points.HEAD_ID:
+				if i == ik_points.HEAD_ID:
 						if tracker_collection_input.head_spatial != null:
 							tracker_collection_input.head_spatial.queue_free()
 							tracker_collection_input.head_spatial = null
-					ik_points.LEFT_HAND_ID:
+				elif i == ik_points.LEFT_HAND_ID:
 						if tracker_collection_input.left_hand_spatial != null:
 							tracker_collection_input.left_hand_spatial.queue_free()
 							tracker_collection_input.left_hand_spatial = null
-					ik_points.RIGHT_HAND_ID:
+				elif i == ik_points.RIGHT_HAND_ID:
 						if tracker_collection_input.right_hand_spatial != null:
 							tracker_collection_input.right_hand_spatial.queue_free()
 							tracker_collection_input.right_hand_spatial = null
-					ik_points.LEFT_FOOT_ID:
+				elif i == ik_points.LEFT_FOOT_ID:
 						if tracker_collection_input.left_foot_spatial != null:
 							tracker_collection_input.left_foot_spatial.queue_free()
 							tracker_collection_input.left_foot_spatial = null
-					ik_points.RIGHT_FOOT_ID:
+				elif i == ik_points.RIGHT_FOOT_ID:
 						if tracker_collection_input.right_foot_spatial != null:
 							tracker_collection_input.right_foot_spatial.queue_free()
 							tracker_collection_input.right_foot_spatial = null
-					ik_points.HIPS_ID:
+				elif i == ik_points.HIPS_ID:
 						if tracker_collection_input.hips_spatial != null:
 							tracker_collection_input.hips_spatial.queue_free()
 							tracker_collection_input.hips_spatial = null
-					ik_points.CHEST_ID:
+				elif i == ik_points.CHEST_ID:
 						if tracker_collection_input.chest_spatial != null:
 							tracker_collection_input.chest_spatial.queue_free()
 							tracker_collection_input.chest_spatial = null
