@@ -1,5 +1,5 @@
 @tool
-class_name HumanoidData extends RefCounted
+class_name HumanoidData extends Resource
 
 
 var _skeleton_node: Skeleton3D = null
@@ -325,10 +325,10 @@ func is_skeleton_bone_empty(p_humanoid_bone_id: int) -> bool:
 
 func _validate_bone_name_property(p_property: Dictionary, p_hintstring: String) -> Dictionary:
 	if _skeleton_node:
-		p_property.hint = PROPERTY_HINT_ENUM
-		p_property.hint_string = p_hintstring
+		p_property["hint"] = PROPERTY_HINT_ENUM
+		p_property["hint_string"] = p_hintstring
 	else:
-		p_property.hint = PROPERTY_HINT_NONE
+		p_property["hint"] = PROPERTY_HINT_NONE
 
 	return p_property
 
