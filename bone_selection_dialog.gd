@@ -89,7 +89,7 @@ func update() -> void:
 	update_tree(tree, skeleton)
 
 
-func _about_to_show() -> void:
+func _about_to_popup() -> void:
 	filter_lineedit.text = ""
 	_filter_changed("")
 
@@ -101,7 +101,7 @@ func _notification(p_what: int) -> void:
 
 
 func _init(p_bone_icon: Texture, p_clear_icon: Texture):
-	connect("about_to_show", Callable(self, "_about_to_show"))
+	connect("about_to_popup", Callable(self, "_about_to_popup"))
 	connect("confirmed", Callable(self, "_confirmed"))
 
 	set_title("Select bone...")
@@ -118,7 +118,7 @@ func _init(p_bone_icon: Texture, p_clear_icon: Texture):
 	filter_lineedit = LineEdit.new()
 	filter_lineedit.set_h_size_flags(LineEdit.SIZE_EXPAND_FILL)
 	filter_lineedit.set_placeholder("Filter bones")
-	filter_lineedit.add_constant_override("minimum_spaces", 0)
+	filter_lineedit.add_theme_constant_override("minimum_spaces", 0)
 	filter_lineedit.connect("text_changed", Callable(self, "_filter_changed"))
 	vbox_container.add_child(filter_lineedit)
 

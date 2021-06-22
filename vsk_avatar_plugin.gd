@@ -18,31 +18,30 @@ func _notification(p_notification: int):
 			print("Destroying VSKAvatar plugin")
 
 
-func get_name() -> String:
+func _get_plugin_name() -> String:
 	return "VSKAvatar"
 
 func _enter_tree() -> void:
 	editor_interface = get_editor_interface()
 	avatar_definition_editor = avatar_definition_editor_const.new(self)
-	
-	editor_interface.get_editor_viewport().add_child(avatar_definition_editor)
+	editor_interface.get_viewport().call_deferred("add_child", avatar_definition_editor)
 	
 	avatar_definition_editor.options.hide()
 
 func _exit_tree() -> void:
 	avatar_definition_editor.queue_free()
 
-func edit(p_object : Object) -> void:
-	if p_object is Node and p_object.get_script() == avatar_definition_const:
+func _edit(p_object : Object) -> void:
+	if p_object is Node and typeof(p_object.get("skeleton_path")) == TYPE_NODE_PATH:
 		avatar_definition_editor.edit(p_object)
 
-func handles(p_object : Object) -> bool:
+func _handles(p_object : Object) -> bool:
 	if p_object.get_script() == avatar_definition_const:
 		return true
 	else:
 		return false
 
-func make_visible(p_visible : bool) -> void:
+func _make_visible(p_visible : bool) -> void:
 	if (p_visible):
 		if avatar_definition_editor:
 			if avatar_definition_editor.options:

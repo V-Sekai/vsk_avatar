@@ -90,7 +90,7 @@ func set_skeleton(p_skeleton: Skeleton3D) -> void:
 	bone_selection_dialog.set_skeleton(skeleton)
 
 
-func _about_to_show() -> void:
+func _about_to_popup() -> void:
 	update_all_buttons()
 
 
@@ -113,7 +113,7 @@ func selected(p_bone_name: String) -> void:
 func setup_list(p_tab: Control, p_bones: PackedStringArray, p_button_array: Array) -> void:
 	var vbox_container: VBoxContainer = VBoxContainer.new()
 	p_tab.add_child(vbox_container)
-	vbox_container.set_anchors_and_margins_preset(VBoxContainer.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
+	vbox_container.set_anchors_and_offsets_preset(VBoxContainer.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
 	vbox_container.size_flags_horizontal = VBoxContainer.SIZE_EXPAND_FILL
 
 	for i in range(0, p_bones.size()):
@@ -170,8 +170,8 @@ func update_all_buttons() -> void:
 
 
 func _ready() -> void:
-	if connect("about_to_show", Callable(self, "_about_to_show")) != OK:
-		printerr("Could not connect to about_to_show")
+	if connect("about_to_popup", Callable(self, "_about_to_popup")) != OK:
+		printerr("Could not connect to about_to_popup")
 
 	if bone_selection_dialog.connect("selected", Callable(self, "selected")) != OK:
 		printerr("Could not connect signal!")
@@ -215,13 +215,13 @@ func _init(p_bone_icon: Texture, p_clear_icon: Texture):
 	tab_container.add_child(left_hand_bone_control)
 	tab_container.add_child(right_hand_bone_control)
 
-	tab_container.set_anchors_and_margins_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
-	body_control.set_anchors_and_margins_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
-	head_control.set_anchors_and_margins_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
-	left_hand_bone_control.set_anchors_and_margins_preset(
+	tab_container.set_anchors_and_offsets_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
+	body_control.set_anchors_and_offsets_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
+	head_control.set_anchors_and_offsets_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
+	left_hand_bone_control.set_anchors_and_offsets_preset(
 		Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0
 	)
-	right_hand_bone_control.set_anchors_and_margins_preset(
+	right_hand_bone_control.set_anchors_and_offsets_preset(
 		Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0
 	)
 	

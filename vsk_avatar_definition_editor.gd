@@ -1,3 +1,4 @@
+@tool
 extends Control
 
 const avater_debug_const = preload("avatar_debug.gd")
@@ -240,7 +241,7 @@ func _save_file_at_path(p_path : String) -> void:
 func _notification(what):
 	match what:
 		NOTIFICATION_PREDELETE:
-			if editor_plugin:
+			if editor_plugin != null:
 				editor_plugin.remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, options)
 
 func update_menu_options() -> void:
@@ -263,25 +264,23 @@ func _init(p_editor_plugin : EditorPlugin):
 	
 	err_dialog = AcceptDialog.new()
 	add_child(err_dialog)
-	
 	save_dialog = FileDialog.new()
-	save_dialog.mode = FileDialog.MODE_SAVE_FILE
+	save_dialog.mode = FileDialog.FILE_MODE_SAVE_FILE
 	save_dialog.access = FileDialog.ACCESS_FILESYSTEM
-	save_dialog.popup_exclusive = true
+	save_dialog.exclusive = true
 	save_dialog.connect("file_selected", Callable(self, "_save_file_at_path"))
 	add_child(save_dialog)
 	
-	var clear_icon: Texture = editor_plugin.get_editor_interface().get_base_control().get_icon("Clear", "EditorIcons")
-	var bone_icon: Texture = editor_plugin.get_editor_interface().get_base_control().get_icon("BoneAttachment", "EditorIcons")
+	var clear_icon: Texture = editor_plugin.get_editor_interface().get_base_control().get_theme_icon("Clear", "EditorIcons")
+	var bone_icon: Texture = editor_plugin.get_editor_interface().get_base_control().get_theme_icon("BoneAttachment", "EditorIcons")
 	
 	bone_mapper_dialog = bone_mapper_dialog_const.new(bone_icon, clear_icon)
 	add_child(bone_mapper_dialog)
-	
+
 	options = MenuButton.new()
 	options.set_switch_on_hover(true)
-	
 	editor_plugin.add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, options)
-	options.set_text("Avater Definition")
+	options.set_text("Avatar Definition")
 	
 	options.get_popup().connect("id_pressed", Callable(self, "_menu_option"))
 	options.hide()
