@@ -170,10 +170,10 @@ func update_all_buttons() -> void:
 
 
 func _ready() -> void:
-	if connect("about_to_popup", Callable(self, "_about_to_popup")) != OK:
+	if connect("about_to_popup", Callable(self, "_about_to_popup")) & 0xffffffff != OK:
 		printerr("Could not connect to about_to_popup")
 
-	if bone_selection_dialog.connect("selected", Callable(self, "selected")) != OK:
+	if bone_selection_dialog.connect("selected", Callable(self, "selected")) & 0xffffffff != OK:
 		printerr("Could not connect signal!")
 
 

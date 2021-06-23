@@ -134,7 +134,7 @@ func error_callback(p_err: int) -> void:
 		
 		printerr(error_string)
 		err_dialog.set_text(error_string)
-		err_dialog.popup_centered_minsize()
+		err_dialog.popup_centered_clamped()
 
 
 func check_if_avatar_is_valid() -> bool:
@@ -232,7 +232,7 @@ func _save_file_at_path(p_path : String) -> void:
 						p_path,
 						hand_pose,
 						ResourceSaver.FLAG_RELATIVE_PATHS
-					) == OK:
+					) & 0xffffffff == OK:
 						
 						err = avatar_callback_const.AVATAR_OK
 						
