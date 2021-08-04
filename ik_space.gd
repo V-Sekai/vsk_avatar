@@ -5,16 +5,16 @@ signal external_trackers_changed
 const bone_lib_const = preload("res://addons/vsk_avatar/bone_lib.gd")
 
 @export var _player_input_path: NodePath = NodePath()
- # (NodePath)var _player_input_node: Node = null
+var _player_input_node: Node #  = get_node(_player_input_nodepath)
 
 @export var pin_at_world_origin : bool = false
 @export var debug_points : bool = false
 @export var origin_interpolation_factor: float = 0.0
- # (float)@export var rotation_interpolation_factor: float = 0.0
+@export var rotation_interpolation_factor: float = 0.0
  # (float)
 @export var _camera_controller_node_path: NodePath = NodePath()
- # (NodePath)@export var _ren_ik_path: NodePath = NodePath()
- # (NodePath)@export var _avatar_display_path: NodePath = NodePath()
+@export var _ren_ik_path: NodePath = NodePath()
+@export var _avatar_display_path: NodePath = NodePath()
  # (NodePath)
 const IK_POINT_HEAD_BASIS_GLOBAL = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, -1.0))
 const IK_POINT_LEFT_HAND_BASIS_GLOBAL = Basis(Vector3(0.0, -0.707, 0.707), Vector3(0.0, -0.707, -0.707), Vector3(1.0, 0.0, 0.0))
@@ -22,25 +22,24 @@ const IK_POINT_RIGHT_HAND_BASIS_GLOBAL = Basis(Vector3(0.0, 0.707, -0.707), Vect
 
 const IK_HAND_OFFSET = Vector3(0.01, 0.014, 0.13) # Right hand
 
-var ik_points : Dictionary = {
-	"HEAD_ID": 0,
-	"LEFT_HAND_ID": 1,
-	"RIGHT_HAND_ID": 2,
-	"LEFT_FOOT_ID": 3,
-	"RIGHT_FOOT_ID": 4,
-	"HIPS_ID": 5,
-	"CHEST_ID": 6,
-}
+class ik_points:
+	const HEAD_ID = 0
+	const LEFT_HAND_ID = 1
+	const RIGHT_HAND_ID = 2
+	const LEFT_FOOT_ID = 3
+	const RIGHT_FOOT_ID = 4
+	const HIPS_ID = 5
+	const CHEST_ID = 6
 
 const MOCAP_RECORDING_ENABLED: bool = false
 
-var HEAD_BIT = (1 << ik_points.HEAD_ID)
-var LEFT_HAND_BIT = (1 << ik_points.LEFT_HAND_ID)
-var RIGHT_HAND_BIT = (1 << ik_points.RIGHT_HAND_ID)
-var LEFT_FOOT_BIT = (1 << ik_points.LEFT_FOOT_ID)
-var RIGHT_FOOT_BIT = (1 << ik_points.RIGHT_FOOT_ID)
-var HIPS_BIT = (1 << ik_points.HIPS_ID)
-var CHEST_BIT = (1 << ik_points.CHEST_ID)
+const HEAD_BIT = (1 << ik_points.HEAD_ID)
+const LEFT_HAND_BIT = (1 << ik_points.LEFT_HAND_ID)
+const RIGHT_HAND_BIT = (1 << ik_points.RIGHT_HAND_ID)
+const LEFT_FOOT_BIT = (1 << ik_points.LEFT_FOOT_ID)
+const RIGHT_FOOT_BIT = (1 << ik_points.RIGHT_FOOT_ID)
+const HIPS_BIT = (1 << ik_points.HIPS_ID)
+const CHEST_BIT = (1 << ik_points.CHEST_ID)
 
 var previous_external_mask: int = 0
 var current_external_mask: int = 0
@@ -144,28 +143,28 @@ func update_trackers() -> void:
 	if is_network_master():
 		free_trackers()
 		
-#		if VRManager.is_xr_active():
-#			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform3D(Basis(), Vector3()), false)
-#
-#			if VRManager.xr_origin.left_hand_controller:
-#				tracker_collection_input.left_hand_spatial = create_new_spatial_point("LeftHandInput", Transform3D(Basis(), Vector3()), false)
-#
-#			if VRManager.xr_origin.right_hand_controller:
-#				tracker_collection_input.right_hand_spatial = create_new_spatial_point("RightHandInput", Transform3D(Basis(), Vector3()), false)
-#
-#			if VRManager.xr_origin.connect("tracker_added", self, "_on_tracker_added") != OK:
-#				printerr("Could not connect tracker_added!")
-#			if VRManager.xr_origin.connect("tracker_removed", self, "_on_tracker_removed") != OK:
-#				printerr("Could not connect tracker_removed!")
-#
-#			update_local_transforms()
-#			# Connect to the IK system
-#		else:
-#			if VRManager.xr_origin.is_connected("tracker_added", self, "_on_tracker_added"):
-#				VRManager.xr_origin.disconnect("tracker_added", self, "_on_tracker_added")
-#			if VRManager.xr_origin.is_connected("tracker_removed", self, "_on_tracker_removed"):
-#				VRManager.xr_origin.disconnect("tracker_removed", self, "_on_tracker_removed")
-#			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform3D(Basis(), Vector3()), false)
+		if VRManager.is_xr_active():
+			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform3D(Basis(), Vector3()), false)
+
+			if VRManager.xr_origin.left_hand_controller:
+				tracker_collection_input.left_hand_spatial = create_new_spatial_point("LeftHandInput", Transform3D(Basis(), Vector3()), false)
+
+			if VRManager.xr_origin.right_hand_controller:
+				tracker_collection_input.right_hand_spatial = create_new_spatial_point("RightHandInput", Transform3D(Basis(), Vector3()), false)
+
+			if VRManager.xr_origin.connect("tracker_added", self._on_tracker_added) != OK:
+				printerr("Could not connect tracker_added!")
+			if VRManager.xr_origin.connect("tracker_removed", self._on_tracker_removed) != OK:
+				printerr("Could not connect tracker_removed!")
+
+			update_local_transforms()
+			# Connect to the IK system
+		else:
+			if VRManager.xr_origin.is_connected("tracker_added", self._on_tracker_added):
+				VRManager.xr_origin.disconnect("tracker_added", self._on_tracker_added)
+			if VRManager.xr_origin.is_connected("tracker_removed", self._on_tracker_removed):
+				VRManager.xr_origin.disconnect("tracker_removed", self._on_tracker_removed)
+			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform3D(Basis(), Vector3()), false)
 	pass
 	
 func update_ik_controller() -> void:
@@ -258,56 +257,56 @@ func create_new_spatial_point(p_name: String, p_transform: Transform3D, p_no_deb
 	return spatial
 
 func _on_tracker_added(p_tracker: Node3D) -> void:
-#	var arvr_controller: ARVRController = p_tracker
-#
-#	if arvr_controller:
-#		var should_update_ik_controller: bool = false
-#		print("Tracker added to IK space: %s" % p_tracker.get_name())
-#
-#		var hand: int = arvr_controller.get_hand()
-#		match hand:
-#			ARVRPositionalTracker.TRACKER_LEFT_HAND:
-#				if VRManager.xr_origin.left_hand_controller:
-#					if tracker_collection_input.left_hand_spatial == null:
-#						tracker_collection_input.left_hand_spatial = create_new_spatial_point("LeftHandInput", Transform3D(Basis(), Vector3()), false)
-#						should_update_ik_controller = true
-#			ARVRPositionalTracker.TRACKER_RIGHT_HAND:
-#				if VRManager.xr_origin.right_hand_controller:
-#					if tracker_collection_input.right_hand_spatial == null:
-#						tracker_collection_input.right_hand_spatial = create_new_spatial_point("RightHandInput", Transform3D(Basis(), Vector3()), false)
-#						should_update_ik_controller = true
-#
-#
-#		if should_update_ik_controller:
-#			update_ik_controller()
+	var arvr_controller: XRController3D = p_tracker
+
+	if arvr_controller:
+		var should_update_ik_controller: bool = false
+		print("Tracker added to IK space: %s" % p_tracker.get_name())
+
+		var hand: int = arvr_controller.get_hand()
+		match hand:
+			XRPositionalTracker.TRACKER_HAND_LEFT:
+				if VRManager.xr_origin.left_hand_controller:
+					if tracker_collection_input.left_hand_spatial == null:
+						tracker_collection_input.left_hand_spatial = create_new_spatial_point("LeftHandInput", Transform3D(Basis(), Vector3()), false)
+						should_update_ik_controller = true
+			XRPositionalTracker.TRACKER_HAND_RIGHT:
+				if VRManager.xr_origin.right_hand_controller:
+					if tracker_collection_input.right_hand_spatial == null:
+						tracker_collection_input.right_hand_spatial = create_new_spatial_point("RightHandInput", Transform3D(Basis(), Vector3()), false)
+						should_update_ik_controller = true
+
+
+		if should_update_ik_controller:
+			update_ik_controller()
 	pass
 
 func _on_tracker_removed(p_tracker: Node3D) -> void:
-#	var arvr_controller: ARVRController = p_tracker
-#
-#	if arvr_controller:
-#		var should_update_ik_controller: bool = false
-#		print("Tracker removed from IK space: %s" % p_tracker.get_name())
-#
-#		var hand: int = arvr_controller.get_hand()
-#		match hand:
-#			ARVRPositionalTracker.TRACKER_LEFT_HAND:
-#				if VRManager.xr_origin.left_hand_controller == null:
-#					if tracker_collection_input.left_hand_spatial:
-#						tracker_collection_input.left_hand_spatial.queue_free()
-#						tracker_collection_input.left_hand_spatial.get_parent().remove_child(tracker_collection_input.left_hand_spatial)
-#						tracker_collection_input.left_hand_spatial = null
-#						should_update_ik_controller = true
-#			ARVRPositionalTracker.TRACKER_RIGHT_HAND:
-#				if VRManager.xr_origin.right_hand_controller == null:
-#					if tracker_collection_input.right_hand_controller:
-#						tracker_collection_input.right_hand_controller.queue_free()
-#						tracker_collection_input.right_hand_controller.get_parent().remove_child(tracker_collection_input.right_hand_controller)
-#						tracker_collection_input.right_hand_controller = null
-#						should_update_ik_controller = true
-#
-#		if should_update_ik_controller:
-#			update_ik_controller()
+	var arvr_controller: XRController3D = p_tracker
+
+	if arvr_controller:
+		var should_update_ik_controller: bool = false
+		print("Tracker removed from IK space: %s" % p_tracker.get_name())
+
+		var hand: int = arvr_controller.get_hand()
+		match hand:
+			XRPositionalTracker.TRACKER_HAND_LEFT:
+				if VRManager.xr_origin.left_hand_controller == null:
+					if tracker_collection_input.left_hand_spatial:
+						tracker_collection_input.left_hand_spatial.queue_free()
+						tracker_collection_input.left_hand_spatial.get_parent().remove_child(tracker_collection_input.left_hand_spatial)
+						tracker_collection_input.left_hand_spatial = null
+						should_update_ik_controller = true
+			XRPositionalTracker.TRACKER_HAND_RIGHT:
+				if VRManager.xr_origin.right_hand_controller == null:
+					if tracker_collection_input.right_hand_controller:
+						tracker_collection_input.right_hand_controller.queue_free()
+						tracker_collection_input.right_hand_controller.get_parent().remove_child(tracker_collection_input.right_hand_controller)
+						tracker_collection_input.right_hand_controller = null
+						should_update_ik_controller = true
+
+		if should_update_ik_controller:
+			update_ik_controller()
 	pass
 
 func update_external_transform(p_mask: int, p_transform_array: Array) -> void:
@@ -446,16 +445,16 @@ func update_local_transforms() -> void:
 
 	if tracker_collection_input:
 		if tracker_collection_input.head_spatial:
-			var camera: ARVRCamera3D = VRManager.xr_origin.get_node_or_null("ARVRCamera3D")
+			var camera: XRCamera3D = VRManager.xr_origin.get_node_or_null("ARVRCamera3D")
 			tracker_collection_input.head_spatial.transform = \
 			get_local_head_transform(camera, origin_offset, camera_offset)
 		
 		if tracker_collection_input.left_hand_spatial:
-			var controller: ARVRController = VRManager.xr_origin.left_hand_controller
+			var controller: XRController3D = VRManager.xr_origin.left_hand_controller
 			if controller:
 				tracker_collection_input.left_hand_spatial.transform = Transform3D().rotated(Vector3(0.0, 1.0, 0.0), PI) * Transform3D(controller.transform.basis, (controller.transform.origin + origin_offset - camera_offset)).translated(Vector3(-IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_LEFT_HAND_BASIS_GLOBAL)
 		if tracker_collection_input.right_hand_spatial:
-			var controller: ARVRController = VRManager.xr_origin.right_hand_controller
+			var controller: XRController3D = VRManager.xr_origin.right_hand_controller
 			if controller:
 				tracker_collection_input.right_hand_spatial.transform = Transform3D().rotated(Vector3(0.0, 1.0, 0.0), PI) * Transform3D(controller.transform.basis, (controller.transform.origin + origin_offset - camera_offset)).translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_RIGHT_HAND_BASIS_GLOBAL)
 			
@@ -593,7 +592,7 @@ func setup() -> void:
 			_ren_ik.enable_hip_placement(true)
 			_ren_ik.enable_foot_placement(true)
 		
-		set_as_toplevel(pin_at_world_origin)
+		top_level = pin_at_world_origin
 		set_transform(Transform3D())
 		
 		tracker_collection_input = TrackerCollection.new()
@@ -603,9 +602,9 @@ func setup() -> void:
 			
 			if !Engine.is_editor_hint():
 				if is_network_master():
-					assert(VRManager.connect("xr_mode_changed", self, "_xr_mode_changed") == OK)
-					assert(VRManager.connect("request_vr_calibration", self, "_request_vr_calibration") == OK)
-					assert(VRManager.connect("confirm_vr_calibration", self, "_confirm_vr_calibration") == OK)
+					assert(VRManager.connect("xr_mode_changed", self._xr_mode_changed) == OK)
+					assert(VRManager.connect("request_vr_calibration", self._request_vr_calibration) == OK)
+					assert(VRManager.connect("confirm_vr_calibration", self._confirm_vr_calibration) == OK)
 			
 			update_trackers()
 			update_ik_controller()
@@ -633,4 +632,4 @@ func _entity_ready():
 		ik_point_count -= 1
 	
 	if !Engine.is_editor_hint():
-		assert(connect("external_trackers_changed", self, "_external_trackers_updated", [], CONNECT_ONESHOT) == OK)
+		assert(connect("external_trackers_changed", self._external_trackers_updated, [], CONNECT_ONESHOT) == OK)

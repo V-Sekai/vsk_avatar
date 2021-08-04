@@ -3,16 +3,16 @@ extends Node
 const avatar_constants_const = preload("avatar_constants.gd")
 const bone_lib_const = preload("bone_lib.gd")
 
-static func find_mesh_instantiates_for_avatar_skeleton(p_node: Node, p_skeleton: Skeleton3D, p_valid_mesh_instantiates: Array) -> Array:
+static func find_mesh_instances_for_avatar_skeleton(p_node: Node, p_skeleton: Skeleton3D, p_valid_mesh_instances: Array) -> Array:
 	if p_skeleton and p_node is MeshInstance3D:
 		var skeleton: Node = p_node.get_node_or_null(p_node.skeleton)
 		if skeleton == p_skeleton:
-			p_valid_mesh_instantiates.push_back(p_node)
+			p_valid_mesh_instances.push_back(p_node)
 			
 	for child in p_node.get_children():
-		p_valid_mesh_instantiates = find_mesh_instantiates_for_avatar_skeleton(child, p_skeleton, p_valid_mesh_instantiates)
+		p_valid_mesh_instances = find_mesh_instances_for_avatar_skeleton(child, p_skeleton, p_valid_mesh_instances)
 	
-	return p_valid_mesh_instantiates
+	return p_valid_mesh_instances
 
 static func get_chain(
 	p_skeleton: Skeleton3D,

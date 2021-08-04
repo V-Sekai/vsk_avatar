@@ -79,7 +79,7 @@ func setup_bones_menu() -> int:
 	
 	bone_mapper_dialog.set_humanoid_data(node.humanoid_data)
 	bone_mapper_dialog.set_skeleton(node._skeleton_node)
-	bone_mapper_dialog.popup_centered()
+	bone_mapper_dialog.popup_centered_ratio() # Was without ratio but now broken
 	
 	return avatar_callback_const.AVATAR_OK
 

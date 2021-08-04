@@ -133,19 +133,19 @@ static func fix_rotations(p_root: Node3D, p_skeleton: Skeleton3D, p_humanoid_dat
 		p_skeleton.set_bone_pose(i, rotation_fix_data["bone_pose_roll_fixes"][i])
 		
 	# Fix to skins
-	var mesh_instantiates: Array = avatar_lib_const.find_mesh_instantiates_for_avatar_skeleton(p_root, p_root._skeleton_node, [])
+	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_root._skeleton_node, [])
 	var skins: Array = []
 	
-	for mesh_instantiate in mesh_instantiates:
-		if mesh_instantiate.skin:
-			skins.push_back(mesh_instantiate.skin.duplicate())
+	for mesh_instance in mesh_instances:
+		if mesh_instance.skin:
+			skins.push_back(mesh_instance.skin.duplicate())
 			
 		else:
 			skins.push_back(null)
 			
-	if skins.size() == mesh_instantiates.size():
-		for i in range(0, mesh_instantiates.size()):
-			mesh_instantiates[i].skin = skins[i]
+	if skins.size() == mesh_instances.size():
+		for i in range(0, mesh_instances.size()):
+			mesh_instances[i].skin = skins[i]
 	else:
 		return avatar_callback_const.SKIN_MESH_INSTANCE_SIZE_MISMATCH
 	
@@ -163,9 +163,9 @@ static func fix_rotations(p_root: Node3D, p_skeleton: Skeleton3D, p_humanoid_dat
 			
 			skin.set_bind_pose(bind_i, Transform3D(rotation_fix_data["bind_pose_fixes"][bone_index]) * skin.get_bind_pose(bind_i))
 	
-	if skins.size() == mesh_instantiates.size():
-		for i in range(0, mesh_instantiates.size()):
-			mesh_instantiates[i].skin = skins[i]
+	if skins.size() == mesh_instances.size():
+		for i in range(0, mesh_instances.size()):
+			mesh_instances[i].skin = skins[i]
 	else:
 		return avatar_callback_const.SKIN_MESH_INSTANCE_SIZE_MISMATCH
 	

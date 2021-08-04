@@ -21,7 +21,7 @@ var _avatar_physics_node: Node = get_node_or_null(avatar_physics_path)
 var _eye_transform_node: Node3D = get_node_or_null(eye_transform_node_path)
 
 @export var mouth_transform_node_path: NodePath = NodePath()
- # (NodePath)onready var _mouth_transform_node: Node3D = get_node_or_null(mouth_transform_node_path)
+ # @onready var _mouth_transform_node: Node3D = get_node_or_null(mouth_transform_node_path)
 
 var humanoid_data: HumanoidData = null :
 	set = set_humanoid_data

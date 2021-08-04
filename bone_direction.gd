@@ -121,10 +121,10 @@ static func _fortune_with_chains(
 	
 	return r_rest_bones
 
-static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instantiates: Array) -> void:
+static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> void:
 	print("bone_direction: _fix_meshes")
 	
-	for mi in p_mesh_instantiates:
+	for mi in p_mesh_instances:
 		var skin: Skin = mi.get_skin();
 		if skin == null:
 			continue
@@ -207,5 +207,5 @@ static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: 
 		p_skeleton.set_bone_rest(i, p_skeleton.get_bone_rest(i) * offsets["base_pose_offsets"][i])
 	
 	# Correct the bind poses
-	var mesh_instantiates: Array = avatar_lib_const.find_mesh_instantiates_for_avatar_skeleton(p_root, p_skeleton, [])
-	_fix_meshes(offsets["bind_pose_offsets"], mesh_instantiates)
+	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])
+	_fix_meshes(offsets["bind_pose_offsets"], mesh_instances)

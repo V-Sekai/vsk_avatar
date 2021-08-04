@@ -11,10 +11,10 @@ const external_transform_fixer_const = preload("external_transform_fixer.gd")
 
 const avatar_callback_const = preload("avatar_callback.gd")
 
-static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instantiates: Array) -> void:
+static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> void:
 	print("bone_direction: _fix_meshes")
 	
-	for mi in p_mesh_instantiates:
+	for mi in p_mesh_instances:
 		var skin: Skin = mi.get_skin();
 		if skin == null:
 			continue
@@ -78,8 +78,8 @@ static func fix_avatar(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: Hu
 		final_bind_pose.append(rotation_fix_data["bind_pose_fixes"][i] * fortune_offsets["bind_pose_offsets"][i])
 
 	# Search for all mesh instances with the associated skeleton and apply the bind pose fix to their respective meshes
-	var mesh_instantiates: Array = avatar_lib_const.find_mesh_instantiates_for_avatar_skeleton(p_root, p_skeleton, [])
-	_fix_meshes(final_bind_pose, mesh_instantiates)
+	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])
+	_fix_meshes(final_bind_pose, mesh_instances)
 
 	# Apply the inverse transform of any nodes between the skeleton and the root node to fix any models
 	err = external_transform_fixer_const.fix_external_transform(p_root, p_skeleton)
