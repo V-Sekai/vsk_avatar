@@ -101,7 +101,8 @@ func resize_local_transform_cache(p_size) -> void:
 var eye_offset: Vector3 = Vector3()
 var mouth_offset: Vector3 = Vector3()
 
-const gizmo_reference_const = preload("res://addons/vsk_avatar/gizmo_reference.tscn")
+# const gizmo_reference_const = preload("res://addons/vsk_avatar/gizmo_reference.tscn")
+var gizmo_reference_const = load("res://addons/vsk_avatar/gizmo_reference.tscn")
 	
 func _create_output_trackers() -> void:
 	if ! tracker_collection_output:

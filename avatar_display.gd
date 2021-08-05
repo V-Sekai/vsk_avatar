@@ -9,7 +9,7 @@ const avatar_definition_const = preload("vsk_avatar_definition.gd")
 const avatar_definition_runtime_const = preload("vsk_avatar_definition_runtime.gd")
 
 const humanoid_data_const = preload("humanoid_data.gd")
-const gizmo_reference_const = preload("gizmo_reference.tscn")
+# const gizmo_reference_const = preload("gizmo_reference.tscn")
 
 const attachment_point_3d_const = preload("res://addons/entity_manager/attachment_point_3d.gd")
 const vr_constants_const = preload("res://addons/sar1_vr_manager/vr_constants.gd")
@@ -183,9 +183,10 @@ func create_bone_attachments() -> void:
 	add_child(right_hand_bone_attachment)
 
 	if VISUALISE_ATTACHMENTS:
-		head_bone_attachment.add_child(gizmo_reference_const.instantiate())
-		left_hand_bone_attachment.add_child(gizmo_reference_const.instantiate())
-		right_hand_bone_attachment.add_child(gizmo_reference_const.instantiate())
+		var gizmo_reference_scene = load("res://addons/vsk_avatar/gizmo_reference.tscn")
+		head_bone_attachment.add_child(gizmo_reference_scene.instantiate())
+		left_hand_bone_attachment.add_child(gizmo_reference_scene.instantiate())
+		right_hand_bone_attachment.add_child(gizmo_reference_scene.instantiate())
 
 func assign_ik_bone_assignments(
 	p_ren_ik_node: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData
