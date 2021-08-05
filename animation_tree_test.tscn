@@ -1,55 +1,162 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=9 format=3 uid="uid://bo26j15q6it62"]
 
-[ext_resource path="res://addons/vsk_avatar/import/animations/xbot_animations.gltf" type="PackedScene" id=1]
-[ext_resource path="res://addons/vsk_avatar/animation/default_avatar_tree.tres" type="AnimationNodeBlendTree" id=2]
-[ext_resource path="res://addons/vsk_avatar/avatar_default_driver.gd" type="Script" id=3]
-[ext_resource path="res://addons/vsk_avatar/humanoid_data.gd" type="Script" id=4]
-[ext_resource path="res://addons/vsk_avatar/vsk_avatar_definition.gd" type="Script" id=5]
+[ext_resource type="PackedScene" uid="uid://cehyoeokgdutf" path="res://addons/vsk_avatar/import/animations/xbot_animations.gltf" id="1"]
+[ext_resource type="AnimationNodeBlendTree" uid="uid://ctxvockyck2j8" path="res://addons/vsk_avatar/animation/default_avatar_tree.tres" id="2"]
+[ext_resource type="Script" path="res://addons/vsk_avatar/avatar_default_driver.gd" id="3"]
+[ext_resource type="Script" path="res://addons/vsk_avatar/humanoid_data.gd" id="4"]
+[ext_resource type="Script" path="res://addons/vsk_avatar/vsk_avatar_definition.gd" id="5"]
 
-[sub_resource type="Resource" id=1]
-script = ExtResource( 4 )
+[sub_resource type="Resource" id="1"]
+script = ExtResource( "4" )
+head_bone_name = ""
+neck_bone_name = ""
+shoulder_left_bone_name = ""
+upper_arm_left_bone_name = ""
+forearm_left_bone_name = ""
+hand_left_bone_name = ""
+shoulder_right_bone_name = ""
+upper_arm_right_bone_name = ""
+forearm_right_bone_name = ""
+hand_right_bone_name = ""
+spine_bone_name = ""
+chest_bone_name = ""
+upper_chest_bone_name = ""
+hips_bone_name = ""
+thigh_left_bone_name = ""
+shin_left_bone_name = ""
+foot_left_bone_name = ""
+toe_left_bone_name = ""
+thigh_right_bone_name = ""
+shin_right_bone_name = ""
+foot_right_bone_name = ""
+toe_right_bone_name = ""
+thumb_proximal_left_bone_name = ""
+thumb_intermediate_left_bone_name = ""
+thumb_distal_left_bone_name = ""
+index_proximal_left_bone_name = ""
+index_intermediate_left_bone_name = ""
+index_distal_left_bone_name = ""
+middle_proximal_left_bone_name = ""
+middle_intermediate_left_bone_name = ""
+middle_distal_left_bone_name = ""
+ring_proximal_left_bone_name = ""
+ring_intermediate_left_bone_name = ""
+ring_distal_left_bone_name = ""
+little_proximal_left_bone_name = ""
+little_intermediate_left_bone_name = ""
+little_distal_left_bone_name = ""
+thumb_proximal_right_bone_name = ""
+thumb_intermediate_right_bone_name = ""
+thumb_distal_right_bone_name = ""
+index_proximal_right_bone_name = ""
+index_intermediate_right_bone_name = ""
+index_distal_right_bone_name = ""
+middle_proximal_right_bone_name = ""
+middle_intermediate_right_bone_name = ""
+middle_distal_right_bone_name = ""
+ring_proximal_right_bone_name = ""
+ring_intermediate_right_bone_name = ""
+ring_distal_right_bone_name = ""
+little_proximal_right_bone_name = ""
+little_intermediate_right_bone_name = ""
+little_distal_right_bone_name = ""
+eye_left_bone_name = ""
+eye_right_bone_name = ""
+jaw_bone_name = ""
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=2]
+[sub_resource type="AnimationNodeStateMachinePlayback" id="2"]
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=3]
+[sub_resource type="AnimationNodeStateMachinePlayback" id="3"]
 
 [node name="AnimationTreeTest" type="Node3D"]
-script = ExtResource( 5 )
+script = ExtResource( "5" )
 skeleton_path = NodePath("xbot_animations/Armature/Skeleton")
 database_id = ""
-vskeditor_preview_type = "Camera"
+vskeditor_preview_type = null
 vskeditor_preview_texture = null
-vskeditor_preview_camera_path = NodePath("")
-vskeditor_pipeline_paths = []
-humanoid_data = SubResource( 1 )
+vskeditor_preview_camera_path = null
+vskeditor_pipeline_paths = null
+humanoid_data = SubResource( "1" )
 
-[node name="xbot_animations" parent="." instance=ExtResource( 1 )]
+[node name="xbot_animations" parent="." instance=ExtResource( "1" )]
 
 [node name="Skeleton3D" parent="xbot_animations/Armature" index="0"]
-bones/0/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/1/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/4/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/9/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/10/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/13/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/16/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/33/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/34/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/56/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/57/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/61/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/63/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-bones/66/pose = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/0/pose = Transform3D(1, 5.78426e-14, 2.22806e-42, -5.78426e-14, 1, 0, -2.22806e-42, 0, 1, 0, 0, 0)
+bones/1/pose = Transform3D(1, -1.84075e-13, -8.4377e-15, 1.84075e-13, 1, 7.45058e-09, 8.43769e-15, -7.45058e-09, 1, 0, 0, 0)
+bones/2/pose = Transform3D(1, -2.7478e-15, 4.44089e-16, 2.7478e-15, 1, 1.92285e-30, -4.44089e-16, -7.02579e-31, 1, 0, 0, 0)
+bones/3/pose = Transform3D(1, 1.39721e-15, 1.98556e-29, -1.39721e-15, 1, 1.42109e-14, 0, -1.42109e-14, 1, 0, 0, 0)
+bones/4/pose = Transform3D(1, 4.91279e-20, -6.77627e-21, -4.91279e-20, 1, -8.9407e-08, 6.77626e-21, 8.9407e-08, 1, 0, 0, 0)
+bones/5/pose = Transform3D(1, -4.76456e-21, 8.47033e-22, 4.76456e-21, 1, 1.49012e-08, -8.47033e-22, -1.49012e-08, 1, 0, 0, 0)
+bones/6/pose = Transform3D(1, -1.965e-28, 0, 1.965e-28, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/7/pose = Transform3D(1, -7.31662e-28, 0, 7.31662e-28, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/8/pose = Transform3D(1, -7.31662e-28, 0, 7.31662e-28, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/9/pose = Transform3D(1, 2.98023e-08, -3.72529e-09, -2.98023e-08, 1, 6.51926e-09, 3.72529e-09, -6.51926e-09, 1, 0, 0, 0)
+bones/10/pose = Transform3D(1, -1.21072e-08, 9.86624e-18, 1.21072e-08, 1, -2.32831e-09, 1.8323e-17, 2.32831e-09, 1, 0, 0, 0)
+bones/11/pose = Transform3D(1, 3.53623e-15, 0, -3.53623e-15, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/12/pose = Transform3D(1, 1.41583e-14, 0, -1.41583e-14, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/13/pose = Transform3D(1, 4.47035e-08, -1.19209e-07, -4.47035e-08, 1, 2.98023e-08, 1.19209e-07, -2.98023e-08, 1, 0, 0, 0)
+bones/14/pose = Transform3D(1, -7.62043e-13, -1.81899e-12, 7.62043e-13, 1, -4.54747e-13, 1.81899e-12, 4.54747e-13, 1, 0, 0, 0)
+bones/15/pose = Transform3D(1, 1.1074e-13, -1.42109e-14, -1.1074e-13, 1, -2.27374e-13, 1.42109e-14, 2.27374e-13, 1, 0, 0, 0)
+bones/16/pose = Transform3D(1, 2.23517e-08, 3.72529e-08, -2.23517e-08, 1, 2.98023e-08, -3.72529e-08, -2.98023e-08, 1, 0, 0, 0)
+bones/17/pose = Transform3D(1, 4.4616e-13, -9.09495e-13, -4.4616e-13, 1, 2.27374e-13, 9.09495e-13, -2.27374e-13, 1, 0, 0, 0)
+bones/18/pose = Transform3D(1, 2.16938e-13, 0, -2.16938e-13, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/19/pose = Transform3D(1, -1.56721e-12, 0, 1.56721e-12, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/20/pose = Transform3D(1, -9.09495e-13, -7.62487e-13, 9.09495e-13, 1, -9.09495e-13, 7.62487e-13, 9.09495e-13, 1, 0, 0, 0)
+bones/21/pose = Transform3D(1, -4.30382e-21, 0, 4.30382e-21, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/22/pose = Transform3D(1, -2.41721e-14, 0, 2.41721e-14, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/23/pose = Transform3D(1, -1.08226e-13, 0, 1.08226e-13, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/24/pose = Transform3D(1, -4.78894e-26, 2.1062e-13, 0, 1, 2.27374e-13, -2.1062e-13, -2.27374e-13, 1, 0, 0, 0)
+bones/25/pose = Transform3D(1, 9.58289e-22, 0, -9.58289e-22, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/26/pose = Transform3D(1, 3.09891e-14, 0, -3.09891e-14, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/27/pose = Transform3D(1, 1.41458e-14, 0, -1.41458e-14, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/28/pose = Transform3D(1, 0, 7.63278e-17, 0, 1, 0, -7.63278e-17, 0, 1, 0, 0, 0)
+bones/29/pose = Transform3D(1, 1.2904e-21, -2.23849e-39, -1.2904e-21, 1, -1.73472e-18, 0, 1.73472e-18, 1, 0, 0, 0)
+bones/30/pose = Transform3D(1, 3.98848e-14, 0, -3.98848e-14, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/31/pose = Transform3D(1, -2.34882e-13, 0, 2.34882e-13, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/32/pose = Transform3D(1, 0, -8.07632e-13, 0, 1, 0, 8.07632e-13, 0, 1, 0, 0, 0)
+bones/33/pose = Transform3D(1, 1.73472e-18, -3.72529e-09, 1.73472e-18, 1, 9.31323e-10, 3.72529e-09, -9.31323e-10, 1, 0, 0, 0)
+bones/34/pose = Transform3D(1, 7.85804e-09, -2.98023e-08, -7.85803e-09, 1, 2.32831e-10, 2.98023e-08, -2.32831e-10, 1, 0, 0, 0)
+bones/35/pose = Transform3D(1, -1.94818e-14, 0, 1.94818e-14, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/36/pose = Transform3D(1, 5.57432e-18, 0, -5.57432e-18, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/37/pose = Transform3D(1, -3.89085e-13, 0, 3.89085e-13, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/38/pose = Transform3D(1, 1.22503e-13, 0, -1.22503e-13, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/39/pose = Transform3D(1, 2.77542e-13, 0, -2.77542e-13, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/40/pose = Transform3D(1, -1.25483e-28, 1.76601e-14, -1.25483e-28, 1, 1.42109e-14, -1.76601e-14, -1.42109e-14, 1, 0, 0, 0)
+bones/41/pose = Transform3D(1, 2.16355e-13, 0, -2.16355e-13, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/42/pose = Transform3D(1, -6.96582e-13, 0, 6.96582e-13, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/43/pose = Transform3D(1, -3.90202e-13, 0, 3.90202e-13, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/44/pose = Transform3D(1, 0, -3.82784e-14, 0, 1, 0, 3.82784e-14, 0, 1, 0, 0, 0)
+bones/45/pose = Transform3D(1, 2.98447e-21, 5.17723e-39, -2.98447e-21, 1, 1.73472e-18, 0, -1.73472e-18, 1, 0, 0, 0)
+bones/46/pose = Transform3D(1, -1.63508e-16, 0, 1.63508e-16, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/47/pose = Transform3D(1, -5.32796e-13, 0, 5.32796e-13, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/48/pose = Transform3D(1, 0, -6.86229e-13, 0, 1, 0, 6.86229e-13, 0, 1, 0, 0, 0)
+bones/49/pose = Transform3D(1, 2.3702e-13, 0, -2.3702e-13, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/50/pose = Transform3D(1, 5.34295e-15, 0, -5.34295e-15, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/51/pose = Transform3D(1, -9.89486e-15, 0, 9.89486e-15, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/52/pose = Transform3D(1, 3.3668e-38, -1.92402e-13, 3.3668e-38, 1, 3.49977e-25, 1.92402e-13, -3.49977e-25, 1, 0, 0, 0)
+bones/53/pose = Transform3D(1, -1.49012e-08, -8.9407e-08, 1.49012e-08, 1, -3.77476e-15, 8.9407e-08, 2.44249e-15, 1, 0, 0, 0)
+bones/54/pose = Transform3D(1, -4.30697e-14, -9.79292e-27, 4.30697e-14, 1, 2.27374e-13, 0, -2.27374e-13, 1, 0, 0, 0)
+bones/55/pose = Transform3D(1, -2.94931e-13, -2.68238e-25, 2.94931e-13, 1, 9.09495e-13, 0, -9.09495e-13, 1, 0, 0, 0)
+bones/56/pose = Transform3D(1, -3.72529e-08, 2.23517e-08, 3.72529e-08, 1, 5.29396e-23, -2.23517e-08, 8.32667e-16, 1, 0, 0, 0)
+bones/57/pose = Transform3D(1, 2.84217e-14, 4.54747e-13, -2.84217e-14, 1, -1.86265e-09, -4.54747e-13, 1.86265e-09, 1, 0, 0, 0)
+bones/59/pose = Transform3D(1, -1.69407e-21, 5.68434e-14, 0, 1, 2.98023e-08, -5.68434e-14, -2.98023e-08, 1, 0, 0, 0)
+bones/60/pose = Transform3D(1, 8.47033e-22, -5.68434e-14, 8.47033e-22, 1, 2.98023e-08, 5.68434e-14, -2.98023e-08, 1, 0, 0, 0)
+bones/61/pose = Transform3D(1, 1.13687e-13, -1.21104e-14, -1.13687e-13, 1, -7.27596e-12, 1.21104e-14, 7.27596e-12, 1, 0, 0, 0)
+bones/62/pose = Transform3D(1, -7.10543e-15, 0, 7.10543e-15, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/63/pose = Transform3D(1, 7.10543e-15, 0, -7.10543e-15, 1, 0, 0, 0, 1, 0, 0, 0)
+bones/64/pose = Transform3D(1, 1.77636e-14, 1.42109e-14, -1.77636e-14, 1, 2.01948e-28, -1.42109e-14, -4.54384e-28, 1, 0, 0, 0)
+bones/65/pose = Transform3D(1, 1.69407e-21, -5.68434e-14, 0, 1, 2.98023e-08, 5.68434e-14, -2.98023e-08, 1, 0, 0, 0)
+bones/66/pose = Transform3D(1, -1.1368e-13, -5.91792e-14, 1.1368e-13, 1, -3.63798e-12, 5.91792e-14, 3.63798e-12, 1, 0, 0, 0)
 
 [node name="AnimationPlayer" parent="xbot_animations" index="1"]
 blend_times = []
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
-tree_root = ExtResource( 2 )
+tree_root = ExtResource( "2" )
 anim_player = NodePath("../xbot_animations/AnimationPlayer")
 active = true
 parameters/LeftHandBlend/blend_amount = 1.0
-parameters/LeftHandStateMachine/playback = SubResource( 2 )
+parameters/LeftHandStateMachine/playback = SubResource( "2" )
 parameters/LeftHandStateMachine/conditions/fist = false
 parameters/LeftHandStateMachine/conditions/gun = false
 parameters/LeftHandStateMachine/conditions/neutral = false
@@ -59,7 +166,7 @@ parameters/LeftHandStateMachine/conditions/point = false
 parameters/LeftHandStateMachine/conditions/thumbs_up = false
 parameters/LeftHandStateMachine/conditions/victory = false
 parameters/RightHandBlend/blend_amount = 1.0
-parameters/RightHandStateMachine/playback = SubResource( 3 )
+parameters/RightHandStateMachine/playback = SubResource( "3" )
 parameters/RightHandStateMachine/conditions/fist = false
 parameters/RightHandStateMachine/conditions/gun = false
 parameters/RightHandStateMachine/conditions/neutral = false
@@ -71,7 +178,7 @@ parameters/RightHandStateMachine/conditions/victory = false
 script = null
 
 [node name="AnimationTreeDriver" type="Node" parent="."]
-script = ExtResource( 3 )
+script = ExtResource( "3" )
 anim_tree = NodePath("../AnimationTree")
 
 [node name="Camera" type="Camera3D" parent="."]

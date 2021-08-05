@@ -1,11 +1,16 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://brbjttl8s6fh0"]
 
-[ext_resource path="res://addons/vsk_avatar/import/error_handlers/avatar_forbidden.glb" type="PackedScene" id=1]
-[ext_resource path="res://addons/vsk_avatar/vsk_avatar_definition.gd" type="Script" id=2]
+[ext_resource type="PackedScene" uid="uid://bkwkmj5178kow" path="res://addons/vsk_avatar/import/error_handlers/avatar_forbidden.glb" id="1"]
+[ext_resource type="Script" path="res://addons/vsk_avatar/vsk_avatar_definition.gd" id="2"]
 
-[node name="Avatar" type="Spatial"]
-script = ExtResource( 2 )
+[node name="Avatar" type="Node3D"]
+script = ExtResource( "2" )
+database_id = ""
+vskeditor_preview_type = null
+vskeditor_preview_texture = null
+vskeditor_preview_camera_path = null
+vskeditor_pipeline_paths = null
 humanoid_data = null
 
-[node name="avatar_forbidden" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
+[node name="avatar_forbidden" parent="." instance=ExtResource( "1" )]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)

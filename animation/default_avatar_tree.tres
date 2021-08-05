@@ -1,6 +1,6 @@
-[gd_resource type="AnimationNodeBlendTree" load_steps=5 format=3]
+[gd_resource type="AnimationNodeBlendTree" load_steps=5 format=3 uid="uid://ctxvockyck2j8"]
 
-[ext_resource path="res://addons/vsk_avatar/animation/default_avatar_hand_state_machine.tres" type="AnimationNodeStateMachine" id="1"]
+[ext_resource type="AnimationNodeStateMachine" uid="uid://duvrf0dgkmqkn" path="res://addons/vsk_avatar/animation/default_avatar_hand_state_machine.tres" id="1"]
 
 [sub_resource type="AnimationNodeAnimation" id="1"]
 filters = []
@@ -27,4 +27,4 @@ nodes/RightHandBlend/position = Vector2(400, 80)
 nodes/RightHandStateMachine/node = ExtResource( "1" )
 nodes/RightHandStateMachine/position = Vector2(0, 400)
 nodes/output/position = Vector2(800, 120)
-node_connections = [&"output", 0, &"RightHandBlend", &"RightHandBlend", 0, &"LeftHandBlend", &"RightHandBlend", 1, &"RightHandStateMachine", &"LeftHandBlend", 0, &"Animation", &"LeftHandBlend", 1, &"LeftHandStateMachine"]
+node_connections = [&"LeftHandBlend", 0, &"Animation", &"LeftHandBlend", 1, &"LeftHandStateMachine", &"RightHandBlend", 0, &"LeftHandBlend", &"RightHandBlend", 1, &"RightHandStateMachine", &"output", 0, &"RightHandBlend"]

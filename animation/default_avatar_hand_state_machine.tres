@@ -1,4 +1,4 @@
-[gd_resource type="AnimationNodeStateMachine" load_steps=72 format=3]
+[gd_resource type="AnimationNodeStateMachine" load_steps=72 format=3 uid="uid://duvrf0dgkmqkn"]
 
 [sub_resource type="AnimationNodeAnimation" id="1"]
 filters = []
