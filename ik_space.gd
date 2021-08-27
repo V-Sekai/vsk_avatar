@@ -30,6 +30,8 @@ class ik_points:
 	const RIGHT_FOOT_ID = 4
 	const HIPS_ID = 5
 	const CHEST_ID = 6
+	static func size():
+		return 7
 
 const MOCAP_RECORDING_ENABLED: bool = false
 
@@ -446,7 +448,7 @@ func update_local_transforms() -> void:
 
 	if tracker_collection_input:
 		if tracker_collection_input.head_spatial:
-			var camera: XRCamera3D = VRManager.xr_origin.get_node_or_null("ARVRCamera3D")
+			var camera: XRCamera3D = VRManager.xr_origin.get_node_or_null("ARVRCamera")
 			tracker_collection_input.head_spatial.transform = \
 			get_local_head_transform(camera, origin_offset, camera_offset)
 		
@@ -566,7 +568,8 @@ func transform_update(p_delta: float) -> void:
 func update_physics(p_delta) -> void:
 	if is_inside_tree():
 		if is_network_master():
-			_ren_ik.update_placement(p_delta)
+			if _ren_ik != null:
+				_ren_ik.update_placement(p_delta)
 			if mocap_recording:
 				update_output_trackers()
 				var transform_array = [global_transform] + _get_transforms_from_tracker_collection(tracker_collection_output)
@@ -585,6 +588,9 @@ func setup() -> void:
 #			printerr("RenIK could not be loaded!")
 #			_ren_ik = null
 		
+		if _ren_ik.get_class() != "RenIK":
+			push_error("RenIK did not load: class is " + str(_ren_ik.get_class()))
+			_ren_ik = null
 		if _ren_ik:
 			_ren_ik.set_process(false)
 			_ren_ik.set_process_internal(false)

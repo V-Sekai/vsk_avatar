@@ -161,6 +161,7 @@ func setup_bone_attachments(p_humanoid_data: RefCounted, p_skeleton: Skeleton3D)
 func create_bone_attachments() -> void:
 	head_bone_attachment = BoneAttachment3D.new()
 	left_hand_bone_attachment = BoneAttachment3D.new()
+	right_hand_bone_attachment = BoneAttachment3D.new()
 
 	head_bone_attachment.set_name("HeadAttachmentPoint")
 	left_hand_bone_attachment.set_name("LeftHandAttachmentPoint")
@@ -191,6 +192,9 @@ func create_bone_attachments() -> void:
 func assign_ik_bone_assignments(
 	p_ren_ik_node: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData
 ) -> void:
+	if str(p_ren_ik_node.get_class()) != "RenIK":
+		push_warning("RenIK is " + str(p_ren_ik_node.get_class()) + " not RenIK")
+		return
 	if !p_humanoid_data:
 		head_id = -1
 		hip_id = -1
@@ -267,6 +271,9 @@ func assign_ik_bone_assignments(
 	p_ren_ik_node.set_upper_leg_right_bone(right_upper_leg_id)
 
 func clear_ik_bone_assignments(p_ren_ik_node: Node) -> void:
+	if str(p_ren_ik_node.get_class()) != "RenIK":
+		push_warning("RenIK is " + str(p_ren_ik_node.get_class()) + " not RenIK")
+		return
 	p_ren_ik_node.set_head_bone(bone_lib_const.NO_BONE)
 	p_ren_ik_node.set_hip_bone(bone_lib_const.NO_BONE)
 
@@ -462,7 +469,7 @@ func _setup_avatar_eyes(
 	var eye_offset_transform: Transform3D = Transform3D()
 
 	if p_humanoid_data and p_skeleton:
-		avatar_node.set_as_toplevel(true)
+		avatar_node.set_as_top_level(true)
 		avatar_node.set_global_transform(Transform3D(AVATAR_BASIS, Vector3()))
 		var head_bone_id: int = p_humanoid_data.find_skeleton_bone_for_humanoid_bone(
 			p_skeleton, humanoid_data_const.head)
@@ -476,7 +483,7 @@ func _setup_avatar_eyes(
 		avatar_wristspan = _calculate_humanoid_wristspan(p_skeleton, p_humanoid_data)
 	else:
 		avatar_node.set_transform(Transform3D(AVATAR_BASIS, Vector3()))
-		avatar_node.set_as_toplevel(false)
+		avatar_node.set_as_top_level(false)
 		avatar_wristspan = (VRManager.vr_user_preferences.custom_player_height
 		* VRManager.vr_user_preferences.custom_player_armspan_to_height_ratio
 		* vr_constants_const.ARMSPAN_WRIST_SPAN_CONVERSION)
@@ -569,6 +576,8 @@ func setup_avatar_instantiate(p_avatar_node: Node3D) -> void:
 		avatar_skeleton = (
 			p_avatar_node.get_node_or_null(avatar_node.skeleton_path) as Skeleton3D
 		)
+		if avatar_skeleton == null:
+			avatar_skeleton = null
 
 		# Eye
 		_setup_avatar_eyes(avatar_node, avatar_skeleton, humanoid_data)
@@ -658,7 +667,7 @@ func _entity_ready() -> void:
 
 	#_instance_avatar()
 
-func _threaded_instantiate_setup() -> void:
+func _threaded_instance_setup() -> void:
 	create_bone_attachments()
 	setup_bone_attachments(null, null)
 
