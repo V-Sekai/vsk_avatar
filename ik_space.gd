@@ -143,7 +143,7 @@ func free_trackers() -> void:
 		tracker_collection_input.right_foot_spatial = null
 				
 func update_trackers() -> void:
-	if is_network_master():
+	if is_network_authority():
 		free_trackers()
 		
 		if VRManager.is_xr_active():
@@ -313,7 +313,7 @@ func _on_tracker_removed(p_tracker: Node3D) -> void:
 	pass
 
 func update_external_transform(p_mask: int, p_transform_array: Array) -> void:
-	if is_inside_tree() and !is_network_master() and tracker_collection_input:
+	if is_inside_tree() and !is_network_authority() and tracker_collection_input:
 		if current_external_mask != p_mask:
 			emit_signal("external_trackers_changed")
 		
@@ -468,7 +468,7 @@ func update_output_trackers() -> void:
 		if skeleton:
 			# Calculate the transforms for the output trackers based on the global poses
 			var head_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.head_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.head_id, skeleton, local_transforms_array)
-			if is_network_master():
+			if is_network_authority():
 				head_transform = Transform3D(head_transform.basis.orthonormalized().scaled(_avatar_display_node.saved_head_transform.basis.get_scale()), head_transform.origin);
 			
 			# The outgoing hips rotation should treat the default rotation as identity,
@@ -527,15 +527,15 @@ static func _get_transforms_from_tracker_collection(p_tracker: RefCounted) -> Ar
 		
 # Called once the IK for this armature has been calculated
 func ik_complete() -> void:
-	if is_network_master() or NetworkManager.is_server():
+	if is_network_authority() or NetworkManager.is_server():
 		output_trackers_is_dirty = true
 		
-		if is_network_master():
+		if is_network_authority():
 			_avatar_display_node.save_head()
 			_avatar_display_node.try_head_shrink()
 			
 func execute_ik(p_delta: float) -> void:
-	if is_network_master():
+	if is_network_authority():
 		_avatar_display_node.restore_head()
 	
 	if _ren_ik and !pending_calibration and _avatar_display_node.avatar_node:
@@ -556,7 +556,7 @@ func execute_ik(p_delta: float) -> void:
 	
 func transform_update(p_delta: float) -> void:
 	if is_inside_tree():
-		if is_network_master():
+		if is_network_authority():
 			update_local_transforms()
 		else:
 			interpolate_transforms(p_delta)
@@ -567,7 +567,7 @@ func transform_update(p_delta: float) -> void:
 # at a different physics update rate
 func update_physics(p_delta) -> void:
 	if is_inside_tree():
-		if is_network_master():
+		if is_network_authority():
 			if _ren_ik != null:
 				_ren_ik.update_placement(p_delta)
 			if mocap_recording:
@@ -604,11 +604,11 @@ func setup() -> void:
 		
 		tracker_collection_input = TrackerCollection.new()
 		
-		if is_network_master():
+		if is_network_authority():
 			_create_output_trackers()
 			
 			if !Engine.is_editor_hint():
-				if is_network_master():
+				if is_network_authority():
 					assert(VRManager.connect("xr_mode_changed", self._xr_mode_changed) == OK)
 					assert(VRManager.connect("request_vr_calibration", self._request_vr_calibration) == OK)
 					assert(VRManager.connect("confirm_vr_calibration", self._confirm_vr_calibration) == OK)
@@ -622,7 +622,7 @@ func setup() -> void:
 		pass
 		
 func _on_avatar_changed():
-	if (is_network_master() or NetworkManager.is_server()) and\
+	if (is_network_authority() or NetworkManager.is_server()) and\
 	_avatar_display_node and\
 	_avatar_display_node.avatar_skeleton:
 		resize_local_transform_cache(_avatar_display_node.avatar_skeleton.get_bone_count())

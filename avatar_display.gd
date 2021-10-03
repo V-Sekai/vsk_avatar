@@ -520,7 +520,7 @@ func _setup_avatar_mouth(
 	setup_bone_attachments(p_humanoid_data, p_skeleton)
 
 	# Change the world scale to match
-	if is_network_master():
+	if is_network_authority():
 		calculate_proportions()
 	else:
 		pass
@@ -639,7 +639,7 @@ func get_head_forward_transform() -> Transform3D:
 	return head_transform
 
 func _setup_voice() -> void:
-	if ! is_network_master():
+	if ! is_network_authority():
 		var godot_speech: Node = get_node_or_null("/root/GodotSpeech")
 		if godot_speech:
 			if ! voice_player:
@@ -652,7 +652,7 @@ func _setup_voice() -> void:
 
 func _entity_ready() -> void:
 	if !Engine.is_editor_hint():
-		if is_network_master():
+		if is_network_authority():
 			assert(VRManager.connect("xr_mode_changed", self._xr_mode_changed) == OK)
 			assert(VRManager.connect("proportions_changed", self._proportions_changed) == OK)
 
