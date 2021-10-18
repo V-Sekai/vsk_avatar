@@ -279,14 +279,14 @@ func apply_eyelid_offset(p_head_orientation: Quaternion) -> void:
 
 	if is_looking_up:
 		for i in range(0, 2):
-			transient_blendshape_coefficents[Blendshapes.EyeBlink_L + i] = blink_up_coefficient
-			transient_blendshape_coefficents[Blendshapes.EyeOpen_L + i] = open_up_coefficient
-			transient_blendshape_coefficents[Blendshapes.BrowsU_L + i] = brows_up_coefficient
+			transient_blendshape_coefficents[int(Blendshapes.EyeBlink_L) + i] = blink_up_coefficient
+			transient_blendshape_coefficents[int(Blendshapes.EyeOpen_L) + i] = open_up_coefficient
+			transient_blendshape_coefficents[int(Blendshapes.BrowsU_L) + i] = brows_up_coefficient
 	else:
 		for i in range(0, 2):
-			transient_blendshape_coefficents[Blendshapes.EyeBlink_L + i] = blink_down_coefficient
-			transient_blendshape_coefficents[Blendshapes.EyeOpen_L + i] = open_down_coefficient
-			transient_blendshape_coefficents[Blendshapes.BrowsU_L + i] = brows_down_coefficient
+			transient_blendshape_coefficents[int(Blendshapes.EyeBlink_L) + i] = blink_down_coefficient
+			transient_blendshape_coefficents[int(Blendshapes.EyeOpen_L) + i] = open_down_coefficient
+			transient_blendshape_coefficents[int(Blendshapes.BrowsU_L) + i] = brows_down_coefficient
 
 
 func update(p_delta: float) -> void:
