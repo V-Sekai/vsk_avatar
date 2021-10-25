@@ -130,7 +130,7 @@ static func generic_error_check(p_root: Node3D, p_skeleton: Skeleton3D) -> int:
 	if p_skeleton.get_bone_count() <= 0:
 		return SKELETON_ZERO_BONES
 		
-	if ! p_root.is_a_parent_of(p_skeleton):
+	if ! p_root.is_ancestor_of(p_skeleton):
 		return ROOT_NOT_PARENT_OF_SKELETON
 		
 	return AVATAR_OK
