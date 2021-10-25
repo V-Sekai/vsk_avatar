@@ -81,7 +81,7 @@ func _ready():
 	collider_groups_internal.clear()
 	spring_bones_internal.clear()
 	var skel_to_polyfill: Dictionary = {}.duplicate()
-	if true or not Engine.editor_hint:
+	if true or not Engine.is_editor_hint():
 		for collider_group in collider_groups:
 			var new_collider_group = collider_group.duplicate(true)
 			var parent: Node3D = get_node_or_null(new_collider_group.skeleton_or_node)
@@ -119,7 +119,7 @@ func _ready():
 	return
 
 func update(delta):
-	if not Engine.editor_hint:
+	if not Engine.is_editor_hint():
 		# force update skeleton
 		for spring_bone in spring_bones_internal:
 			if spring_bone.skel_polyfill != null:
