@@ -13,4 +13,4 @@ vskeditor_pipeline_paths = null
 humanoid_data = null
 
 [node name="avatar_error" parent="." instance=ExtResource( "1" )]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -1)

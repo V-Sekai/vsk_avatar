@@ -71,7 +71,7 @@ static func create_animation_from_hand_pose(
 					euler.z = -euler.z
 					euler.y = -euler.y
 					
-					transform = Transform3D(Basis(euler), Vector3())
+					transform = Transform3D(Basis.from_euler(euler), Vector3())
 				
 				animation = create_pose_track_for_humanoid_bone(
 					animation,
