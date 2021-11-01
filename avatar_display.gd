@@ -429,7 +429,7 @@ static func _calculate_humanoid_wristspan(p_skeleton: Skeleton3D, p_humanoid_dat
 	return current_wristspan
 
 func _setup_avatar_eyes(
-	p_avatar_node: Node3D,
+	_p_avatar_node: Node3D,
 	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData
 	) -> void:

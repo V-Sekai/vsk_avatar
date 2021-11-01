@@ -24,7 +24,7 @@ func _cache_anim_tree(p_path: NodePath) -> void:
 	if node is AnimationTree:
 		cached_anim_tree = node
 
-func _physics_process(p_delta: float):
+func _physics_process(_p_delta: float):
 	if cached_anim_tree and cached_anim_tree.tree_root:
 		cached_anim_tree["parameters/LeftHandBlend/blend_amount"] = 1.0
 		cached_anim_tree["parameters/RightHandBlend/blend_amount"] = 1.0
