@@ -3,7 +3,6 @@
 [ext_resource type="AnimationNodeStateMachine" uid="uid://duvrf0dgkmqkn" path="res://addons/vsk_avatar/animation/default_avatar_hand_state_machine.tres" id="1"]
 
 [sub_resource type="AnimationNodeAnimation" id="1"]
-filters = []
 animation = &"DefaultPose"
 
 [sub_resource type="AnimationNodeBlend2" id="2"]

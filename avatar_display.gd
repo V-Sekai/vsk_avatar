@@ -119,12 +119,16 @@ func _update_voice_player() -> void:
 		if voice_player.get_parent() != head_bone_attachment:
 			if voice_player.is_inside_tree():
 				voice_player.get_parent().remove_child(voice_player)
-
-			head_bone_attachment.add_child(voice_player)
+			if head_bone_attachment != null:
+				head_bone_attachment.add_child(voice_player)
 		voice_player.transform = relative_mouth_transform * Transform3D().rotated(Vector3(0.0, 1.0, 0.0), PI)
 
 
 func setup_bone_attachments(p_humanoid_data: RefCounted, p_skeleton: Skeleton3D) -> void: # humanoid_data_const
+	if p_humanoid_data == null:
+		return
+	if p_skeleton == null:
+		return
 	head_bone_attachment.get_parent().remove_child(head_bone_attachment)
 	left_hand_bone_attachment.get_parent().remove_child(left_hand_bone_attachment)
 	right_hand_bone_attachment.get_parent().remove_child(right_hand_bone_attachment)
@@ -516,8 +520,9 @@ func _setup_avatar_mouth(
 		mouth_global_transform = head_global_transform
 
 	relative_mouth_transform = head_global_transform.affine_inverse() * mouth_global_transform
-
-	setup_bone_attachments(p_humanoid_data, p_skeleton)
+	
+	if p_humanoid_data != null and p_skeleton != null:
+		setup_bone_attachments(p_humanoid_data, p_skeleton)
 
 	# Change the world scale to match
 	if is_multiplayer_authority():
