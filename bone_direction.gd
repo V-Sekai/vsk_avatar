@@ -57,9 +57,9 @@ static func _fortune_with_chains(
 		rest_bone.rest_local_before = p_base_pose[j]
 		rest_bone.rest_local_after = rest_bone.rest_local_before
 		r_rest_bones[j] = rest_bone
-		
+	
 	# Collect all bone chains into a hash table for optimisation
-	var chain_hash_table: Dictionary = Dictionary()
+	var chain_hash_table: Dictionary
 	for chain in p_fixed_chains:
 		for bone_id in chain:
 			chain_hash_table[bone_id] = chain
@@ -147,7 +147,7 @@ static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> voi
 			skin.set_bind_pose(bind_i, p_bind_fix_array[bone_index] * skin.get_bind_pose(bind_i))
 			
 static func get_humanoid_chains(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> Array:
-	var chains: Array = []
+	var chains: Array = [].duplicate()
 	
 	# Spine
 	chains.append(Array(avatar_lib_const.get_full_spine_chain(p_skeleton, p_humanoid_data)))

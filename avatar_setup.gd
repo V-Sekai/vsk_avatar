@@ -1,19 +1,19 @@
 extends Node
 
 # Hand Animation
-const default_avatar_tree_const = preload("animation/default_avatar_tree.tres")
+var default_avatar_tree_const = load("res://addons/vsk_avatar/animation/default_avatar_tree.tres")
 
 const hand_pose_const = preload("hand_pose.gd")
 
-const hand_pose_default_const = preload("hand_poses/hand_pose_default_pose.tres")
-const hand_pose_fist_const = preload("hand_poses/hand_pose_fist.tres")
-const hand_pose_gun_const = preload("hand_poses/hand_pose_gun.tres")
-const hand_pose_neutral_const = preload("hand_poses/hand_pose_neutral.tres")
-const hand_pose_ok_sign_const = preload("hand_poses/hand_pose_ok_sign.tres")
-const hand_pose_open_const = preload("hand_poses/hand_pose_open.tres")
-const hand_pose_point_const = preload("hand_poses/hand_pose_point.tres")
-const hand_pose_thumbs_up_const = preload("hand_poses/hand_pose_thumbs_up.tres")
-const hand_pose_victory_const = preload("hand_poses/hand_pose_victory.tres")
+var hand_pose_default_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_default_pose.tres")
+var hand_pose_fist_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_fist.tres")
+var hand_pose_gun_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_gun.tres")
+var hand_pose_neutral_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_neutral.tres")
+var hand_pose_ok_sign_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_ok_sign.tres")
+var hand_pose_open_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_open.tres")
+var hand_pose_point_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_point.tres")
+var hand_pose_thumbs_up_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_thumbs_up.tres")
+var hand_pose_victory_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_victory.tres")
 
 static func create_pose_track_for_humanoid_bone(
 	p_animation: Animation,
@@ -31,15 +31,13 @@ static func create_pose_track_for_humanoid_bone(
 	if bone_index == -1:
 		return p_animation
 	
-	var track_index = p_animation.add_track(Animation.TYPE_TRANSFORM)
+	var track_index = p_animation.add_track(Animation.TYPE_ROTATION_3D)
 	var bone_name : String = p_skeleton.get_bone_name(bone_index)
 	p_animation.track_set_path(track_index, p_base_path + ":" + bone_name)
-	p_animation.transform_track_insert_key(
+	p_animation.rotation_track_insert_key(
 		track_index,
 		0.0,
-		Vector3(),
-		p_transform.basis.get_rotation_quaternion(),
-		Vector3(1.0, 1.0, 1.0))
+		p_transform.basis.get_rotation_quaternion())
 		
 	p_animation.track_set_enabled(track_index, true)
 	p_animation.track_set_interpolation_type(track_index, Animation.INTERPOLATION_LINEAR)

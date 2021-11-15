@@ -21,7 +21,8 @@ func _set(p_property, p_value) -> bool:
 
 # Backwards compatibility
 func _get_property_list():
-	var properties: Array = vsk_user_content_definition_helper_conest.get_common_property_list(editor_properties.vskeditor_preview_type)
+	# var properties: Array = vsk_user_content_definition_helper_conest.get_common_property_list(editor_properties.vskeditor_preview_type)
+	var properties: Array = vsk_user_content_definition_helper_conest.get_common_property_list("Camera")
 	return properties
 
 func _init():

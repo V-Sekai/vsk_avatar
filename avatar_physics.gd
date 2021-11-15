@@ -78,6 +78,7 @@ func skeleton_supports_children(skel: Skeleton3D) -> bool:
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	return;# FIX LATER
 	collider_groups_internal.clear()
 	spring_bones_internal.clear()
 	var skel_to_polyfill: Dictionary = {}.duplicate()
