@@ -61,7 +61,7 @@ static func get_chain_length(p_skeleton: Skeleton3D, p_chain: Array, p_rest_tran
 	return chain_length
 	
 
-static func straighten_chain(p_skeleton: Skeleton3D, p_direction: Vector3, p_chain: Array, p_rest_transform_array: Array, p_t_pose_transform_array: Array, p_inverse_children: bool) -> Array:
+static func straighten_chain(p_skeleton: Skeleton3D, p_direction: Vector3, p_chain: PackedInt32Array, p_rest_transform_array: Array, p_t_pose_transform_array: Array, p_inverse_children: bool) -> Array:
 	#print("STRAIGHTEN_CHAIN")
 	
 	for bone_id in p_chain:
@@ -123,7 +123,7 @@ static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_d
 	t_pose_transform_array = straighten_chain(
 		p_skeleton,
 		base_transform * Vector3.UP,
-		Array(avatar_lib_const.get_spine_chain(p_skeleton, p_humanoid_data)),
+		avatar_lib_const.get_spine_chain(p_skeleton, p_humanoid_data),
 		p_base_pose_array,
 		t_pose_transform_array,
 		true)
@@ -132,7 +132,7 @@ static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_d
 		t_pose_transform_array = straighten_chain(
 			p_skeleton,
 			base_transform * Vector3.DOWN,
-			Array(avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data, side)),
+			avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data, side),
 			p_base_pose_array,
 			t_pose_transform_array,
 			true)
@@ -148,7 +148,7 @@ static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_d
 		t_pose_transform_array = straighten_chain(
 			p_skeleton,
 			side_direction,
-			Array(avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data, side)),
+			avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data, side),
 			p_base_pose_array,
 			t_pose_transform_array,
 			true)
@@ -157,7 +157,7 @@ static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_d
 			t_pose_transform_array = straighten_chain(
 				p_skeleton,
 				side_direction,
-				Array(avatar_lib_const.get_digit_chain(p_skeleton, p_humanoid_data, side, digit)),
+				avatar_lib_const.get_digit_chain(p_skeleton, p_humanoid_data, side, digit),
 				p_base_pose_array,
 				t_pose_transform_array,
 				true)

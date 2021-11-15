@@ -59,7 +59,7 @@ static func _fortune_with_chains(
 		r_rest_bones[j] = rest_bone
 	
 	# Collect all bone chains into a hash table for optimisation
-	var chain_hash_table: Dictionary
+	var chain_hash_table: Dictionary = {}.duplicate()
 	for chain in p_fixed_chains:
 		for bone_id in chain:
 			chain_hash_table[bone_id] = chain
@@ -73,8 +73,11 @@ static func _fortune_with_chains(
 			var apply_centroid = true
 			
 			var chain = chain_hash_table.get(parent_bone, null)
-			if chain is Array:
-				var index: int = chain.find(parent_bone)
+			if typeof(chain) == TYPE_INT32_ARRAY:
+				var index: int = -1
+				for findind in range(len(chain)):
+					if chain[findind] == parent_bone:
+						index = findind
 				if (index + 1) < chain.size():
 					# Check if child bone is the next bone in the chain
 					if chain[index + 1] == i:
@@ -147,24 +150,24 @@ static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> voi
 			skin.set_bind_pose(bind_i, p_bind_fix_array[bone_index] * skin.get_bind_pose(bind_i))
 			
 static func get_humanoid_chains(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> Array:
-	var chains: Array = [].duplicate()
+	var chains: Array = [].duplicate() # <>< <>< ><> RED HERRING <>< <>< <><
 	
 	# Spine
-	chains.append(Array(avatar_lib_const.get_full_spine_chain(p_skeleton, p_humanoid_data)))
+	chains.append(avatar_lib_const.get_full_spine_chain(p_skeleton, p_humanoid_data))
 	
 	for side in range(\
 	avatar_lib_const.avatar_constants_const.SIDE_LEFT,\
 	avatar_lib_const.avatar_constants_const.SIDE_RIGHT + 1):
 		# Arm
-		chains.append(Array(avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data,side)))
+		chains.append(avatar_lib_const.get_arm_chain(p_skeleton, p_humanoid_data,side))
 		# Leg
-		chains.append(Array(avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data, side)))
+		chains.append(avatar_lib_const.get_leg_chain(p_skeleton, p_humanoid_data, side))
 		
 		# Digits
 		for digit in range(avatar_lib_const.avatar_constants_const.DIGIT_THUMB,
 			avatar_lib_const.avatar_constants_const.DIGIT_LITTLE + 1):
-				chains.append(Array(avatar_lib_const.get_digit_chain(\
-					p_skeleton, p_humanoid_data, side, digit)))
+				chains.append(avatar_lib_const.get_digit_chain(\
+					p_skeleton, p_humanoid_data, side, digit))
 	
 	return chains
 	
@@ -183,7 +186,7 @@ static func get_fortune_with_chain_offsets(p_skeleton: Skeleton3D, p_humanoid_da
 	# Get the 5 bone chains nessecary for a valid humanoid rig
 	
 	var humanoid_chains: Array = get_humanoid_chains(p_skeleton, p_humanoid_data)
-	var rest_bones: Dictionary = _fortune_with_chains(p_skeleton, {}, humanoid_chains, false, [humanoid_chains[0]], p_base_pose)
+	var rest_bones: Dictionary = _fortune_with_chains(p_skeleton, {}.duplicate(), humanoid_chains, false, [humanoid_chains[0]], p_base_pose)
 	
 	var offsets: Dictionary = {"base_pose_offsets":[], "bind_pose_offsets":[]}
 	

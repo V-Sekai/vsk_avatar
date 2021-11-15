@@ -1,19 +1,6 @@
 extends Node
 
-# Hand Animation
-var default_avatar_tree_const = load("res://addons/vsk_avatar/animation/default_avatar_tree.tres")
-
 const hand_pose_const = preload("hand_pose.gd")
-
-var hand_pose_default_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_default_pose.tres")
-var hand_pose_fist_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_fist.tres")
-var hand_pose_gun_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_gun.tres")
-var hand_pose_neutral_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_neutral.tres")
-var hand_pose_ok_sign_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_ok_sign.tres")
-var hand_pose_open_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_open.tres")
-var hand_pose_point_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_point.tres")
-var hand_pose_thumbs_up_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_thumbs_up.tres")
-var hand_pose_victory_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_victory.tres")
 
 static func create_pose_track_for_humanoid_bone(
 	p_animation: Animation,
@@ -122,7 +109,18 @@ static func setup_default_hand_animations(
 	p_root_node: Node,
 	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData) -> AnimationPlayer:
-	#
+
+	# Hand Animation
+	var hand_pose_default_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_default_pose.tres")
+	var hand_pose_fist_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_fist.tres")
+	var hand_pose_gun_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_gun.tres")
+	var hand_pose_neutral_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_neutral.tres")
+	var hand_pose_ok_sign_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_ok_sign.tres")
+	var hand_pose_open_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_open.tres")
+	var hand_pose_point_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_point.tres")
+	var hand_pose_thumbs_up_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_thumbs_up.tres")
+	var hand_pose_victory_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_victory.tres")
+
 	setup_animation_from_hand_pose_dictionary(
 		p_animation_player,
 		p_root_node,
@@ -149,7 +147,9 @@ static func setup_animation_tree_hand_blend_tree(
 	p_animation_player: AnimationPlayer,
 	p_skeleton: Skeleton3D,
 	p_humanoid_data: HumanoidData) -> AnimationTree:
-		
+	
+	var default_avatar_tree_const = load("res://addons/vsk_avatar/animation/default_avatar_tree.tres")
+	
 	if !p_skeleton or !p_humanoid_data:
 		return p_animation_tree
 		

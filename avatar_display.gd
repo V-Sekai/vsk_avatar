@@ -14,7 +14,7 @@ const humanoid_data_const = preload("humanoid_data.gd")
 const attachment_point_3d_const = preload("res://addons/entity_manager/attachment_point_3d.gd")
 const vr_constants_const = preload("res://addons/sar1_vr_manager/vr_constants.gd")
 
-const avatar_setup_const = preload("avatar_setup.gd")
+var avatar_setup_const = load("res://addons/vsk_avatar/avatar_setup.gd")
 
 signal avatar_setup_complete
 signal avatar_setup_failed

@@ -2,7 +2,7 @@
 extends Control
 
 const avater_debug_const = preload("avatar_debug.gd")
-#const vsk_types_const = preload("res://addons/vsk_importer_exporter/vsk_types.gd")
+const vsk_types_const = preload("res://addons/vsk_importer_exporter/vsk_types.gd")
 const avatar_callback_const = preload("avatar_callback.gd")
 
 const bone_mapper_dialog_const = preload("bone_mapper_dialog.gd")
@@ -100,15 +100,14 @@ func get_export_data() -> Dictionary:
 
 
 func export_avatar_upload() -> void:
-#	if node and node is Node:
-#		var vsk_editor = get_node_or_null("/root/VSKEditor")
-#		if vsk_editor:
-#			vsk_editor.show_upload_panel(Callable(self, "get_export_data"), vsk_types_const.UserContentType.Avatar)
-#		else:
-#			printerr("Could not load VSKEditor!")
-#	else:
-#		printerr("Node is not valid!")
-	pass
+	if node and node is Node:
+		var vsk_editor = $"/root/VSKEditor"
+		if vsk_editor:
+			vsk_editor.show_upload_panel(self.get_export_data, vsk_types_const.UserContentType.Avatar)
+		else:
+			printerr("Could not load VSKEditor!")
+	else:
+		printerr("Node is not valid!")
 
 func export_hand_pose(p_is_right_hand: bool) -> void:
 	if node and node is Node:
