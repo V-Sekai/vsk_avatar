@@ -129,7 +129,7 @@ func edit(p_node : Node) -> void:
 
 func error_callback(p_err: int) -> void:
 	if p_err != avatar_callback_const.AVATAR_OK:
-		var error_str: String = avatar_callback_const.get_error_string(p_err)
+		var error_str: String = avatar_callback_const.get_error_str(p_err)
 		
 		printerr(error_str)
 		err_dialog.set_text(error_str)

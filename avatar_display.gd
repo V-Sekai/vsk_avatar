@@ -615,11 +615,11 @@ func shrink_head() -> void:
 		var custom_head_pose: Transform3D = avatar_skeleton.get_bone_global_pose(head_id)
 		var custom_head_pose_parent: Transform3D = avatar_skeleton.get_bone_global_pose(avatar_skeleton.get_bone_parent(head_id))
 		custom_head_pose = Transform3D(custom_head_pose.basis.orthonormalized().scaled(Vector3(0.000001, 0.000001, 0.000001)), custom_head_pose_parent.origin)
-		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0)
+		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0, true)
 		# FIXME(lyuma): I don't understand why doing this twice makes it work, but it does...
 		custom_head_pose = avatar_skeleton.get_bone_global_pose(head_id)
 		custom_head_pose = Transform3D(custom_head_pose.basis.orthonormalized().scaled(Vector3(0.000001, 0.000001, 0.000001)), custom_head_pose_parent.origin)
-		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0)
+		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0, true)
 
 func save_head() -> void:
 	if avatar_skeleton and head_id != bone_lib_const.NO_BONE:
@@ -629,7 +629,7 @@ func restore_head() -> void:
 	if avatar_skeleton and head_id != bone_lib_const.NO_BONE:
 		var custom_head_pose: Transform3D = avatar_skeleton.get_bone_global_pose(head_id)
 		custom_head_pose = Transform3D(custom_head_pose.basis.orthonormalized().scaled(saved_head_transform.basis.get_scale()), custom_head_pose.origin)
-		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0)
+		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0, true)
 
 func get_head_forward_transform() -> Transform3D:
 	var head_transform: Transform3D

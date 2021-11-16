@@ -176,9 +176,10 @@ func update_ik_controller() -> void:
 		if tracker_collection_input:
 			
 			if _avatar_display_node.avatar_skeleton:
-				_avatar_display_node.avatar_skeleton.clear_bones_global_pose_override()
-				for i in range(0, _avatar_display_node.avatar_skeleton.get_bone_count()):
-					_avatar_display_node.avatar_skeleton.set_bone_pose(i, Transform3D())
+				var s: Skeleton3D = _avatar_display_node.avatar_skeleton
+				s.clear_bones_global_pose_override()
+				for i in range(0, s.get_bone_count()):
+					s.set_bone_pose_rotation(i, s.get_bone_rest(i).basis.get_rotation_quaternion())
 				
 				# If we're in callibration mode, set the global transform to
 				# that of the display node. Otherwise, the identity transform

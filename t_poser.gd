@@ -166,9 +166,9 @@ static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_d
 
 static func enforce_strict_t_pose(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_base_pose_array: Array) -> void:
 	for i in range(0, p_skeleton.get_bone_count()):
-		p_skeleton.set_bone_pose(i, Transform3D())
+		p_skeleton.set_bone_pose_rotation(i, p_skeleton.get_bone_rest(i).basis.get_rotation_quaternion())
 	
 	var t_pose_rotations: Array = get_strict_t_pose(p_root, p_skeleton, p_humanoid_data, p_base_pose_array)
 		
 	for i in range(0, p_skeleton.get_bone_count()):
-		p_skeleton.set_bone_pose(i, t_pose_rotations[i])
+		p_skeleton.set_bone_pose_rotation(i, t_pose_rotations[i].basis.get_rotation_quaternion())

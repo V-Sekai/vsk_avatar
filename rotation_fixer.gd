@@ -130,7 +130,10 @@ static func fix_rotations(p_root: Node3D, p_skeleton: Skeleton3D, p_humanoid_dat
 	var rotation_fix_data: Dictionary = get_fixed_rotations(p_root, p_skeleton, p_humanoid_data, rest_pose_local_offsets, p_t_pose_local_offsets)
 	
 	for i in range(0, p_skeleton.get_bone_count()):
-		p_skeleton.set_bone_pose(i, rotation_fix_data["bone_pose_roll_fixes"][i])
+		var t: Transform3D = rotation_fix_data["bone_pose_roll_fixes"][i]
+		p_skeleton.set_bone_pose_position(i, t.origin)
+		p_skeleton.set_bone_pose_rotation(i, t.basis.get_rotation_quaternion())
+		p_skeleton.set_bone_pose_scale(i, t.basis.get_scale())
 		
 	# Fix to skins
 	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_root._skeleton_node, [])
