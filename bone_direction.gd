@@ -207,7 +207,11 @@ static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: 
 	
 	# One last iteration to apply the transforms we calculated
 	for i in range(0, offsets["base_pose_offsets"].size()):
-		p_skeleton.set_bone_rest(i, p_skeleton.get_bone_rest(i) * offsets["base_pose_offsets"][i])
+		var final_pose: Transform3D = p_skeleton.get_bone_rest(i) * offsets["base_pose_offsets"][i]
+		p_skeleton.set_bone_rest(i, final_pose)
+		p_skeleton.set_bone_pose_position(i, final_pose.origin)
+		p_skeleton.set_bone_pose_rotation(i, final_pose.basis.get_rotation_quaternion())
+		p_skeleton.set_bone_pose_scale(i, final_pose.basis.get_scale())
 	
 	# Correct the bind poses
 	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])

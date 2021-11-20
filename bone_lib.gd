@@ -119,6 +119,9 @@ static func rename_skeleton_to_humanoid_bones(
 		p_skeleton.add_bone(bone_names[i])
 		p_skeleton.set_bone_parent(i, bone_parents[i])
 		p_skeleton.set_bone_rest(i, bone_rests[i])
+		p_skeleton.set_bone_pose_position(i, bone_rests[i].origin)
+		p_skeleton.set_bone_pose_rotation(i, bone_rests[i].basis.get_rotation_quaternion())
+		p_skeleton.set_bone_pose_scale(i, bone_rests[i].basis.get_scale())
 
 	# Update the names for the skins too
 	for skin in p_skins:
