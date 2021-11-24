@@ -83,18 +83,24 @@ static func is_bone_parent_of_or_self(p_skeleton: Skeleton3D, p_parent_id: int, 
 		
 	return is_bone_parent_of(p_skeleton, p_parent_id, p_child_id)
 
-static func change_bone_rest(p_skeleton: Skeleton3D, bone_idx: int, bone_rest: Transform3D, undo_redo: UndoRedo=null):
-	var old_scale: Vector3 = p_skeleton.get_bone_pose_scale(bone_idx) # bone_rest.basis.get_scale().x;
-	#var basis: Basis = bone_rest.basis.orthonormalized() * old_scale.x
-	#var combined_matrix = Transform3D(basis, bone_rest.origin)
-	#var combined_matrix = Transform3D(Basis(bone_rest.basis.get_rotation_quaternion()), bone_rest.origin)
-	#var combined_matrix = Transform3D(
-	#	Basis(bone_rest.basis.get_rotation_quaternion()).scaled(bone_rest.basis.get_scale()),
-	#	bone_rest.origin)
-	p_skeleton.set_bone_pose_position(bone_idx, bone_rest.origin)
-	p_skeleton.set_bone_pose_rotation(bone_idx, bone_rest.basis.orthonormalized())
-	p_skeleton.set_bone_pose_scale(bone_idx, old_scale)
-	p_skeleton.set_bone_rest(bone_idx, p_skeleton.get_bone_pose(bone_idx))
+static func change_bone_rest(p_skeleton: Skeleton3D, bone_idx: int, bone_rest: Transform3D, undo_redo: UndoRedo):
+	if undo_redo == null:
+		printerr("Can't change bone rest.")
+		return
+	undo_redo.create_action("Change bone rest")
+	var old_position: Vector3 = p_skeleton.get_bone_pose_position(bone_idx)
+	var old_scale: Vector3 = p_skeleton.get_bone_pose_scale(bone_idx)
+	var old_rotation: Quaternion = p_skeleton.get_bone_pose_rotation(bone_idx)	
+	undo_redo.add_do_method(p_skeleton, "set_bone_pose_position", bone_idx, bone_rest.origin)
+	undo_redo.add_do_method(p_skeleton, "set_bone_pose_scale", bone_idx, bone_rest.basis.get_scale())
+	undo_redo.add_do_method(p_skeleton, "set_bone_pose_rotation", bone_idx, bone_rest.basis.orthonormalized())
+	var old_rest: Transform3D = p_skeleton.get_bone_rest(bone_idx)
+	undo_redo.add_do_method(p_skeleton, "set_bone_rest", bone_idx,  p_skeleton.get_bone_pose(bone_idx))
+	undo_redo.add_undo_method(p_skeleton, "set_bone_pose_position", bone_idx, old_position)
+	undo_redo.add_undo_method(p_skeleton, "set_bone_pose_scale", bone_idx, old_scale)
+	undo_redo.add_undo_method(p_skeleton, "set_bone_pose_rotation", bone_idx, old_rotation)
+	undo_redo.add_undo_method(p_skeleton, "set_bone_rest", bone_idx, old_rest)
+	undo_redo.commit_action()
 
 static func rename_skeleton_to_humanoid_bones(
 	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_skins: Array, undo_redo: UndoRedo=null,
