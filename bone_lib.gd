@@ -83,8 +83,21 @@ static func is_bone_parent_of_or_self(p_skeleton: Skeleton3D, p_parent_id: int, 
 		
 	return is_bone_parent_of(p_skeleton, p_parent_id, p_child_id)
 
+static func change_bone_rest(p_skeleton: Skeleton3D, bone_idx: int, bone_rest: Transform3D, undo_redo: UndoRedo=null):
+	var old_scale: Vector3 = p_skeleton.get_bone_pose_scale(bone_idx) # bone_rest.basis.get_scale().x;
+	#var basis: Basis = bone_rest.basis.orthonormalized() * old_scale.x
+	#var combined_matrix = Transform3D(basis, bone_rest.origin)
+	#var combined_matrix = Transform3D(Basis(bone_rest.basis.get_rotation_quaternion()), bone_rest.origin)
+	#var combined_matrix = Transform3D(
+	#	Basis(bone_rest.basis.get_rotation_quaternion()).scaled(bone_rest.basis.get_scale()),
+	#	bone_rest.origin)
+	p_skeleton.set_bone_pose_position(bone_idx, bone_rest.origin)
+	p_skeleton.set_bone_pose_rotation(bone_idx, bone_rest.basis.orthonormalized())
+	p_skeleton.set_bone_pose_scale(bone_idx, old_scale)
+	p_skeleton.set_bone_rest(bone_idx, p_skeleton.get_bone_pose(bone_idx))
+
 static func rename_skeleton_to_humanoid_bones(
-	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_skins: Array
+	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_skins: Array, undo_redo: UndoRedo=null,
 ) -> bool:
 	if p_skeleton == null or p_humanoid_data == null:
 		return false
@@ -118,10 +131,7 @@ static func rename_skeleton_to_humanoid_bones(
 	for i in range(0, bone_count):
 		p_skeleton.add_bone(bone_names[i])
 		p_skeleton.set_bone_parent(i, bone_parents[i])
-		p_skeleton.set_bone_rest(i, bone_rests[i])
-		p_skeleton.set_bone_pose_position(i, bone_rests[i].origin)
-		p_skeleton.set_bone_pose_rotation(i, bone_rests[i].basis.get_rotation_quaternion())
-		p_skeleton.set_bone_pose_scale(i, bone_rests[i].basis.get_scale())
+		change_bone_rest(p_skeleton, i, bone_rests[i], undo_redo)
 
 	# Update the names for the skins too
 	for skin in p_skins:

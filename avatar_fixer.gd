@@ -8,42 +8,17 @@ const bone_direction_const = preload("bone_direction.gd")
 const rotation_fixer_const = preload("rotation_fixer.gd")
 const t_poser_const = preload("t_poser.gd")
 const external_transform_fixer_const = preload("external_transform_fixer.gd")
+const bone_lib = preload("bone_lib.gd")
 
 const avatar_callback_const = preload("avatar_callback.gd")
 
-static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> void:
-	print("bone_direction: _fix_meshes")
-	
-	for mi in p_mesh_instances:
-		var skin: Skin = mi.get_skin();
-		if skin == null:
-			continue
-			
-		skin = skin.duplicate()
-		mi.set_skin(skin)
-		var skeleton_path: NodePath = mi.get_skeleton_path()
-		var node: Node = mi.get_node_or_null(skeleton_path)
-		var skeleton: Skeleton3D = node
-		for bind_i in range(0, skin.get_bind_count()):
-			var bone_index:int  = skin.get_bind_bone(bind_i)
-			if (bone_index == -1):
-				var bind_name: String = skin.get_bind_name(bind_i)
-				if bind_name.is_empty():
-					continue
-				bone_index = skeleton.find_bone(bind_name)
-				
-			if (bone_index == -1):
-				continue
-			skin.set_bind_pose(bind_i, p_bind_fix_array[bone_index] * skin.get_bind_pose(bind_i))
-
-static func fix_avatar(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> int:
+static func fix_avatar(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, undo_redo: UndoRedo=null) -> int:
 	var err: int = avatar_callback_const.AVATAR_OK
 	
 	# First, copy the base rest pose from the skeleton into the base_pose array
 	var base_pose: Array = [].duplicate()
 	for i in range(0, p_skeleton.get_bone_count()):
 		base_pose.append(p_skeleton.get_bone_rest(i))
-	
 	# Next get apply the fortune_with_chain_offsets algorithm which will return the offsets to the base pose required to get
 	# all the bones to point their Y-direction to either the next bone in the humanoid chain, or the average of their children.
 	# It will also return an array of transforms which when multiplied by the skin bind poses, will correct the mesh skinning.
@@ -71,11 +46,8 @@ static func fix_avatar(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: Hu
 	# Now finally, apply it to the original skeleton
 	for i in range(0, final_base_pose.size()):
 		var final_pose: Transform3D = final_base_pose[i]
-		p_skeleton.set_bone_rest(i, final_pose)
-		p_skeleton.set_bone_pose_position(i, final_pose.origin)
-		p_skeleton.set_bone_pose_rotation(i, final_pose.basis.get_rotation_quaternion())
-		p_skeleton.set_bone_pose_scale(i, final_pose.basis.get_scale())
-	
+		bone_lib.change_bone_rest(p_skeleton, i, final_pose, undo_redo)
+
 	# Now combine the bind pose fix by combining the fix from the bone roll fix and the bone direction fix
 	var final_bind_pose: Array = [].duplicate()
 	for i in range(0, p_skeleton.get_bone_count()):
@@ -83,9 +55,9 @@ static func fix_avatar(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: Hu
 
 	# Search for all mesh instances with the associated skeleton and apply the bind pose fix to their respective meshes
 	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])
-	_fix_meshes(final_bind_pose, mesh_instances)
+	bone_direction_const._fix_meshes(final_bind_pose, mesh_instances)
 
 	# Apply the inverse transform of any nodes between the skeleton and the root node to fix any models
-	err = external_transform_fixer_const.fix_external_transform(p_root, p_skeleton)
+	err = external_transform_fixer_const.fix_external_transform(p_root, p_skeleton, undo_redo)
 	
 	return err

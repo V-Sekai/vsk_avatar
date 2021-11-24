@@ -6,6 +6,7 @@ extends Node
 # https://github.com/godot-extended-libraries/godot-fire/commit/622022d2779f9d35b586db4ee31c9cb76d0b7bc7
 
 const avatar_lib_const = preload("avatar_lib.gd")
+const bone_lib = preload("bone_lib.gd")
 
 const VECTOR_DIRECTION = Vector3.UP
 
@@ -20,25 +21,41 @@ class RestBone extends RefCounted:
 
 static func _get_perpendicular_vector(p_v: Vector3) -> Vector3:
 	var perpendicular: Vector3 = Vector3()
-	if (p_v[0] != 0 and p_v[1] != 0):
+	if !is_zero_approx(p_v[0]) and !is_zero_approx(p_v[1]):
 		perpendicular = Vector3(0, 0, 1).cross(p_v).normalized()
 	else:
 		perpendicular = Vector3(1, 0, 0)
 	
 	return perpendicular
 	
-static func _align_vectors(a: Vector3, b: Vector3) -> Quaternion:
-	a = a.normalized()
-	b = b.normalized()
-	if (a.length_squared() != 0.0 and b.length_squared() != 0.0):
-		# Find the axis perpendicular to both vectors and rotate along it by the angular difference
-		var perpendicular: Vector3 = a.cross(b).normalized()
-		var angle_diff: float = a.angle_to(b)
-		if (perpendicular.length_squared() == 0):
-			perpendicular = _get_perpendicular_vector(a)
-		return Quaternion(perpendicular, angle_diff)
-	else:
-		return Quaternion()
+
+static func _align_vectors(y_dir: Vector3, p_target_normal: Vector3) -> Basis:
+	p_target_normal = p_target_normal.normalized()
+	var angle: float = y_dir.angle_to(p_target_normal)
+	if (abs(angle) < 0.001 ||
+			y_dir.normalized().is_equal_approx(p_target_normal.normalized()) ||
+			y_dir.normalized().is_equal_approx(-p_target_normal.normalized())):
+		return Basis.IDENTITY
+	var cross_product: Vector3 = y_dir.cross(p_target_normal).normalized()
+	return Basis(cross_product, angle) 
+
+#static func _align_vectors(a: Vector3, b: Vector3) -> Quaternion:
+#	a = a.normalized()
+#	b = b.normalized()
+#	print("Align: " + str(a) + "," + str(b))
+#	#if (a.length_squared() != 0.0 and b.length_squared() != 0.0):
+#	var angle: float = a.angle_to(b)
+#	if is_zero_approx(angle):
+#		return Quaternion()
+#	if !is_zero_approx(a.length_squared()) and !is_zero_approx(b.length_squared()):
+#		# Find the axis perpendicular to both vectors and rotate along it by the angular difference
+#		var perpendicular: Vector3 = a.cross(b).normalized()
+#		var angle_diff: float = a.angle_to(b)
+#		if is_zero_approx(perpendicular.length_squared()):
+#			perpendicular = _get_perpendicular_vector(a)
+#		return Quaternion(perpendicular, angle_diff)
+#	else:
+#		return Quaternion()
 
 static func _fortune_with_chains(
 	p_skeleton: Skeleton3D,
@@ -109,6 +126,7 @@ static func _fortune_with_chains(
 			if p_ignore_unchained_bones and !chain_hash_table.get(i, null):
 				r_rest_bones[i].override_direction = false
 			leaf_bone.children_centroid_direction = r_rest_bones[leaf_bone.parent_index].children_centroid_direction
+		# print("i: %d  / direction: %s" % [i, r_rest_bones[i].children_centroid_direction.normalized()])
 
 	# We iterate again to point each bone to the centroid
 	# When we rotate a bone, we also have to move all of its children in the opposite direction
@@ -196,7 +214,7 @@ static func get_fortune_with_chain_offsets(p_skeleton: Skeleton3D, p_humanoid_da
 		
 	return offsets
 
-static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
+static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, undo_redo: UndoRedo=null) -> void:
 	print("bone_direction: fix_skeleton")
 	
 	var base_pose: Array = []
@@ -208,10 +226,7 @@ static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: 
 	# One last iteration to apply the transforms we calculated
 	for i in range(0, offsets["base_pose_offsets"].size()):
 		var final_pose: Transform3D = p_skeleton.get_bone_rest(i) * offsets["base_pose_offsets"][i]
-		p_skeleton.set_bone_rest(i, final_pose)
-		p_skeleton.set_bone_pose_position(i, final_pose.origin)
-		p_skeleton.set_bone_pose_rotation(i, final_pose.basis.get_rotation_quaternion())
-		p_skeleton.set_bone_pose_scale(i, final_pose.basis.get_scale())
+		bone_lib.change_bone_rest(p_skeleton, i, final_pose, undo_redo)
 	
 	# Correct the bind poses
 	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])

@@ -2,8 +2,9 @@
 extends RefCounted
 
 const avatar_callback_const = preload("avatar_callback.gd")
+const bone_lib = preload("bone_lib.gd")
 
-static func fix_external_transform(p_root: Node, p_skeleton: Skeleton3D) -> int:
+static func fix_external_transform(p_root: Node, p_skeleton: Skeleton3D, undo_redo: UndoRedo=null) -> int:
 	print("---Running ExternalTransform3DFixer---")
 	
 	var err: int = avatar_callback_const.generic_error_check(p_root, p_skeleton)
@@ -37,11 +38,8 @@ static func fix_external_transform(p_root: Node, p_skeleton: Skeleton3D) -> int:
 						
 					if child is Node3D:
 						child.transform = external_transform * child.transform
-		
+	
 	var bone_rest: Transform3D = external_transform * p_skeleton.get_bone_rest(0)
-	p_skeleton.set_bone_rest(0, bone_rest)
-	p_skeleton.set_bone_pose_position(0, bone_rest.origin)
-	p_skeleton.set_bone_pose_rotation(0, bone_rest.basis.get_rotation_quaternion())
-	p_skeleton.set_bone_pose_scale(0, bone_rest.basis.get_scale())
+	bone_lib.change_bone_rest(p_skeleton, 0, bone_rest, undo_redo)
 	
 	return avatar_callback_const.AVATAR_OK

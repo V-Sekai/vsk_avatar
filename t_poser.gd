@@ -29,8 +29,12 @@ const MAXIMUM_TWIST_HIPS_TO_SPINE_DEGREES = 30.0
 
 static func get_basis_rotated_towards_normal(p_basis: Basis, p_target_normal: Vector3) -> Basis:
 	var y_dir = p_basis.y.normalized()
-	var cross_product: Vector3 = y_dir.cross(p_target_normal).normalized()
 	var angle: float = y_dir.angle_to(p_target_normal)
+	if (is_zero_approx(angle) ||
+			y_dir.normalized().is_equal_approx(p_target_normal.normalized()) ||
+			y_dir.normalized().is_equal_approx(-p_target_normal.normalized())):
+		return Basis.IDENTITY
+	var cross_product: Vector3 = y_dir.cross(p_target_normal).normalized()
 	
 	return Basis(cross_product, angle) * p_basis
 	
