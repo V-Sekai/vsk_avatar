@@ -57,8 +57,8 @@ func debug_bones(p_skeleton: Skeleton3D) -> void:
 	avater_debug_const.debug_bones(node._skeleton_node)
 	
 	
-func correct_bone_directions(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData, undo_redo: UndoRedo=null) -> void:
-	bone_direction_const.fix_skeleton(p_root, p_skeleton_node, p_humanoid_data. undo_redo)
+func correct_bone_directions(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData, p_undo_redo: UndoRedo) -> void:
+	bone_direction_const.fix_skeleton(p_root, p_skeleton_node, p_humanoid_data, p_undo_redo)
 
 func enforce_strict_t_pose(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
 	var base_pose_array: Array = []
