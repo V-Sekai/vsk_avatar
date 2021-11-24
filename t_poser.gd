@@ -98,15 +98,6 @@ static func get_direction_for_humanoid_bone(p_humanoid_data: HumanoidData, p_ske
 	
 	return Vector3()
 
-#"""
-#static func get_relative_global_transform_for_bone(p_skeleton: Skeleton3D, p_root_bone_name: String, p_bone_name: String) -> Transform3D:
-#	# Stub
-#	return Transform3D()
-#
-#static func enforce_standard_t_pose(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
-#	pass
-#"""
-
 static func get_strict_t_pose(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_base_pose_array: Array) -> Array:
 	var t_pose_transform_array: Array = []
 	

@@ -38,7 +38,6 @@ enum {
 	MENU_OPTION_EXPORT_LEFT_HAND_POSE,
 	MENU_OPTION_EXPORT_RIGHT_HAND_POSE,
 	MENU_OPTION_CORRECT_BONE_DIRECTIONS,
-	MENU_OPTION_ENFORCE_STANDARD_T_POSE,
 	MENU_OPTION_ENFORCE_STRICT_T_POSE,
 	MENU_OPTION_SETUP_BONES,
 	MENU_OPTION_FIX_ALL,
@@ -60,9 +59,6 @@ func debug_bones(p_skeleton: Skeleton3D) -> void:
 	
 func correct_bone_directions(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData, undo_redo: UndoRedo=null) -> void:
 	bone_direction_const.fix_skeleton(p_root, p_skeleton_node, p_humanoid_data. undo_redo)
-
-func enforce_standard_t_pose(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
-	t_poser_const.enforce_standard_t_pose(p_root, p_skeleton_node, p_humanoid_data)
 
 func enforce_strict_t_pose(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
 	var base_pose_array: Array = []
@@ -154,11 +150,6 @@ func _menu_option(p_id : int) -> void:
 		MENU_OPTION_CORRECT_BONE_DIRECTIONS:
 			if check_if_avatar_is_valid():
 				correct_bone_directions(node, node._skeleton_node, node.humanoid_data, editor_plugin.get_undo_redo())
-			else:
-				err = avatar_callback_const.ROOT_IS_NULL
-		MENU_OPTION_ENFORCE_STANDARD_T_POSE:
-			if check_if_avatar_is_valid():
-				enforce_standard_t_pose(node, node._skeleton_node, node.humanoid_data)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_ENFORCE_STRICT_T_POSE:
@@ -254,7 +245,6 @@ func update_menu_options() -> void:
 		options.get_popup().add_item("Save Right Hand Pose (Debug)", MENU_OPTION_EXPORT_RIGHT_HAND_POSE)
 		options.get_popup().add_item("Debug Bones (Debug)", MENU_OPTION_DEBUG_BONES)
 		options.get_popup().add_item("Correct Bone Directions (Debug)", MENU_OPTION_CORRECT_BONE_DIRECTIONS)
-		options.get_popup().add_item("Enforce Standard T-Pose (Debug)", MENU_OPTION_ENFORCE_STANDARD_T_POSE)
 		options.get_popup().add_item("Enforce Strict T-Pose (Debug)", MENU_OPTION_ENFORCE_STRICT_T_POSE)
 		options.get_popup().add_item("Fix All (Debug)", MENU_OPTION_FIX_ALL)
 
