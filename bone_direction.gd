@@ -103,7 +103,7 @@ static func _fortune_with_chains(
 					apply_centroid = false
 					
 			if apply_centroid:
-				r_rest_bones[parent_bone].children_centroid_direction = r_rest_bones[parent_bone].children_centroid_direction + p_skeleton.get_bone_rest(i).origin
+				r_rest_bones[parent_bone].children_centroid_direction = r_rest_bones[parent_bone].children_centroid_direction + (p_skeleton.get_bone_rest(i) * p_base_pose[i]).origin
 			r_rest_bones[parent_bone].children.append(i)
 			
 
