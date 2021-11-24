@@ -201,7 +201,7 @@ static func print_chain_names(p_skeleton: Skeleton3D, p_chains: Array) -> void:
 		idx += 1
 		
 static func get_fortune_with_chain_offsets(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_base_pose: Array) -> Dictionary:
-	# Get the 5 bone chains nessecary for a valid humanoid rig
+	# Get the 5 bone chains necessary for a valid humanoid rig
 	
 	var humanoid_chains: Array = get_humanoid_chains(p_skeleton, p_humanoid_data)
 	var rest_bones: Dictionary = _fortune_with_chains(p_skeleton, {}.duplicate(), humanoid_chains, false, [humanoid_chains[0]], p_base_pose)
