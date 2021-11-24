@@ -28,22 +28,34 @@ static func _get_perpendicular_vector(p_v: Vector3) -> Vector3:
 	
 	return perpendicular
 	
-static func _align_vectors(a: Vector3, b: Vector3) -> Quaternion:
-	a = a.normalized()
-	b = b.normalized()
-	print("Align: " + str(a) + "," + str(b))
-	var angle: float = a.angle_to(b)
-	if is_zero_approx(angle):
-		return Quaternion()
-	if !is_zero_approx(a.length_squared()) and !is_zero_approx(b.length_squared()):
-		# Find the axis perpendicular to both vectors and rotate along it by the angular difference
-		var perpendicular: Vector3 = a.cross(b).normalized()
-		var angle_diff: float = a.angle_to(b)
-		if is_zero_approx(perpendicular.length_squared()):
-			perpendicular = _get_perpendicular_vector(a)
-		return Quaternion(perpendicular, angle_diff)
-	else:
-		return Quaternion()
+
+static func _align_vectors(y_dir: Vector3, p_target_normal: Vector3) -> Basis:
+	p_target_normal = p_target_normal.normalized()
+	var angle: float = y_dir.angle_to(p_target_normal)
+	if (abs(angle) < 0.001 ||
+			y_dir.normalized().is_equal_approx(p_target_normal.normalized()) ||
+			y_dir.normalized().is_equal_approx(-p_target_normal.normalized())):
+		return Basis.IDENTITY
+	var cross_product: Vector3 = y_dir.cross(p_target_normal).normalized()
+	return Basis(cross_product, angle) 
+
+#static func _align_vectors(a: Vector3, b: Vector3) -> Quaternion:
+#	a = a.normalized()
+#	b = b.normalized()
+#	print("Align: " + str(a) + "," + str(b))
+#	#if (a.length_squared() != 0.0 and b.length_squared() != 0.0):
+#	var angle: float = a.angle_to(b)
+#	if is_zero_approx(angle):
+#		return Quaternion()
+#	if !is_zero_approx(a.length_squared()) and !is_zero_approx(b.length_squared()):
+#		# Find the axis perpendicular to both vectors and rotate along it by the angular difference
+#		var perpendicular: Vector3 = a.cross(b).normalized()
+#		var angle_diff: float = a.angle_to(b)
+#		if is_zero_approx(perpendicular.length_squared()):
+#			perpendicular = _get_perpendicular_vector(a)
+#		return Quaternion(perpendicular, angle_diff)
+#	else:
+#		return Quaternion()
 
 static func _fortune_with_chains(
 	p_skeleton: Skeleton3D,
@@ -103,7 +115,7 @@ static func _fortune_with_chains(
 					apply_centroid = false
 					
 			if apply_centroid:
-				r_rest_bones[parent_bone].children_centroid_direction = r_rest_bones[parent_bone].children_centroid_direction + (p_skeleton.get_bone_rest(i) * p_base_pose[i]).origin
+				r_rest_bones[parent_bone].children_centroid_direction = r_rest_bones[parent_bone].children_centroid_direction + p_skeleton.get_bone_rest(i).origin
 			r_rest_bones[parent_bone].children.append(i)
 			
 
@@ -127,6 +139,7 @@ static func _fortune_with_chains(
 			for j in range(0, r_rest_bones[i].children.size()):
 				var child_index: int = r_rest_bones[i].children[j]
 				r_rest_bones[child_index].rest_local_after = Transform3D(r_rest_bones[i].rest_delta.inverse(), Vector3()) * r_rest_bones[child_index].rest_local_after
+	
 	return r_rest_bones
 
 static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> void:
@@ -201,7 +214,7 @@ static func get_fortune_with_chain_offsets(p_skeleton: Skeleton3D, p_humanoid_da
 		
 	return offsets
 
-static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, undo_redo: UndoRedo) -> void:
+static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, undo_redo: UndoRedo=null) -> void:
 	print("bone_direction: fix_skeleton")
 	
 	var base_pose: Array = []
