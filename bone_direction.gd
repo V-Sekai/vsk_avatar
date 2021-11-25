@@ -31,7 +31,6 @@ static func _get_perpendicular_vector(p_v: Vector3) -> Vector3:
 static func _align_vectors(a: Vector3, b: Vector3) -> Quaternion:
 	a = a.normalized()
 	b = b.normalized()
-	print("Align: " + str(a) + "," + str(b))
 	var angle: float = a.angle_to(b)
 	if is_zero_approx(angle):
 		return Quaternion()
@@ -114,7 +113,6 @@ static func _fortune_with_chains(
 			if p_ignore_unchained_bones and !chain_hash_table.get(i, null):
 				r_rest_bones[i].override_direction = false
 			leaf_bone.children_centroid_direction = r_rest_bones[leaf_bone.parent_index].children_centroid_direction
-		# print("i: %d  / direction: %s" % [i, r_rest_bones[i].children_centroid_direction.normalized()])
 
 	# We iterate again to point each bone to the centroid
 	# When we rotate a bone, we also have to move all of its children in the opposite direction
@@ -127,6 +125,7 @@ static func _fortune_with_chains(
 			for j in range(0, r_rest_bones[i].children.size()):
 				var child_index: int = r_rest_bones[i].children[j]
 				r_rest_bones[child_index].rest_local_after = Transform3D(r_rest_bones[i].rest_delta.inverse(), Vector3()) * r_rest_bones[child_index].rest_local_after
+	
 	return r_rest_bones
 
 static func _fix_meshes(p_bind_fix_array: Array, p_mesh_instances: Array) -> void:
@@ -210,12 +209,10 @@ static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: 
 	
 	var offsets: Dictionary = get_fortune_with_chain_offsets(p_skeleton, p_humanoid_data, base_pose)
 	
-	undo_redo.create_action("Change bone rest")	
+	undo_redo.create_action("Change bone rest", UndoRedo.MERGE_ALL)
 	for i in range(0, offsets["base_pose_offsets"].size()):
 		var final_pose: Transform3D = p_skeleton.get_bone_rest(i) * offsets["base_pose_offsets"][i]
 		bone_lib.change_bone_rest(p_skeleton, i, final_pose, undo_redo)
-		undo_redo.add_do_method(p_skeleton, "set_bone_rest", i, final_pose);
-		undo_redo.add_undo_method(p_skeleton, "set_bone_rest", i, p_skeleton.get_bone_rest(i));
 	undo_redo.commit_action()
 	# Correct the bind poses
 	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])

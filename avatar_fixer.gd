@@ -12,7 +12,8 @@ const bone_lib = preload("bone_lib.gd")
 
 const avatar_callback_const = preload("avatar_callback.gd")
 
-static func fix_avatar(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, undo_redo: UndoRedo=null) -> int:
+static func fix_avatar(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, undo_redo: UndoRedo) -> int:
+	undo_redo = UndoRedo.new()
 	var err: int = avatar_callback_const.AVATAR_OK
 	
 	# First, copy the base rest pose from the skeleton into the base_pose array
@@ -44,9 +45,11 @@ static func fix_avatar(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: Hu
 		final_base_pose.append(direction_corrected_base_pose[i] * rotation_fix_data["bone_pose_roll_fixes"][i])
 
 	# Now finally, apply it to the original skeleton
+	undo_redo.create_action("Change bone rest")
 	for i in range(0, final_base_pose.size()):
 		var final_pose: Transform3D = final_base_pose[i]
 		bone_lib.change_bone_rest(p_skeleton, i, final_pose, undo_redo)
+	undo_redo.commit_action()
 
 	# Now combine the bind pose fix by combining the fix from the bone roll fix and the bone direction fix
 	var final_bind_pose: Array = [].duplicate()
