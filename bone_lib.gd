@@ -87,7 +87,6 @@ static func change_bone_rest(p_skeleton: Skeleton3D, bone_idx: int, bone_rest: T
 	if undo_redo == null:
 		printerr("Can't change bone rest.")
 		return
-	undo_redo.create_action("Change bone rest")
 	var old_position: Vector3 = p_skeleton.get_bone_pose_position(bone_idx)
 	var old_scale: Vector3 = p_skeleton.get_bone_pose_scale(bone_idx)
 	var old_rotation: Quaternion = p_skeleton.get_bone_pose_rotation(bone_idx)	
@@ -100,8 +99,7 @@ static func change_bone_rest(p_skeleton: Skeleton3D, bone_idx: int, bone_rest: T
 	undo_redo.add_undo_method(p_skeleton, "set_bone_pose_scale", bone_idx, old_scale)
 	undo_redo.add_undo_method(p_skeleton, "set_bone_pose_rotation", bone_idx, old_rotation)
 	undo_redo.add_undo_method(p_skeleton, "set_bone_rest", bone_idx, old_rest)
-	undo_redo.commit_action()
-
+	
 static func rename_skeleton_to_humanoid_bones(
 	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_skins: Array, undo_redo: UndoRedo=null,
 ) -> bool:
@@ -134,11 +132,14 @@ static func rename_skeleton_to_humanoid_bones(
 
 	# Destroy the old skeleton and replace it with the new data
 	p_skeleton.clear_bones()
+	
+	undo_redo.create_action("Change bone rest")
 	for i in range(0, bone_count):
 		p_skeleton.add_bone(bone_names[i])
 		p_skeleton.set_bone_parent(i, bone_parents[i])
 		change_bone_rest(p_skeleton, i, bone_rests[i], undo_redo)
-
+	undo_redo.commit_action()
+	
 	# Update the names for the skins too
 	for skin in p_skins:
 		for i in range(0, skin.get_bind_count()):

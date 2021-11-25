@@ -210,10 +210,12 @@ static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: 
 	
 	var offsets: Dictionary = get_fortune_with_chain_offsets(p_skeleton, p_humanoid_data, base_pose)
 	
+	undo_redo.create_action("Change bone rest")	
 	# One last iteration to apply the transforms we calculated
 	for i in range(0, offsets["base_pose_offsets"].size()):
 		var final_pose: Transform3D = p_skeleton.get_bone_rest(i) * offsets["base_pose_offsets"][i]
 		bone_lib.change_bone_rest(p_skeleton, i, final_pose, undo_redo)
+	undo_redo.commit_action()
 	
 	# Correct the bind poses
 	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])
