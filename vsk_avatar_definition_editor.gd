@@ -145,26 +145,32 @@ func _menu_option(p_id : int) -> void:
 		MENU_OPTION_DEBUG_BONES:
 			if check_if_avatar_is_valid():
 				debug_bones(node._skeleton_node)
+				_refresh_skeleton(node._skeleton_node)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_CORRECT_BONE_DIRECTIONS:
 			if check_if_avatar_is_valid():
 				correct_bone_directions(node, node._skeleton_node, node.humanoid_data, editor_plugin.get_undo_redo())
+				_refresh_skeleton(node._skeleton_node)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_ENFORCE_STRICT_T_POSE:
 			if check_if_avatar_is_valid():
 				enforce_strict_t_pose(node, node._skeleton_node, node.humanoid_data)
+				_refresh_skeleton(node._skeleton_node)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_SETUP_BONES:
 			if check_if_avatar_is_valid():
 				err = setup_bones_menu()
+				_refresh_skeleton(node._skeleton_node)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_FIX_ALL:
 			if check_if_avatar_is_valid():
 				err = avatar_fixer_const.fix_avatar(node, node._skeleton_node, node.humanoid_data, editor_plugin.get_undo_redo())
+				_refresh_skeleton(node._skeleton_node)
+				_menu_option(MENU_OPTION_CORRECT_BONE_DIRECTIONS)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_EXPORT_AVATAR:
@@ -189,6 +195,10 @@ func _menu_option(p_id : int) -> void:
 				err = avatar_callback_const.ROOT_IS_NULL
 				
 	error_callback(err)
+	
+func _refresh_skeleton(p_skeleton : Skeleton3D):
+	p_skeleton.visible = not p_skeleton.visible
+	p_skeleton.visible = not p_skeleton.visible
 
 func _save_file_at_path(p_path : String) -> void:
 	var vsk_exporter: Node = get_node_or_null("/root/VSKExporter")
