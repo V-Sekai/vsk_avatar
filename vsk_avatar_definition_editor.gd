@@ -1,7 +1,6 @@
 @tool
 extends Control
 
-const avater_debug_const = preload("avatar_debug.gd")
 const vsk_types_const = preload("res://addons/vsk_importer_exporter/vsk_types.gd")
 const avatar_callback_const = preload("avatar_callback.gd")
 
