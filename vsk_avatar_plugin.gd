@@ -1,6 +1,7 @@
 @tool
 extends EditorPlugin
 
+const avatar_definition_editor_const = preload("vsk_avatar_definition_editor.gd")
 const avatar_definition_const = preload("vsk_avatar_definition.gd")
 
 var editor_interface : EditorInterface = null
@@ -22,6 +23,7 @@ func _get_plugin_name() -> String:
 
 func _enter_tree() -> void:
 	editor_interface = get_editor_interface()
+	avatar_definition_editor = avatar_definition_editor_const.new(self)
 	editor_interface.get_viewport().call_deferred("add_child", avatar_definition_editor)
 	
 	avatar_definition_editor.options.hide()
