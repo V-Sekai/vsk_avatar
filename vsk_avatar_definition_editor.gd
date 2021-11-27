@@ -34,7 +34,6 @@ const OUTPUT_SCENE_EXTENSION = "scn"
 const OUTPUT_HAND_RESOURCE_EXTENSION = "tres"
 
 enum {
-	MENU_OPTION_DEBUG_BONES,
 	MENU_OPTION_EXPORT_LEFT_HAND_POSE,
 	MENU_OPTION_EXPORT_RIGHT_HAND_POSE,
 	MENU_OPTION_CORRECT_BONE_DIRECTIONS,
@@ -53,10 +52,6 @@ enum {
 
 var save_option: int = SAVE_OPTION_AVATAR
 
-func debug_bones(p_skeleton: Skeleton3D) -> void:
-	avater_debug_const.debug_bones(node._skeleton_node)
-	
-	
 func correct_bone_directions(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData, p_undo_redo: UndoRedo) -> void:
 	bone_direction_const.fix_skeleton(p_root, p_skeleton_node, p_humanoid_data, p_undo_redo)
 
@@ -142,12 +137,6 @@ func check_if_avatar_is_valid() -> bool:
 func _menu_option(p_id : int) -> void:
 	var err: int = avatar_callback_const.AVATAR_OK
 	match p_id:
-		MENU_OPTION_DEBUG_BONES:
-			if check_if_avatar_is_valid():
-				debug_bones(node._skeleton_node)
-				_refresh_skeleton(node._skeleton_node)
-			else:
-				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_CORRECT_BONE_DIRECTIONS:
 			if check_if_avatar_is_valid():
 				correct_bone_directions(node, node._skeleton_node, node.humanoid_data, editor_plugin.get_undo_redo())
@@ -156,6 +145,7 @@ func _menu_option(p_id : int) -> void:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_ENFORCE_STRICT_T_POSE:
 			if check_if_avatar_is_valid():
+				_menu_option(MENU_OPTION_CORRECT_BONE_DIRECTIONS)
 				enforce_strict_t_pose(node, node._skeleton_node, node.humanoid_data)
 				_refresh_skeleton(node._skeleton_node)
 			else:
@@ -253,8 +243,7 @@ func update_menu_options() -> void:
 		options.get_popup().add_item("Upload Avatar", MENU_OPTION_UPLOAD_AVATAR)
 		options.get_popup().add_item("Save Left Hand Pose (Debug)", MENU_OPTION_EXPORT_LEFT_HAND_POSE)
 		options.get_popup().add_item("Save Right Hand Pose (Debug)", MENU_OPTION_EXPORT_RIGHT_HAND_POSE)
-		options.get_popup().add_item("Debug Bones (Debug)", MENU_OPTION_DEBUG_BONES)
-		options.get_popup().add_item("Correct Bone Directions (Debug)", MENU_OPTION_CORRECT_BONE_DIRECTIONS)
+		options.get_popup().add_item("Debug Bones (Debug)", MENU_OPTION_CORRECT_BONE_DIRECTIONS)
 		options.get_popup().add_item("Enforce Strict T-Pose (Debug)", MENU_OPTION_ENFORCE_STRICT_T_POSE)
 		options.get_popup().add_item("Fix All (Debug)", MENU_OPTION_FIX_ALL)
 
