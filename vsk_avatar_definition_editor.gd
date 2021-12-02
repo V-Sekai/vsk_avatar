@@ -38,7 +38,6 @@ enum {
 	MENU_OPTION_EXPORT_LEFT_HAND_POSE,
 	MENU_OPTION_EXPORT_RIGHT_HAND_POSE,
 	MENU_OPTION_CORRECT_BONE_DIRECTIONS,
-	MENU_OPTION_ENFORCE_STRICT_T_POSE,
 	MENU_OPTION_SETUP_BONES,
 	MENU_OPTION_FIX_ALL,
 	MENU_OPTION_EXPORT_AVATAR,
@@ -154,12 +153,6 @@ func _menu_option(p_id : int) -> void:
 				_refresh_skeleton(node._skeleton_node)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
-		MENU_OPTION_ENFORCE_STRICT_T_POSE:
-			if check_if_avatar_is_valid():
-				enforce_strict_t_pose(node, node._skeleton_node, node.humanoid_data)
-				_refresh_skeleton(node._skeleton_node)
-			else:
-				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_SETUP_BONES:
 			if check_if_avatar_is_valid():
 				err = setup_bones_menu()
@@ -255,7 +248,6 @@ func update_menu_options() -> void:
 		options.get_popup().add_item("Save Right Hand Pose (Debug)", MENU_OPTION_EXPORT_RIGHT_HAND_POSE)
 		options.get_popup().add_item("Debug Bones (Debug)", MENU_OPTION_DEBUG_BONES)
 		options.get_popup().add_item("Correct Bone Directions (Debug)", MENU_OPTION_CORRECT_BONE_DIRECTIONS)
-		options.get_popup().add_item("Enforce Strict T-Pose (Debug)", MENU_OPTION_ENFORCE_STRICT_T_POSE)
 		options.get_popup().add_item("Fix All (Debug)", MENU_OPTION_FIX_ALL)
 
 func _init(p_editor_plugin : EditorPlugin):
