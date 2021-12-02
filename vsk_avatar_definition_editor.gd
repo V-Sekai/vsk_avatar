@@ -230,7 +230,7 @@ func update_menu_options() -> void:
 		options.get_popup().clear()
 		
 		options.get_popup().add_item("Setup Bones", MENU_OPTION_SETUP_BONES)
-		options.get_popup().add_item("Export Avatar Locally", MENU_OPTION_EXPORT_AVATAR)
+		options.get_popup().add_item("Export Avatar Definition Locally", MENU_OPTION_EXPORT_AVATAR)
 		options.get_popup().add_item("Upload Avatar", MENU_OPTION_UPLOAD_AVATAR)
 		options.get_popup().add_item("Save Left Hand Pose (Debug)", MENU_OPTION_EXPORT_LEFT_HAND_POSE)
 		options.get_popup().add_item("Save Right Hand Pose (Debug)", MENU_OPTION_EXPORT_RIGHT_HAND_POSE)
