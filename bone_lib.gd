@@ -132,13 +132,14 @@ static func rename_skeleton_to_humanoid_bones(
 
 	# Destroy the old skeleton and replace it with the new data
 	p_skeleton.clear_bones()
-	
-	undo_redo.create_action("Change bone rest", UndoRedo.MERGE_ALL)
+	if undo_redo:
+		undo_redo.create_action("Change bone rest", UndoRedo.MERGE_ALL)
 	for i in range(0, bone_count):
 		p_skeleton.add_bone(bone_names[i])
 		p_skeleton.set_bone_parent(i, bone_parents[i])
 		change_bone_rest(p_skeleton, i, bone_rests[i], undo_redo)
-	undo_redo.commit_action()
+	if undo_redo:
+		undo_redo.commit_action()
 	
 	# Update the names for the skins too
 	for skin in p_skins:

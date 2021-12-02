@@ -40,8 +40,10 @@ static func fix_external_transform(p_root: Node, p_skeleton: Skeleton3D, undo_re
 						child.transform = external_transform * child.transform
 	
 	var bone_rest: Transform3D = external_transform * p_skeleton.get_bone_rest(0)
-	undo_redo.create_action("Change bone rest", UndoRedo.MERGE_ALL)
+	if undo_redo:
+		undo_redo.create_action("Change bone rest", UndoRedo.MERGE_ALL)
 	bone_lib.change_bone_rest(p_skeleton, 0, bone_rest, undo_redo)
-	undo_redo.commit_action()
+	if undo_redo:
+		undo_redo.commit_action()
 	
 	return avatar_callback_const.AVATAR_OK
