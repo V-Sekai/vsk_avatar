@@ -18,7 +18,7 @@ func _set(p_property, p_value) -> bool:
 	return vsk_user_content_definition_helper_conest.common_set(self, p_property, p_value)
 
 # Backwards compatibility
-func _get_property_list():
+func _get_property_list() -> Array:
 	var prev: Variant = editor_properties.get("vskeditor_preview_type")
 	if typeof(prev) == TYPE_NIL:
 		prev = "Camera"
