@@ -3,8 +3,6 @@ extends "res://addons/vsk_avatar/vsk_avatar_definition_runtime.gd"
 
 const vsk_user_content_definition_helper_conest = preload("res://addons/vsk_importer_exporter/vsk_user_content_definition_helper.gd")
 
-var database_id: String = "" # For backwards compatibility
-
 var editor_properties: RefCounted # VSKEditorProperties
 
 func add_pipeline(p_node: Node) -> void:
