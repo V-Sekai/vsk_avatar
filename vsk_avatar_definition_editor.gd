@@ -196,16 +196,9 @@ func _save_file_at_path(p_path : String) -> void:
 		if vsk_exporter:
 			err = vsk_exporter.export_avatar(editor_plugin.get_editor_interface().get_edited_scene_root(),\
 			node,\
-			p_path)
+			p_path)	
 		else:
-			var packed_scene : PackedScene = PackedScene.new()
-			packed_scene.pack(editor_plugin.get_editor_interface().get_edited_scene_root())
-			if ResourceSaver.save(
-				p_path,
-				packed_scene,
-				ResourceSaver.FLAG_RELATIVE_PATHS | ResourceSaver.FLAG_COMPRESS
-			) & 0xffffffff == OK:				
-				err = avatar_callback_const.AVATAR_OK
+			err = avatar_callback_const.AVATAR_OK
 		
 	elif save_option == SAVE_OPTION_LEFT_HAND_POSE or \
 		save_option == SAVE_OPTION_RIGHT_HAND_POSE:
@@ -232,6 +225,7 @@ func _save_file_at_path(p_path : String) -> void:
 						err = avatar_callback_const.AVATAR_OK
 						
 	error_callback(err)
+	
 
 func _notification(what):
 	match what:
