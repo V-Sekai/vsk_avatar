@@ -79,7 +79,7 @@ func export_avatar_local() -> void:
 	
 	save_dialog.popup_centered_ratio()
 	save_dialog.set_title("Save Avatar As...")
-
+	
 
 func get_export_data() -> Dictionary:
 	return {
@@ -155,7 +155,10 @@ func _menu_option(p_id : int) -> void:
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_EXPORT_AVATAR:
-			if check_if_avatar_is_valid():
+			if check_if_avatar_is_valid():				
+				_refresh_skeleton(node._skeleton_node)
+				_menu_option(MENU_OPTION_FIX_ALL)
+				_refresh_skeleton(node._skeleton_node)
 				export_avatar_local()
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
@@ -190,11 +193,19 @@ func _save_file_at_path(p_path : String) -> void:
 	var err: int = avatar_callback_const.AVATAR_FAILED
 	
 	if save_option == SAVE_OPTION_AVATAR:
-		err = avatar_callback_const.EXPORTER_NOT_LOADED
 		if vsk_exporter:
 			err = vsk_exporter.export_avatar(editor_plugin.get_editor_interface().get_edited_scene_root(),\
 			node,\
 			p_path)
+		else:
+			var packed_scene : PackedScene = PackedScene.new()
+			packed_scene.pack(editor_plugin.get_editor_interface().get_edited_scene_root())
+			if ResourceSaver.save(
+				p_path,
+				packed_scene,
+				ResourceSaver.FLAG_RELATIVE_PATHS | ResourceSaver.FLAG_COMPRESS
+			) & 0xffffffff == OK:				
+				err = avatar_callback_const.AVATAR_OK
 		
 	elif save_option == SAVE_OPTION_LEFT_HAND_POSE or \
 		save_option == SAVE_OPTION_RIGHT_HAND_POSE:
@@ -251,7 +262,7 @@ func _init(p_editor_plugin : EditorPlugin):
 	save_dialog.exclusive = true
 	save_dialog.connect("file_selected", Callable(self, "_save_file_at_path"))
 	add_child(save_dialog)
-	
+		
 	var clear_icon: Texture = editor_plugin.get_editor_interface().get_base_control().get_theme_icon("Clear", "EditorIcons")
 	var bone_icon: Texture = editor_plugin.get_editor_interface().get_base_control().get_theme_icon("BoneAttachment", "EditorIcons")
 	
