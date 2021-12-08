@@ -23,16 +23,13 @@ var _eye_transform_node: Node3D = get_node_or_null(eye_transform_node_path)
 @export var mouth_transform_node_path: NodePath = NodePath()
  # @onready var _mouth_transform_node: Node3D = get_node_or_null(mouth_transform_node_path)
 
-var humanoid_data: HumanoidData = null :
+@export var database_id: String
+@export var vskeditor_preview_type: String
+@export var vskeditor_preview_texture : Texture2D
+@export_node_path(Camera3D) var vskeditor_preview_camera_path
+@export var vskeditor_pipeline_paths : Array[NodePath]
+@export var humanoid_data: Resource = null : # HumanoidData
 	set = set_humanoid_data
-
-
-func _get_property_list() -> Array:
-	var property_list: Array = []
-	
-	property_list.push_back({"name":"humanoid_data", "type":TYPE_OBJECT, "hint": PROPERTY_HINT_RESOURCE_TYPE, "hint_string":"HumanoidData"})
-	
-	return property_list
 
 
 func set_humanoid_data(p_humanoid_data: HumanoidData) -> void:
