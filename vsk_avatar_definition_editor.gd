@@ -50,7 +50,7 @@ enum {
 
 var save_option: int = SAVE_OPTION_AVATAR
 
-func correct_bone_directions(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData, p_undo_redo: UndoRedo) -> void:
+static func correct_bone_directions(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData, p_undo_redo: UndoRedo) -> void:
 	bone_direction_const.fix_skeleton(p_root, p_skeleton_node, p_humanoid_data, p_undo_redo)
 
 func enforce_strict_t_pose(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
@@ -155,10 +155,7 @@ func _menu_option(p_id : int) -> void:
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_EXPORT_AVATAR:
-			if check_if_avatar_is_valid():				
-				_refresh_skeleton(node._skeleton_node)
-				_menu_option(MENU_OPTION_FIX_ALL)
-				_refresh_skeleton(node._skeleton_node)
+			if check_if_avatar_is_valid():
 				export_avatar_local()
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
@@ -183,7 +180,7 @@ func _menu_option(p_id : int) -> void:
 				
 	error_callback(err)
 	
-func _refresh_skeleton(p_skeleton : Skeleton3D):
+static func _refresh_skeleton(p_skeleton : Skeleton3D):
 	p_skeleton.visible = not p_skeleton.visible
 	p_skeleton.visible = not p_skeleton.visible
 

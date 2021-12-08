@@ -188,9 +188,13 @@ static func print_chain_names(p_skeleton: Skeleton3D, p_chains: Array) -> void:
 		
 static func get_fortune_with_chain_offsets(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_base_pose: Array) -> Dictionary:
 	# Get the 5 bone chains necessary for a valid humanoid rig
-	
-	var humanoid_chains: Array = get_humanoid_chains(p_skeleton, p_humanoid_data)
-	var rest_bones: Dictionary = _fortune_with_chains(p_skeleton, {}.duplicate(), humanoid_chains, false, [humanoid_chains[0]], p_base_pose)
+	var humanoid_chains: Array 
+	var rest_bones: Dictionary
+	if p_humanoid_data:
+		humanoid_chains = get_humanoid_chains(p_skeleton, p_humanoid_data)
+		rest_bones = _fortune_with_chains(p_skeleton, {}.duplicate(), humanoid_chains, false, [humanoid_chains[0]], p_base_pose)
+	else:
+		rest_bones = _fortune_with_chains(p_skeleton, {}.duplicate(), [], false, [], p_base_pose)
 	
 	var offsets: Dictionary = {"base_pose_offsets":[], "bind_pose_offsets":[]}
 	
@@ -208,12 +212,9 @@ static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: 
 		base_pose.append(p_skeleton.get_bone_rest(i))
 	
 	var offsets: Dictionary = get_fortune_with_chain_offsets(p_skeleton, p_humanoid_data, base_pose)
-	
-	undo_redo.create_action("Change bone rest", UndoRedo.MERGE_ALL)
 	for i in range(0, offsets["base_pose_offsets"].size()):
 		var final_pose: Transform3D = p_skeleton.get_bone_rest(i) * offsets["base_pose_offsets"][i]
-		bone_lib.change_bone_rest(p_skeleton, i, final_pose, undo_redo)
-	undo_redo.commit_action()
+		bone_lib.change_bone_rest(p_skeleton, i, final_pose)
 	# Correct the bind poses
 	var mesh_instances: Array = avatar_lib_const.find_mesh_instances_for_avatar_skeleton(p_root, p_skeleton, [])
 	_fix_meshes(offsets["bind_pose_offsets"], mesh_instances)

@@ -83,22 +83,18 @@ static func is_bone_parent_of_or_self(p_skeleton: Skeleton3D, p_parent_id: int, 
 		
 	return is_bone_parent_of(p_skeleton, p_parent_id, p_child_id)
 
-static func change_bone_rest(p_skeleton: Skeleton3D, bone_idx: int, bone_rest: Transform3D, undo_redo: UndoRedo):
+static func change_bone_rest(p_skeleton: Skeleton3D, bone_idx: int, bone_rest: Transform3D):
 	var old_position: Vector3 = p_skeleton.get_bone_pose_position(bone_idx)
 	var old_scale: Vector3 = p_skeleton.get_bone_pose_scale(bone_idx)
 	var old_rotation: Quaternion = p_skeleton.get_bone_pose_rotation(bone_idx)
 	var old_rest: Transform3D = p_skeleton.get_bone_rest(bone_idx)
 	var new_rotation: Quaternion = Quaternion(bone_rest.basis.orthonormalized())
-	undo_redo.add_do_method(p_skeleton, "set_bone_pose_position", bone_idx, bone_rest.origin)
-	undo_redo.add_do_method(p_skeleton, "set_bone_pose_scale", bone_idx, old_scale) # bone_rest.basis.get_scale())
-	undo_redo.add_do_method(p_skeleton, "set_bone_pose_rotation", bone_idx, new_rotation)
-	undo_redo.add_do_method(p_skeleton, "set_bone_rest", bone_idx, Transform3D(
+	p_skeleton.set_bone_pose_position(bone_idx, bone_rest.origin)
+	p_skeleton.set_bone_pose_scale(bone_idx, old_scale)
+	p_skeleton.set_bone_pose_rotation(bone_idx, new_rotation)
+	p_skeleton.set_bone_rest(bone_idx, Transform3D(
 			Basis(new_rotation) * Basis(Vector3(1,0,0) * old_scale.x, Vector3(0,1,0) * old_scale.y, Vector3(0,0,1) * old_scale.z),
-			bone_rest.origin));
-	undo_redo.add_undo_method(p_skeleton, "set_bone_pose_position", bone_idx, old_position)
-	undo_redo.add_undo_method(p_skeleton, "set_bone_pose_scale", bone_idx, old_scale)
-	undo_redo.add_undo_method(p_skeleton, "set_bone_pose_rotation", bone_idx, old_rotation)
-	undo_redo.add_undo_method(p_skeleton, "set_bone_rest", bone_idx, old_rest)
+			bone_rest.origin))
 	
 static func rename_skeleton_to_humanoid_bones(
 	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_skins: Array, undo_redo: UndoRedo,
@@ -132,14 +128,10 @@ static func rename_skeleton_to_humanoid_bones(
 
 	# Destroy the old skeleton and replace it with the new data
 	p_skeleton.clear_bones()
-	if undo_redo:
-		undo_redo.create_action("Change bone rest", UndoRedo.MERGE_ALL)
 	for i in range(0, bone_count):
 		p_skeleton.add_bone(bone_names[i])
 		p_skeleton.set_bone_parent(i, bone_parents[i])
-		change_bone_rest(p_skeleton, i, bone_rests[i], undo_redo)
-	if undo_redo:
-		undo_redo.commit_action()
+		change_bone_rest(p_skeleton, i, bone_rests[i])
 	
 	# Update the names for the skins too
 	for skin in p_skins:
