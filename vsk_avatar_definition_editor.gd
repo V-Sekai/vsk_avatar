@@ -198,7 +198,7 @@ func _save_file_at_path(p_path : String) -> void:
 			node,\
 			p_path)	
 		else:
-			err = avatar_callback_const.AVATAR_OK
+			err = avatar_callback_const.AVATAR_FAILED
 		
 	elif save_option == SAVE_OPTION_LEFT_HAND_POSE or \
 		save_option == SAVE_OPTION_RIGHT_HAND_POSE:
