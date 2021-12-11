@@ -121,8 +121,8 @@ func setup_list(p_tab: Control, p_bones: PackedStringArray, p_button_array: Arra
 
 		var label: Label = Label.new()
 		label.set_text(p_bones[i])
-		label.align = Label.ALIGN_CENTER
-		label.valign = Label.VALIGN_CENTER
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 		var bone_mapper_button = bone_mapper_button_const.new()
 		var button_pressed_callable = Callable(self, "button_pressed")
@@ -195,13 +195,13 @@ func _init(p_bone_icon: Texture, p_clear_icon: Texture):
 	tab_container = TabContainer.new()
 
 	body_control = ScrollContainer.new()
-	body_control.scroll_horizontal_enabled = false
+	body_control.scroll_horizontal = false
 	head_control = ScrollContainer.new()
-	head_control.scroll_horizontal_enabled = false
+	head_control.scroll_horizontal = false
 	left_hand_bone_control = ScrollContainer.new()
-	left_hand_bone_control.scroll_horizontal_enabled = false
+	left_hand_bone_control.scroll_horizontal = false
 	right_hand_bone_control = ScrollContainer.new()
-	right_hand_bone_control.scroll_horizontal_enabled = false
+	right_hand_bone_control.scroll_horizontal = false
 	
 	body_control.set_name("Body")
 	head_control.set_name("Head")
