@@ -324,7 +324,7 @@ func calculate_proportions() -> void:
 		)
 		height_offset = lerp(0.0, stilts, VRManager.vr_user_preferences.eye_to_arm_ratio)
 	else:
-		height_offset = 0.5
+		height_offset = 0.0
 		VRManager.set_origin_world_scale(1.0)
 
 static func _calculate_humanoid_wristspan(p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData) -> float:
