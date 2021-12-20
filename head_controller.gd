@@ -65,8 +65,8 @@ const LEAN_RELAXATION_PERIOD = 0.25  #seconds
 
 const LOOKING_AT_ME_GAP_ALLOWED = (5 * 1000 * 1000) / 60  # n frames, in microseconds
 
-@export  var avatar_display_path: NodePath = NodePath()
- # (NodePath)var _avatar_display: Node3D = null
+@export var avatar_display_path: NodePath = NodePath()
+# var _avatar_display: Node3D = null
 
 var left_eye_blink: float = 0.0
 var right_eye_blink: float = 0.0

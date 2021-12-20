@@ -71,11 +71,11 @@ enum shrink_enum {
 var shrink_mode : int
 @export var default_avatar_height : float = 1.8
 @export var _ren_ik_path: NodePath = NodePath()
-@export  var _ik_space_path: NodePath = NodePath()
-@export  var player_camera_controller_path: NodePath = NodePath()
-@export  var player_hand_controller_path: NodePath = NodePath()
-@export  var player_input_path: NodePath = NodePath()
-@export  var voice_player_path: NodePath = NodePath()
+@export var _ik_space_path: NodePath = NodePath()
+@export var player_camera_controller_path: NodePath = NodePath()
+@export var player_hand_controller_path: NodePath = NodePath()
+@export var player_input_path: NodePath = NodePath()
+@export var voice_player_path: NodePath = NodePath()
  # (NodePath)
 var _player_input_node: Node = null
 var _ik_space: Node = null
