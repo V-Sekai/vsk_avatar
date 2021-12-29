@@ -19,8 +19,8 @@ class CachedSkeletonPolyfill extends RefCounted:
 	var overrides: Array = [].duplicate()
 	var override_weights: Array = [].duplicate()
 
-	func _init(skel: Skeleton3D):
-		self.skel = skel
+	func _init(p_skel: Skeleton3D):
+		self.skel = p_skel
 		for i in range(skel.get_bone_count()):
 			overrides.push_back(Transform3D.IDENTITY)
 			override_weights.push_back(0.0)
