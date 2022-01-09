@@ -77,7 +77,7 @@ static func _fortune_with_chains(
 			var apply_centroid = true
 			
 			var chain = chain_hash_table.get(parent_bone, null)
-			if typeof(chain) == TYPE_INT32_ARRAY:
+			if typeof(chain) == TYPE_PACKED_INT32_ARRAY:
 				var index: int = -1
 				for findind in range(len(chain)):
 					if chain[findind] == parent_bone:
