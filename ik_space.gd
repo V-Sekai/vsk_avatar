@@ -22,24 +22,26 @@ const IK_POINT_RIGHT_HAND_BASIS_GLOBAL = Basis(Vector3(0.0, 0.707, -0.707), Vect
 
 const IK_HAND_OFFSET = Vector3(0.01, 0.014, 0.13) # Right hand
 
-const IK_POINT_HEAD_ID = 0
-const IK_POINT_LEFT_HAND_ID = 1
-const IK_POINT_RIGHT_HAND_ID = 2
-const IK_POINT_LEFT_FOOT_ID = 3
-const IK_POINT_RIGHT_FOOT_ID = 4
-const IK_POINT_HIPS_ID = 5
-const IK_POINT_CHEST_ID = 6
-const IK_POINT_SIZE = 7
+class ik_points:
+	const HEAD_ID = 0
+	const LEFT_HAND_ID = 1
+	const RIGHT_HAND_ID = 2
+	const LEFT_FOOT_ID = 3
+	const RIGHT_FOOT_ID = 4
+	const HIPS_ID = 5
+	const CHEST_ID = 6
+	static func size():
+		return 7
 
 const MOCAP_RECORDING_ENABLED: bool = false
 
-const HEAD_BIT = (1 << IK_POINT_HEAD_ID)
-const LEFT_HAND_BIT = (1 << IK_POINT_LEFT_HAND_ID)
-const RIGHT_HAND_BIT = (1 << IK_POINT_RIGHT_HAND_ID)
-const LEFT_FOOT_BIT = (1 << IK_POINT_LEFT_FOOT_ID)
-const RIGHT_FOOT_BIT = (1 << IK_POINT_RIGHT_FOOT_ID)
-const HIPS_BIT = (1 << IK_POINT_HIPS_ID)
-const CHEST_BIT = (1 << IK_POINT_CHEST_ID)
+const HEAD_BIT = (1 << ik_points.HEAD_ID)
+const LEFT_HAND_BIT = (1 << ik_points.LEFT_HAND_ID)
+const RIGHT_HAND_BIT = (1 << ik_points.RIGHT_HAND_ID)
+const LEFT_FOOT_BIT = (1 << ik_points.LEFT_FOOT_ID)
+const RIGHT_FOOT_BIT = (1 << ik_points.RIGHT_FOOT_ID)
+const HIPS_BIT = (1 << ik_points.HIPS_ID)
+const CHEST_BIT = (1 << ik_points.CHEST_ID)
 
 var previous_external_mask: int = 0
 var current_external_mask: int = 0
@@ -317,82 +319,82 @@ func update_external_transform(p_mask: int, p_transform_array: Array) -> void:
 			emit_signal("external_trackers_changed")
 		
 		current_external_mask = p_mask
-		for i in range(0, IK_POINT_SIZE):
+		for i in range(0, ik_points.size()):
 			if current_external_mask & (1 << i):
 				var spatial: Node3D = null
-				if  i == IK_POINT_HEAD_ID:
+				if  i == ik_points.HEAD_ID:
 						spatial = tracker_collection_input.head_spatial
-				elif i == IK_POINT_LEFT_HAND_ID:
+				elif i == ik_points.LEFT_HAND_ID:
 						spatial = tracker_collection_input.left_hand_spatial
-				elif i == IK_POINT_RIGHT_HAND_ID:
+				elif i == ik_points.RIGHT_HAND_ID:
 						spatial = tracker_collection_input.right_hand_spatial
-				elif i == IK_POINT_LEFT_FOOT_ID:
+				elif i == ik_points.LEFT_FOOT_ID:
 						spatial = tracker_collection_input.left_foot_spatial
-				elif i == IK_POINT_RIGHT_FOOT_ID:
+				elif i == ik_points.RIGHT_FOOT_ID:
 						spatial = tracker_collection_input.right_foot_spatial
-				elif i == IK_POINT_HIPS_ID:
+				elif i == ik_points.HIPS_ID:
 						spatial = tracker_collection_input.hips_spatial
-				elif i == IK_POINT_CHEST_ID:
+				elif i == ik_points.CHEST_ID:
 						spatial = tracker_collection_input.chest_spatial
 						
 				if spatial == null:
 					var spatial_name: String = ""
-					if i == IK_POINT_HEAD_ID:
+					if i == ik_points.HEAD_ID:
 							spatial_name = "HeadInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.head_spatial = spatial
-					elif i == IK_POINT_LEFT_HAND_ID:
+					elif i == ik_points.LEFT_HAND_ID:
 							spatial_name = "LeftHandInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.left_hand_spatial = spatial
-					elif i == IK_POINT_RIGHT_HAND_ID:
+					elif i == ik_points.RIGHT_HAND_ID:
 							spatial_name = "RightHandInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.right_hand_spatial = spatial
-					elif i == IK_POINT_LEFT_FOOT_ID:
+					elif i == ik_points.LEFT_FOOT_ID:
 							spatial_name = "LeftFootInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.left_foot_spatial = spatial
-					elif i == IK_POINT_RIGHT_FOOT_ID:
+					elif i == ik_points.RIGHT_FOOT_ID:
 							spatial_name = "RightFootInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.right_foot_spatial = spatial
-					elif i == IK_POINT_HIPS_ID:
+					elif i == ik_points.HIPS_ID:
 							spatial_name = "HipsInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.hips_spatial = spatial
-					elif i == IK_POINT_CHEST_ID:
+					elif i == ik_points.CHEST_ID:
 							spatial_name = "ChestInput"
 							spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 							tracker_collection_input.chest_spatial = spatial
 					spatial.set_transform(p_transform_array[i])
 				target_transforms[i] = p_transform_array[i]
 			else:
-				if i == IK_POINT_HEAD_ID:
+				if i == ik_points.HEAD_ID:
 						if tracker_collection_input.head_spatial != null:
 							tracker_collection_input.head_spatial.queue_free()
 							tracker_collection_input.head_spatial = null
-				elif i == IK_POINT_LEFT_HAND_ID:
+				elif i == ik_points.LEFT_HAND_ID:
 						if tracker_collection_input.left_hand_spatial != null:
 							tracker_collection_input.left_hand_spatial.queue_free()
 							tracker_collection_input.left_hand_spatial = null
-				elif i == IK_POINT_RIGHT_HAND_ID:
+				elif i == ik_points.RIGHT_HAND_ID:
 						if tracker_collection_input.right_hand_spatial != null:
 							tracker_collection_input.right_hand_spatial.queue_free()
 							tracker_collection_input.right_hand_spatial = null
-				elif i == IK_POINT_LEFT_FOOT_ID:
+				elif i == ik_points.LEFT_FOOT_ID:
 						if tracker_collection_input.left_foot_spatial != null:
 							tracker_collection_input.left_foot_spatial.queue_free()
 							tracker_collection_input.left_foot_spatial = null
-				elif i == IK_POINT_RIGHT_FOOT_ID:
+				elif i == ik_points.RIGHT_FOOT_ID:
 						if tracker_collection_input.right_foot_spatial != null:
 							tracker_collection_input.right_foot_spatial.queue_free()
 							tracker_collection_input.right_foot_spatial = null
-				elif i == IK_POINT_HIPS_ID:
+				elif i == ik_points.HIPS_ID:
 						if tracker_collection_input.hips_spatial != null:
 							tracker_collection_input.hips_spatial.queue_free()
 							tracker_collection_input.hips_spatial = null
-				elif i == IK_POINT_CHEST_ID:
+				elif i == ik_points.CHEST_ID:
 						if tracker_collection_input.chest_spatial != null:
 							tracker_collection_input.chest_spatial.queue_free()
 							tracker_collection_input.chest_spatial = null
@@ -406,22 +408,22 @@ func interpolate_transforms(p_delta: float) -> void:
 	if tracker_collection_input:
 		# Head
 		if tracker_collection_input.head_spatial:
-			tracker_collection_input.head_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.head_spatial.transform, target_transforms[IK_POINT_HEAD_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
+			tracker_collection_input.head_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.head_spatial.transform, target_transforms[ik_points.HEAD_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
 		# Hands
 		if tracker_collection_input.left_hand_spatial:
-			tracker_collection_input.left_hand_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.left_hand_spatial.transform, target_transforms[IK_POINT_LEFT_HAND_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
+			tracker_collection_input.left_hand_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.left_hand_spatial.transform, target_transforms[ik_points.LEFT_HAND_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
 		if tracker_collection_input.right_hand_spatial:
-			tracker_collection_input.right_hand_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.right_hand_spatial.transform, target_transforms[IK_POINT_RIGHT_HAND_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
+			tracker_collection_input.right_hand_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.right_hand_spatial.transform, target_transforms[ik_points.RIGHT_HAND_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
 		# Feet
 		if tracker_collection_input.left_foot_spatial:
-			tracker_collection_input.left_foot_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.left_foot_spatial.transform, target_transforms[IK_POINT_LEFT_FOOT_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
+			tracker_collection_input.left_foot_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.left_foot_spatial.transform, target_transforms[ik_points.LEFT_FOOT_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
 		if tracker_collection_input.right_foot_spatial:
-			tracker_collection_input.right_foot_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.right_foot_spatial.transform, target_transforms[IK_POINT_RIGHT_FOOT_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
+			tracker_collection_input.right_foot_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.right_foot_spatial.transform, target_transforms[ik_points.RIGHT_FOOT_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
 		# Torso
 		if tracker_collection_input.hips_spatial:
-			tracker_collection_input.hips_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.hips_spatial.transform, target_transforms[IK_POINT_HIPS_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
+			tracker_collection_input.hips_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.hips_spatial.transform, target_transforms[ik_points.HIPS_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
 		if tracker_collection_input.chest_spatial:
-			tracker_collection_input.chest_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.chest_spatial.transform, target_transforms[IK_POINT_CHEST_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
+			tracker_collection_input.chest_spatial.transform = GodotMathExtension.get_interpolated_transform(tracker_collection_input.chest_spatial.transform, target_transforms[ik_points.CHEST_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta)
 				
 func get_local_head_transform(p_camera: Node3D, p_origin_offset: Vector3, p_camera_offset: Vector3) -> Transform3D:
 	var tilt_ratio: float = 0.0
@@ -632,7 +634,7 @@ func _on_avatar_changed():
 func _entity_ready():
 	setup()
 	
-	var ik_point_count: int = IK_POINT_SIZE
+	var ik_point_count: int = ik_points.size()
 	while(ik_point_count > 0):
 		target_transforms.push_back(Transform3D())
 		ik_point_count -= 1

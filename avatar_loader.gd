@@ -7,7 +7,7 @@ signal avatar_cleared
 signal avatar_ready(packed_scene)
 
 var avatar_packed_scene: PackedScene = null
-var avatar_path: String = "uro://199d69a5-a4a4-4089-8034-2eba94c767db"
+var avatar_path: String = ""
 var avatar_pending: bool = false
 
 func _instantiate_avatar() -> void:
