@@ -106,6 +106,7 @@ static func rename_skeleton_to_humanoid_bones(
 
 	var original_bone_names: Array = []
 	var bone_names: Array = []
+	var bone_name_mapping: Dictionary = {}
 	var bone_rests: Array = []
 	var bone_parents: Array = []
 
@@ -126,6 +127,8 @@ static func rename_skeleton_to_humanoid_bones(
 
 		p_humanoid_data.set("%s_bone_name" % name, name)
 
+	for i in range(0, bone_count):
+		bone_name_mapping[original_bone_names[i]] = bone_names[i]
 	# Destroy the old skeleton and replace it with the new data
 	p_skeleton.clear_bones()
 	for i in range(0, bone_count):
@@ -137,8 +140,9 @@ static func rename_skeleton_to_humanoid_bones(
 	for skin in p_skins:
 		for i in range(0, skin.get_bind_count()):
 			var bind_name: String = skin.get_bind_name(i)
-			for j in range(0, original_bone_names.size()):
-				if bind_name == original_bone_names[j]:
-					skin.set_bind_name(i, bone_names[j])
+			if bone_name_mapping.has(bind_name):
+				var new_bone_name: String = bone_name_mapping[bind_name]
+				if new_bone_name != bind_name:
+					skin.set_bind_name(i, new_bone_name)
 
 	return true
