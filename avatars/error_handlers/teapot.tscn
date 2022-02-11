@@ -10,6 +10,5 @@ vskeditor_preview_type = null
 vskeditor_preview_texture = null
 vskeditor_preview_camera_path = null
 vskeditor_pipeline_paths = null
-humanoid_data = null
 
 [node name="teapot" parent="." instance=ExtResource( "2" )]

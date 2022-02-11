@@ -15,4 +15,3 @@ vskeditor_pipeline_paths = []
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 1.5, 0)
 material_override = ExtResource( "2_3707a" )
 mesh = SubResource( "1" )
-surface_material_override/0 = null

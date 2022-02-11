@@ -24,10 +24,6 @@ var _eye_transform_node: Node3D = get_node_or_null(eye_transform_node_path)
  # @onready var _mouth_transform_node: Node3D = get_node_or_null(mouth_transform_node_path)
 
 @export var database_id: String
-@export_enum("VSK_PREVIEW_CAMERA", "VSK_PREVIEW_TEXTURE") var vskeditor_preview_type: int
-@export var vskeditor_preview_texture : Texture2D
-@export_node_path(Camera3D) var vskeditor_preview_camera_path
-@export var vskeditor_pipeline_paths : Array[NodePath]
 @export var humanoid_data: Resource = null : # HumanoidData
 	set = set_humanoid_data
 
