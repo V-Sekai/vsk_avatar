@@ -42,7 +42,7 @@ func _avatar_load_failed(p_url: String, p_err: int) -> void:
 		_avatar_load_finished()
 		
 		if p_url != VSKAssetManager.avatar_error_path:
-			load_error_avatar()
+			load_error_avatar(p_err)
 		else:
 			emit_signal("avatar_cleared")
 			printerr("Could not load failed avatar!")
@@ -83,9 +83,14 @@ func load_model(p_bypass_whitelist: bool, p_skip_validation: bool) -> void:
 		p_bypass_whitelist,
 		p_skip_validation)
 
-func load_error_avatar() -> void:
+func load_error_avatar(p_err: int) -> void:
 	emit_signal("avatar_cleared")
-	set_avatar_model_path(VSKAssetManager.avatar_error_path)
+	
+	var avatar_path: String = VSKAssetManager.get_error_path(
+		VSKAssetManager.user_content_type.USER_CONTENT_AVATAR,
+		p_err)
+	
+	set_avatar_model_path(avatar_path)
 	load_model(true, true)
 
 func _on_avatar_setup_complete():
@@ -93,4 +98,4 @@ func _on_avatar_setup_complete():
 	
 func _on_avatar_setup_failed():
 	printerr("Avatar %s is not valid!" % get_avatar_model_path())
-	load_error_avatar()
+	load_error_avatar(VSKAssetManager.ASSET_FAILED)
