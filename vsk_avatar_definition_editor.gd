@@ -10,15 +10,17 @@ const bone_lib_const = preload("bone_lib.gd")
 const hand_pose_const = preload("hand_pose.gd")
 const hand_pose_exporter_const = preload("hand_pose_extractor.gd")
 
-var editor_plugin : EditorPlugin = null
+var editor_plugin: EditorPlugin = null
 
 var node : Node = null
-var options : MenuButton = null
 var err_dialog : AcceptDialog = null
 
 var save_dialog : FileDialog = null
 
 var bone_mapper_dialog : AcceptDialog = null
+
+var bone_icon: Texture = null
+var clear_icon: Texture = null
 
 const humanoid_data_const = preload("humanoid_data.gd")
 
@@ -66,6 +68,7 @@ func setup_bones_menu() -> int:
 	if !node._skeleton_node:
 		return avatar_callback_const.SKELETON_IS_NULL
 	
+	assert(bone_mapper_dialog)
 	bone_mapper_dialog.set_humanoid_data(node.humanoid_data)
 	bone_mapper_dialog.set_skeleton(node._skeleton_node)
 	bone_mapper_dialog.popup_centered_ratio() # Was without ratio but now broken
@@ -75,6 +78,7 @@ func setup_bones_menu() -> int:
 func export_avatar_local() -> void:
 	save_option = SAVE_OPTION_AVATAR
 	
+	assert(save_dialog)
 	save_dialog.add_filter("*.%s;%s" % [OUTPUT_SCENE_EXTENSION, OUTPUT_SCENE_EXTENSION.to_upper()]);
 	
 	save_dialog.popup_centered_ratio()
@@ -105,6 +109,7 @@ func export_hand_pose(p_is_right_hand: bool) -> void:
 		else:
 			save_option = SAVE_OPTION_LEFT_HAND_POSE
 		
+		assert(save_dialog)
 		save_dialog.add_filter("*.%s;%s" % [OUTPUT_HAND_RESOURCE_EXTENSION, OUTPUT_HAND_RESOURCE_EXTENSION.to_upper()]);
 		
 		save_dialog.popup_centered_ratio()
@@ -113,16 +118,15 @@ func export_hand_pose(p_is_right_hand: bool) -> void:
 
 func edit(p_node : Node) -> void:
 	node = p_node
-	update_menu_options()
-
 
 func error_callback(p_err: int) -> void:
 	if p_err != avatar_callback_const.AVATAR_OK:
 		var error_str: String = avatar_callback_const.get_error_str(p_err)
 		
 		printerr(error_str)
-		err_dialog.set_text(error_str)
-		err_dialog.popup_centered_clamped()
+		if err_dialog:
+			err_dialog.set_text(error_str)
+			err_dialog.popup_centered_clamped()
 
 
 func check_if_avatar_is_valid() -> bool:
@@ -132,7 +136,7 @@ func check_if_avatar_is_valid() -> bool:
 	return true
 
 
-func _menu_option(p_id : int) -> void:
+func menu_option(p_id : int) -> void:
 	var err: int = avatar_callback_const.AVATAR_OK
 	match p_id:
 		MENU_OPTION_CORRECT_BONE_DIRECTIONS:
@@ -151,7 +155,7 @@ func _menu_option(p_id : int) -> void:
 			if check_if_avatar_is_valid():
 				err = avatar_fixer_const.fix_avatar(node, node._skeleton_node, node.humanoid_data, editor_plugin.get_undo_redo())
 				_refresh_skeleton(node._skeleton_node)
-				_menu_option(MENU_OPTION_CORRECT_BONE_DIRECTIONS)
+				menu_option(MENU_OPTION_CORRECT_BONE_DIRECTIONS)
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_EXPORT_AVATAR:
@@ -162,7 +166,7 @@ func _menu_option(p_id : int) -> void:
 		MENU_OPTION_UPLOAD_AVATAR:
 			if check_if_avatar_is_valid():
 				_refresh_skeleton(node._skeleton_node)
-				_menu_option(MENU_OPTION_FIX_ALL)
+				menu_option(MENU_OPTION_FIX_ALL)
 				_refresh_skeleton(node._skeleton_node)
 				export_avatar_upload()
 			else:
@@ -223,47 +227,44 @@ func _save_file_at_path(p_path : String) -> void:
 						
 	error_callback(err)
 	
-
-func _notification(what):
-	match what:
-		NOTIFICATION_PREDELETE:
-			if editor_plugin != null:
-				editor_plugin.remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, options)
-
-func update_menu_options() -> void:
-	if options:
-		options.get_popup().clear()
-		
-		options.get_popup().add_item("Setup Bones", MENU_OPTION_SETUP_BONES)
-		options.get_popup().add_item("Export Avatar Definition Locally", MENU_OPTION_EXPORT_AVATAR)
-		options.get_popup().add_item("Upload Avatar", MENU_OPTION_UPLOAD_AVATAR)
-		options.get_popup().add_item("Save Left Hand Pose (Debug)", MENU_OPTION_EXPORT_LEFT_HAND_POSE)
-		options.get_popup().add_item("Save Right Hand Pose (Debug)", MENU_OPTION_EXPORT_RIGHT_HAND_POSE)
-		options.get_popup().add_item("Correct Bone Directions (Debug)", MENU_OPTION_CORRECT_BONE_DIRECTIONS)
-		options.get_popup().add_item("Fix All (Debug)", MENU_OPTION_FIX_ALL)
-
-func _init(p_editor_plugin : EditorPlugin):
-	editor_plugin = p_editor_plugin
-	
+func setup_dialogs() -> void:
 	err_dialog = AcceptDialog.new()
-	add_child(err_dialog)
+	editor_plugin.get_editor_interface().get_base_control().add_child(err_dialog)
+	
 	save_dialog = FileDialog.new()
 	save_dialog.mode = FileDialog.FILE_MODE_SAVE_FILE
 	save_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	save_dialog.exclusive = true
 	save_dialog.connect("file_selected", Callable(self, "_save_file_at_path"))
-	add_child(save_dialog)
-		
-	var clear_icon: Texture = editor_plugin.get_editor_interface().get_base_control().get_theme_icon("Clear", "EditorIcons")
-	var bone_icon: Texture = editor_plugin.get_editor_interface().get_base_control().get_theme_icon("BoneAttachment", "EditorIcons")
+	editor_plugin.get_editor_interface().get_base_control().add_child(save_dialog)
 	
 	bone_mapper_dialog = bone_mapper_dialog_const.new(bone_icon, clear_icon)
-	add_child(bone_mapper_dialog)
-
-	options = MenuButton.new()
-	options.set_switch_on_hover(true)
-	editor_plugin.add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, options)
-	options.set_text("Avatar Definition")
+	editor_plugin.get_editor_interface().get_base_control().add_child(bone_mapper_dialog)
 	
-	options.get_popup().connect("id_pressed", Callable(self, "_menu_option"))
-	options.hide()
+func teardown_dialogs() -> void:
+	if err_dialog:
+		if err_dialog.is_inside_tree():
+			err_dialog.get_parent().remove_child(err_dialog)
+		err_dialog.queue_free()
+		
+	if save_dialog:
+		if save_dialog.is_inside_tree():
+			save_dialog.get_parent().remove_child(err_dialog)
+		save_dialog.queue_free()
+		
+	if bone_mapper_dialog:
+		if bone_mapper_dialog.is_inside_tree():
+			bone_mapper_dialog.get_parent().remove_child(err_dialog)
+		bone_mapper_dialog.queue_free()
+	
+func _enter_tree():
+	setup_dialogs()
+	
+func _exit_tree():
+	teardown_dialogs()
+	
+func _init(p_editor_plugin: EditorPlugin, p_clear_icon: Texture, p_bone_icon: Texture):		
+	editor_plugin = p_editor_plugin
+	
+	bone_icon = p_bone_icon
+	clear_icon = p_clear_icon

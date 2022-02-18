@@ -127,8 +127,8 @@ func setup_list(p_tab: Control, p_bones: PackedStringArray, p_button_array: Arra
 		var bone_mapper_button = bone_mapper_button_const.new()
 		var button_pressed_callable = Callable(self, "button_pressed")
 		var clear_pressed_callable = Callable(self, "clear_pressed")
-		bone_mapper_button.select_bone_button.connect("pressed", button_pressed_callable.bind([p_bones[i]]))
-		bone_mapper_button.clear_bone_button.connect("pressed", clear_pressed_callable.bind([p_bones[i]]))
+		assert(bone_mapper_button.select_bone_button.connect("pressed", button_pressed_callable.bind(p_bones[i])) == OK)
+		assert(bone_mapper_button.clear_bone_button.connect("pressed", clear_pressed_callable.bind(p_bones[i])) == OK)
 
 		p_button_array.push_back(bone_mapper_button)
 
