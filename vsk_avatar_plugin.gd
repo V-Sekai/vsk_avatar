@@ -67,13 +67,13 @@ func _exit_tree() -> void:
 			avatar_definition_editor.get_parent().remove_child(avatar_definition_editor)
 		avatar_definition_editor.queue_free()
 
-func _edit(p_object : Object) -> void:
+func _edit(p_object : Variant) -> void:
 	if avatar_definition_editor:
 		if p_object is Node and typeof(p_object.get("skeleton_path")) == TYPE_NODE_PATH:
 			avatar_definition_editor.edit(p_object)
 			update_menu_options()
 
-func _handles(p_object : Object) -> bool:
+func _handles(p_object : Variant) -> bool:
 	if p_object.get_script() == avatar_definition_const:
 		return true
 	else:
