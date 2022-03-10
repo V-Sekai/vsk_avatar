@@ -600,9 +600,9 @@ func setup_avatar_instantiate(p_avatar_node: Node3D) -> void:
 				ren_ik.set("armature_skeleton_path", ren_ik.get_path_to(avatar_skeleton))
 				assign_ik_bone_assignments(ren_ik, avatar_skeleton, humanoid_data)
 
-		emit_signal("avatar_setup_complete")
+		avatar_setup_complete.emit()
 	else:
-		emit_signal("avatar_setup_failed")
+		avatar_setup_failed.emit()
 
 func try_head_shrink() -> void:
 	if shrink_mode == int(shrink_enum.SHRINK) or \
@@ -658,8 +658,8 @@ func _setup_voice() -> void:
 func _entity_ready() -> void:
 	if !Engine.is_editor_hint():
 		if is_multiplayer_authority():
-			assert(VRManager.connect("xr_mode_changed", self._xr_mode_changed) == OK)
-			assert(VRManager.connect("proportions_changed", self._proportions_changed) == OK)
+			assert(VRManager.xr_mode_changed.connect(self._xr_mode_changed) == OK)
+			assert(VRManager.proportions_changed.connect(self._proportions_changed) == OK)
 
 	top_level = false
 	set_transform(Transform3D(AVATAR_BASIS, Vector3()))

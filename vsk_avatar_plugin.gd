@@ -50,7 +50,7 @@ func _enter_tree() -> void:
 	option_button.set_switch_on_hover(true)
 	option_button.set_text("Avatar Definition")
 	
-	option_button.get_popup().connect("id_pressed", Callable(self, "_menu_option"))
+	option_button.get_popup().id_pressed.connect(self._menu_option)
 	option_button.hide()
 	
 	add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, option_button)

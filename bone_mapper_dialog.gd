@@ -125,10 +125,10 @@ func setup_list(p_tab: Control, p_bones: PackedStringArray, p_button_array: Arra
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 		var bone_mapper_button = bone_mapper_button_const.new()
-		var button_pressed_callable = Callable(self, "button_pressed")
-		var clear_pressed_callable = Callable(self, "clear_pressed")
-		assert(bone_mapper_button.select_bone_button.connect("pressed", button_pressed_callable.bind(p_bones[i])) == OK)
-		assert(bone_mapper_button.clear_bone_button.connect("pressed", clear_pressed_callable.bind(p_bones[i])) == OK)
+		var button_pressed_callable = self.button_pressed
+		var clear_pressed_callable = self.clear_pressed
+		assert(bone_mapper_button.select_bone_button.pressed.connect(button_pressed_callable.bind(p_bones[i])) == OK)
+		assert(bone_mapper_button.clear_bone_button.pressed.connect(clear_pressed_callable.bind(p_bones[i])) == OK)
 
 		p_button_array.push_back(bone_mapper_button)
 
@@ -170,10 +170,10 @@ func update_all_buttons() -> void:
 
 
 func _ready() -> void:
-	if connect("about_to_popup", Callable(self, "_about_to_popup")) & 0xffffffff != OK:
+	if about_to_popup.connect(self._about_to_popup) & 0xffffffff != OK:
 		printerr("Could not connect to about_to_popup")
 
-	if bone_selection_dialog.connect("selected", Callable(self, "selected")) & 0xffffffff != OK:
+	if bone_selection_dialog.selected.connect(self.selected) & 0xffffffff != OK:
 		printerr("Could not connect signal!")
 
 

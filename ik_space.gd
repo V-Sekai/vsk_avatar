@@ -156,18 +156,18 @@ func update_trackers() -> void:
 			if VRManager.xr_origin.right_hand_controller:
 				tracker_collection_input.right_hand_spatial = create_new_spatial_point("RightHandInput", Transform3D(Basis(), Vector3()), false)
 
-			if VRManager.xr_origin.connect("tracker_added", self._on_tracker_added) != OK:
+			if VRManager.xr_origin.tracker_added.connect(self._on_tracker_added) != OK:
 				printerr("Could not connect tracker_added!")
-			if VRManager.xr_origin.connect("tracker_removed", self._on_tracker_removed) != OK:
+			if VRManager.xr_origin.tracker_removed.connect(self._on_tracker_removed) != OK:
 				printerr("Could not connect tracker_removed!")
 
 			update_local_transforms()
 			# Connect to the IK system
 		else:
-			if VRManager.xr_origin.is_connected("tracker_added", self._on_tracker_added):
-				VRManager.xr_origin.disconnect("tracker_added", self._on_tracker_added)
-			if VRManager.xr_origin.is_connected("tracker_removed", self._on_tracker_removed):
-				VRManager.xr_origin.disconnect("tracker_removed", self._on_tracker_removed)
+			if VRManager.xr_origin.tracker_added.is_connected(self._on_tracker_added):
+				VRManager.xr_origin.tracker_added.disconnect(self._on_tracker_added)
+			if VRManager.xr_origin.tracker_removed.is_connected(self._on_tracker_removed):
+				VRManager.xr_origin.tracker_removed.disconnect(self._on_tracker_removed)
 			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform3D(Basis(), Vector3()), false)
 	pass
 	
@@ -319,7 +319,7 @@ func _on_tracker_removed(p_tracker: Node3D) -> void:
 func update_external_transform(p_mask: int, p_transform_array: Array) -> void:
 	if is_inside_tree() and !is_multiplayer_authority() and tracker_collection_input:
 		if current_external_mask != p_mask:
-			emit_signal("external_trackers_changed")
+			external_trackers_changed.emit()
 		
 		current_external_mask = p_mask
 		for i in range(0, ik_points.size()):
@@ -624,9 +624,9 @@ func setup() -> void:
 			
 			if !Engine.is_editor_hint():
 				if is_multiplayer_authority():
-					assert(VRManager.connect("xr_mode_changed", self._xr_mode_changed) == OK)
-					assert(VRManager.connect("request_vr_calibration", self._request_vr_calibration) == OK)
-					assert(VRManager.connect("confirm_vr_calibration", self._confirm_vr_calibration) == OK)
+					assert(VRManager.xr_mode_changed.connect(self._xr_mode_changed) == OK)
+					assert(VRManager.request_vr_calibration.connect(self._request_vr_calibration) == OK)
+					assert(VRManager.confirm_vr_calibration.connect(self._confirm_vr_calibration) == OK)
 			
 			update_trackers()
 			update_ik_controller()
@@ -654,4 +654,4 @@ func _entity_ready():
 		ik_point_count -= 1
 	
 	if !Engine.is_editor_hint():
-		assert(connect("external_trackers_changed", self._external_trackers_updated, [], CONNECT_ONESHOT) == OK)
+		assert(external_trackers_changed.connect(self._external_trackers_updated, CONNECT_ONESHOT) == OK)

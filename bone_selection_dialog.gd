@@ -30,7 +30,7 @@ func _cancel() -> void:
 func _select() -> void:
 	var tree_item: TreeItem = tree.get_selected()
 	if tree_item:
-		emit_signal("selected", tree_item.get_metadata(0))
+		selected.emit(tree_item.get_metadata(0))
 		hide()
 
 
@@ -101,8 +101,8 @@ func _notification(p_what: int) -> void:
 
 
 func _init(p_bone_icon: Texture, p_clear_icon: Texture):
-	connect("about_to_popup", Callable(self, "_about_to_popup"))
-	connect("confirmed", Callable(self, "_confirmed"))
+	about_to_popup.connect(self._about_to_popup)
+	confirmed.connect(self._confirmed)
 
 	set_title("Select bone...")
 	set_size(Vector2(DIALOG_WIDTH, DIALOG_HEIGHT))
@@ -119,10 +119,10 @@ func _init(p_bone_icon: Texture, p_clear_icon: Texture):
 	filter_lineedit.set_h_size_flags(LineEdit.SIZE_EXPAND_FILL)
 	filter_lineedit.set_placeholder("Filter bones")
 	filter_lineedit.add_theme_constant_override("minimum_spaces", 0)
-	filter_lineedit.connect("text_changed", Callable(self, "_filter_changed"))
+	filter_lineedit.text_changed.connect(self._filter_changed)
 	vbox_container.add_child(filter_lineedit)
 
 	tree = Tree.new()
 	tree.set_v_size_flags(Tree.SIZE_EXPAND_FILL)
-	tree.connect("item_activated", Callable(self, "_select"))
+	tree.item_activated.connect(self._select)
 	vbox_container.add_child(tree)
