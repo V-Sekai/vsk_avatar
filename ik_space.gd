@@ -270,7 +270,7 @@ func _on_tracker_added(p_tracker: Node3D) -> void:
 		var should_update_ik_controller: bool = false
 		print("Tracker added to IK space: %s" % p_tracker.get_name())
 
-		var hand: int = arvr_controller.get_hand()
+		var hand: int = arvr_controller.get_tracker_hand()
 		match hand:
 			XRPositionalTracker.TRACKER_HAND_LEFT:
 				if VRManager.xr_origin.left_hand_controller:
@@ -295,7 +295,7 @@ func _on_tracker_removed(p_tracker: Node3D) -> void:
 		var should_update_ik_controller: bool = false
 		print("Tracker removed from IK space: %s" % p_tracker.get_name())
 
-		var hand: int = arvr_controller.get_hand()
+		var hand: int = arvr_controller.get_tracker_hand()
 		match hand:
 			XRPositionalTracker.TRACKER_HAND_LEFT:
 				if VRManager.xr_origin.left_hand_controller == null:
