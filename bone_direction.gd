@@ -204,7 +204,7 @@ static func get_fortune_with_chain_offsets(p_skeleton: Skeleton3D, p_humanoid_da
 		
 	return offsets
 
-static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, undo_redo: UndoRedo) -> void:
+static func fix_skeleton(p_root: Node, p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, _skeleton_undo_redo: UndoRedo) -> void:
 	print("bone_direction: fix_skeleton")
 	
 	var base_pose: Array = []

@@ -84,10 +84,7 @@ static func is_bone_parent_of_or_self(p_skeleton: Skeleton3D, p_parent_id: int, 
 	return is_bone_parent_of(p_skeleton, p_parent_id, p_child_id)
 
 static func change_bone_rest(p_skeleton: Skeleton3D, bone_idx: int, bone_rest: Transform3D):
-	var old_position: Vector3 = p_skeleton.get_bone_pose_position(bone_idx)
 	var old_scale: Vector3 = p_skeleton.get_bone_pose_scale(bone_idx)
-	var old_rotation: Quaternion = p_skeleton.get_bone_pose_rotation(bone_idx)
-	var old_rest: Transform3D = p_skeleton.get_bone_rest(bone_idx)
 	var new_rotation: Quaternion = Quaternion(bone_rest.basis.orthonormalized())
 	p_skeleton.set_bone_pose_position(bone_idx, bone_rest.origin)
 	p_skeleton.set_bone_pose_scale(bone_idx, old_scale)
@@ -97,7 +94,7 @@ static func change_bone_rest(p_skeleton: Skeleton3D, bone_idx: int, bone_rest: T
 			bone_rest.origin))
 	
 static func rename_skeleton_to_humanoid_bones(
-	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_skins: Array, undo_redo: UndoRedo,
+	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_skins: Array, _undo_redo: UndoRedo,
 ) -> bool:
 	if p_skeleton == null or p_humanoid_data == null:
 		return false
