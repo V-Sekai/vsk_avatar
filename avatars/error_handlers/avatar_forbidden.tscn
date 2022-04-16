@@ -6,10 +6,8 @@
 [node name="Avatar" type="Node3D"]
 script = ExtResource( "2" )
 database_id = ""
-vskeditor_preview_type = null
-vskeditor_preview_texture = null
-vskeditor_preview_camera_path = null
-vskeditor_pipeline_paths = null
+vskeditor_preview_type = 0
+vskeditor_pipeline_paths = []
 
 [node name="avatar_forbidden" parent="." instance=ExtResource( "1" )]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)

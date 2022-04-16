@@ -6,9 +6,7 @@
 [node name="Avatar" type="Node3D"]
 script = ExtResource( "1" )
 database_id = ""
-vskeditor_preview_type = null
-vskeditor_preview_texture = null
-vskeditor_preview_camera_path = null
-vskeditor_pipeline_paths = null
+vskeditor_preview_type = 0
+vskeditor_pipeline_paths = []
 
 [node name="teapot" parent="." instance=ExtResource( "2" )]
