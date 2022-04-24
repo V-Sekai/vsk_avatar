@@ -81,10 +81,9 @@ static func setup_animation_from_hand_pose(
 		p_skeleton,
 		p_humanoid_data,
 		p_hand_pose)
-
-	p_animation_player.add_animation(
-		p_hand_pose_name,
-		animation)
+	var animation_library : AnimationLibrary = AnimationLibrary.new()
+	animation_library.add_animation(p_hand_pose_name, animation)
+	p_animation_player.add_animation_library("", animation_library)
 
 static func setup_animation_from_hand_pose_dictionary(
 	p_animation_player: AnimationPlayer,
