@@ -491,8 +491,8 @@ func _setup_avatar_eyes(
 		avatar_wristspan = (VRManager.vr_user_preferences.custom_player_height
 		* VRManager.vr_user_preferences.custom_player_armspan_to_height_ratio
 		* vr_constants_const.ARMSPAN_WRIST_SPAN_CONVERSION)
-
-	_ik_space.eye_offset = eye_offset_transform.origin
+	if _ik_space.get_property_list().has("eye_offset"):
+		_ik_space.eye_offset = eye_offset_transform.origin
 
 func _setup_avatar_mouth(
 	p_avatar_node: Node,
