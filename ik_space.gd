@@ -630,7 +630,7 @@ func setup() -> void:
 			update_trackers()
 			update_ik_controller()
 			
-			if MocapManager.recording_enabled:
+			if false: ### FIXME: Not static ### if MocapManager.recording_enabled:
 				mocap_recording = MocapManager.start_recording(Engine.iterations_per_second)
 	else:
 		pass
