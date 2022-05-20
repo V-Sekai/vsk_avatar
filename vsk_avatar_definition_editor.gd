@@ -165,9 +165,7 @@ func menu_option(p_id : int) -> void:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_UPLOAD_AVATAR:
 			if check_if_avatar_is_valid():
-				_refresh_skeleton(node._skeleton_node)
 				menu_option(MENU_OPTION_FIX_ALL)
-				_refresh_skeleton(node._skeleton_node)
 				export_avatar_upload()
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
