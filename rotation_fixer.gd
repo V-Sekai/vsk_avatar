@@ -6,7 +6,6 @@ const node_util_const = preload("res://addons/gd_util/node_util.gd")
 const avatar_lib_const = preload("avatar_lib.gd")
 const avatar_constants_const = preload("avatar_constants.gd")
 const avatar_callback_const = preload("avatar_callback.gd")
-const array_util_const = preload("res://addons/gd_util/array_util.gd")
 const humanoid_data_const = preload("res://addons/vsk_avatar/humanoid_data.gd")
 const bone_lib_const = preload("bone_lib.gd")
 
