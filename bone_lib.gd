@@ -143,21 +143,3 @@ static func rename_skeleton_to_humanoid_bones(
 					skin.set_bind_name(i, new_bone_name)
 
 	return true
-
-static func fast_get_bone_global_pose(skel: Skeleton3D, bone_idx: int) -> Transform3D:
-	var xform2: Transform3D = skel.get_bone_global_pose_override(bone_idx)
-	if xform2 != Transform3D.IDENTITY: # this api is stupid.
-		return xform2
-	var transform: Transform3D = skel.get_bone_local_pose_override(bone_idx)
-	if transform == Transform3D.IDENTITY: # another stupid api.
-		transform = skel.get_bone_pose(bone_idx)
-	var par_bone: int = skel.get_bone_parent(bone_idx)
-	if par_bone == -1:
-		return transform
-	return fast_get_bone_global_pose(skel, par_bone) * transform
-
-static func fast_get_bone_local_pose(skel: Skeleton3D, bone_idx: int) -> Transform3D:
-	var transform: Transform3D = skel.get_bone_local_pose_override(bone_idx)
-	if transform == Transform3D.IDENTITY: # another stupid api.
-		transform = skel.get_bone_pose(bone_idx)
-	return transform
