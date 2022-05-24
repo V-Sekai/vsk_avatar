@@ -56,6 +56,7 @@ var pending_calibration: bool = false
 
 var mocap_recording: RefCounted = null
 
+
 class TrackerCollection extends RefCounted:
 	var head_spatial: Node3D = null
 	var left_hand_spatial: Node3D = null
@@ -187,8 +188,10 @@ func update_ik_controller() -> void:
 				if pending_calibration:
 					_avatar_display_node.avatar_skeleton.global_transform = _avatar_display_node.global_transform
 				else:
-					_avatar_display_node.avatar_skeleton.global_transform = Transform3D()
-			
+					var pos: Vector3 = tracker_collection_input.head_spatial.get_global_transform().origin
+					#if _avatar_display_node.avatar_skeleton.get_parent() != null and not _avatar_display_node.avatar_skeleton.top_level:
+					#	pos = _avatar_display_node.avatar_skeleton.get_parent().get_global_transform().affine_inverse() * pos
+					_avatar_display_node.avatar_skeleton.global_transform = Transform3D(Basis.IDENTITY, pos)
 			
 			if tracker_collection_input.head_spatial and !pending_calibration:
 				_ren_ik.set_head_target_path(_ren_ik.get_path_to(tracker_collection_input.head_spatial))
@@ -468,7 +471,7 @@ func update_output_trackers() -> void:
 		var skeleton: Skeleton3D = _avatar_display_node.avatar_skeleton
 		if skeleton:
 			# Calculate the transforms for the output trackers based on the global poses
-			var head_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.head_id) # bone_lib_const.get_bone_global_transform(_avatar_display_node.head_id, skeleton, local_transforms_array)
+			var head_transform: Transform3D = bone_lib_const.fast_get_bone_global_pose(skeleton, _avatar_display_node.head_id)
 			if is_multiplayer_authority():
 				head_transform = Transform3D(head_transform.basis.orthonormalized().scaled(_avatar_display_node.saved_head_transform.basis.get_scale()), head_transform.origin);
 			
@@ -476,13 +479,13 @@ func update_output_trackers() -> void:
 			# so apply the inverse of the rest pose to actual global pose here
 			
 			# TODO: we may want to use global rest as the inverse, but it should probably be cached
-			var hips_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.hip_id) * Transform3D(skeleton.get_bone_rest(_avatar_display_node.hip_id).basis.inverse(), Vector3()) # bone_lib_const.get_bone_global_transform(_avatar_display_node.hip_id, skeleton, local_transforms_array)
+			var hips_transform: Transform3D = bone_lib_const.fast_get_bone_global_pose(skeleton, _avatar_display_node.hip_id) * Transform3D(skeleton.get_bone_rest(_avatar_display_node.hip_id).basis.inverse(), Vector3())
 			
-			var left_hand_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.left_hand_id) * Transform3D(skeleton.get_bone_rest(_avatar_display_node.left_hand_id).basis.inverse(), Vector3()) # bone_lib_const.get_bone_global_transform(_avatar_display_node.left_hand_id, skeleton, local_transforms_array)
-			var right_hand_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.right_hand_id) * Transform3D(skeleton.get_bone_rest(_avatar_display_node.right_hand_id).basis.inverse(), Vector3()) # bone_lib_const.get_bone_global_transform(_avatar_display_node.right_hand_id, skeleton, local_transforms_array)
+			var left_hand_transform: Transform3D = bone_lib_const.fast_get_bone_global_pose(skeleton, _avatar_display_node.left_hand_id) * Transform3D(skeleton.get_bone_rest(_avatar_display_node.left_hand_id).basis.inverse(), Vector3())
+			var right_hand_transform: Transform3D = bone_lib_const.fast_get_bone_global_pose(skeleton, _avatar_display_node.right_hand_id) * Transform3D(skeleton.get_bone_rest(_avatar_display_node.right_hand_id).basis.inverse(), Vector3())
 			
-			var left_foot_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.left_foot_id) * Transform3D(skeleton.get_bone_rest(_avatar_display_node.left_foot_id).basis.inverse(), Vector3()) # bone_lib_const.get_bone_global_transform(_avatar_display_node.left_foot_id, skeleton, local_transforms_array)
-			var right_foot_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.right_foot_id) * Transform3D(skeleton.get_bone_rest(_avatar_display_node.right_foot_id).basis.inverse(), Vector3()) # bone_lib_const.get_bone_global_transform(_avatar_display_node.right_foot_id, skeleton, local_transforms_array)
+			var left_foot_transform: Transform3D = bone_lib_const.fast_get_bone_global_pose(skeleton, _avatar_display_node.left_foot_id) * Transform3D(skeleton.get_bone_rest(_avatar_display_node.left_foot_id).basis.inverse(), Vector3())
+			var right_foot_transform: Transform3D = bone_lib_const.fast_get_bone_global_pose(skeleton, _avatar_display_node.right_foot_id) * Transform3D(skeleton.get_bone_rest(_avatar_display_node.right_foot_id).basis.inverse(), Vector3())
 			
 			# Global transform is inefficent. Try to find a cheaper way of doing this.
 			var affine_inverse: Transform3D = global_transform.affine_inverse()
@@ -545,6 +548,12 @@ func execute_ik(p_delta: float) -> void:
 		for b in skel.get_parentless_bones():
 			skel.set_bone_local_pose_override(b, Transform3D.IDENTITY, 0.0, true)
 		_ren_ik.update_ik()
+		var hips_origin: Vector3 = bone_lib_const.fast_get_bone_global_pose(skel, _avatar_display_node.hip_id).origin
+		skel.transform.origin += hips_origin
+		for b in skel.get_parentless_bones():
+			var xform: Transform3D = bone_lib_const.fast_get_bone_local_pose(skel, b)
+			xform.origin -= hips_origin
+			skel.set_bone_local_pose_override(b, xform, 1.0, true)
 	
 	ik_complete()
 	
