@@ -1,7 +1,7 @@
 shader_type spatial;
 render_mode blend_mix,depth_draw_opaque,cull_back,diffuse_burley,specular_schlick_ggx;
-uniform vec4 albedo : hint_color;
-uniform vec4 emission : hint_color;
+uniform vec4 albedo : source_color;
+uniform vec4 emission : source_color;
 
 const float CYCLE_TIME = 5.0;
 
