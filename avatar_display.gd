@@ -9,6 +9,7 @@ const avatar_definition_const = preload("vsk_avatar_definition.gd")
 const avatar_definition_runtime_const = preload("vsk_avatar_definition_runtime.gd")
 
 const humanoid_data_const = preload("humanoid_data.gd")
+# const gizmo_reference_const = preload("gizmo_reference.tscn")
 
 const attachment_point_3d_const = preload("res://addons/entity_manager/attachment_point_3d.gd")
 const vr_constants_const = preload("res://addons/sar1_vr_manager/vr_constants.gd")
