@@ -560,13 +560,14 @@ func execute_ik(p_delta: float) -> void:
 			_avatar_display_node.avatar_node.driver_node.update(p_delta)
 	
 func transform_update(p_delta: float) -> void:
-	if is_inside_tree():
-		if is_multiplayer_authority():
-			update_local_transforms()
-		else:
-			interpolate_transforms(p_delta)
-			
-		execute_ik(p_delta)
+	if not is_inside_tree():
+		return
+	if is_multiplayer_authority():
+		update_local_transforms()
+	else:
+		interpolate_transforms(p_delta)
+		
+	execute_ik(p_delta)
 
 # Current assumes physics to be running at 60hz, will behave differently
 # at a different physics update rate
