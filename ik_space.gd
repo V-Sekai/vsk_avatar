@@ -118,9 +118,8 @@ func _create_output_trackers() -> void:
 		tracker_collection_output.right_foot_spatial = create_new_spatial_point("RightFootOutput", Transform3D(), true)
 				
 func _external_trackers_updated():
-#	if NetworkManager.is_server():
-#		_create_output_trackers()
-	pass
+	if NetworkManager.is_server():
+		_create_output_trackers()
 				
 func free_trackers() -> void:
 	if tracker_collection_input.head_spatial:
@@ -221,11 +220,11 @@ func update_ik_controller() -> void:
 				_ren_ik.set_foot_right_target_path(NodePath())
 
 func _xr_mode_changed() -> void:
-#	if !VRManager.xr_active:
-#		pending_calibration = false
-#
-#	update_trackers()
-#	update_ik_controller()
+	if !VRManager.xr_active:
+		pending_calibration = false
+
+	update_trackers()
+	update_ik_controller()
 	pass
 	
 func _request_vr_calibration() -> void:
