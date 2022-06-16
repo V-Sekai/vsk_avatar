@@ -17,8 +17,9 @@ var _player_input_node: Node #  = get_node(_player_input_nodepath)
 @export var _avatar_display_path: NodePath = NodePath()
  # (NodePath)
 const IK_POINT_HEAD_BASIS_GLOBAL = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, -1.0))
-const IK_POINT_LEFT_HAND_BASIS_GLOBAL = Basis()
-const IK_POINT_RIGHT_HAND_BASIS_GLOBAL = Basis()
+const IK_POINT_LEFT_HAND_BASIS_GLOBAL : Basis = Basis()
+var tranposed_basis : Basis = Basis().transposed()
+var IK_POINT_RIGHT_HAND_BASIS_GLOBAL = Transform3D(tranposed_basis.inverse() * Basis() * tranposed_basis, Vector3(0, 0, 0))
 
 const IK_HAND_OFFSET = Vector3(0.01, 0.014, 0.13) # Right hand
 
