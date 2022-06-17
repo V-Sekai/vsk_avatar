@@ -17,9 +17,9 @@ var _player_input_node: Node #  = get_node(_player_input_nodepath)
 @export var _avatar_display_path: NodePath = NodePath()
  # (NodePath)
 const IK_POINT_HEAD_BASIS_GLOBAL = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, -1.0))
-const IK_POINT_LEFT_HAND_BASIS_GLOBAL : Basis = Basis()
-var tranposed_basis : Basis = Basis().transposed()
-var IK_POINT_RIGHT_HAND_BASIS_GLOBAL = Transform3D(tranposed_basis.inverse() * Basis() * tranposed_basis, Vector3(0, 0, 0))
+
+@export var IK_POINT_LEFT_HAND_BASIS_GLOBAL : Basis = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0))
+@export var IK_POINT_RIGHT_HAND_BASIS_GLOBAL : Basis = Basis(Vector3(1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0))
 
 const IK_HAND_OFFSET = Vector3(0.01, 0.014, 0.13) # Right hand
 
@@ -456,11 +456,11 @@ func update_local_transforms() -> void:
 		if tracker_collection_input.left_hand_spatial:
 			var controller: XRController3D = VRManager.xr_origin.left_hand_controller
 			if controller:
-				tracker_collection_input.left_hand_spatial.transform = Transform3D().rotated(Vector3(0.0, 1.0, 0.0), PI) * Transform3D(controller.transform.basis, (controller.transform.origin + origin_offset - camera_offset)).translated(Vector3(-IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_LEFT_HAND_BASIS_GLOBAL)
+				tracker_collection_input.left_hand_spatial.transform = Transform3D(controller.transform.basis, (controller.transform.origin + camera_offset)).translated(Vector3(-IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_LEFT_HAND_BASIS_GLOBAL)
 		if tracker_collection_input.right_hand_spatial:
 			var controller: XRController3D = VRManager.xr_origin.right_hand_controller
 			if controller:
-				tracker_collection_input.right_hand_spatial.transform = Transform3D().rotated(Vector3(0.0, 1.0, 0.0), PI) * Transform3D(controller.transform.basis, (controller.transform.origin + origin_offset - camera_offset)).translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_RIGHT_HAND_BASIS_GLOBAL)
+				tracker_collection_input.right_hand_spatial.transform = Transform3D(controller.transform.basis, (controller.transform.origin + camera_offset)).translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_RIGHT_HAND_BASIS_GLOBAL)
 			
 # Calculate the transforms of the trackers to be serialised by the network writer
 func update_output_trackers() -> void:
