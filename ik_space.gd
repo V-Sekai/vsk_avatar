@@ -24,8 +24,8 @@ const IK_POINT_HEAD_BASIS_GLOBAL = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1
 # 3. Rotate the nodes until correct
 # 4. Move the new nodes out and save their rotations 
 
-var IK_POINT_LEFT_HAND_BASIS_GLOBAL : Basis = Quaternion(0.729, -0.047, 0.051, 0.681)
-var IK_POINT_RIGHT_HAND_BASIS_GLOBAL : Basis = Quaternion(0.677, 0.142, 0.061, 0.72)
+var IK_POINT_LEFT_HAND_BASIS_GLOBAL : Basis = IK_POINT_HEAD_BASIS_GLOBAL
+var IK_POINT_RIGHT_HAND_BASIS_GLOBAL : Basis = IK_POINT_HEAD_BASIS_GLOBAL
 
 const IK_HAND_OFFSET = Vector3(0.01, 0.014, 0.13) # Right hand
 
@@ -462,7 +462,7 @@ func update_local_transforms() -> void:
 		if tracker_collection_input.left_hand_spatial:
 			var controller: XRController3D = VRManager.xr_origin.left_hand_controller
 			if controller:
-				tracker_collection_input.left_hand_spatial.transform = Transform3D(controller.transform.basis, (controller.transform.origin + camera_offset)).translated(Vector3(-IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_LEFT_HAND_BASIS_GLOBAL)
+				tracker_collection_input.left_hand_spatial.transform = Transform3D(controller.transform.basis, (controller.transform.origin + camera_offset)).translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_LEFT_HAND_BASIS_GLOBAL)
 		if tracker_collection_input.right_hand_spatial:
 			var controller: XRController3D = VRManager.xr_origin.right_hand_controller
 			if controller:
