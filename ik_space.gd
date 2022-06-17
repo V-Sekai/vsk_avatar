@@ -24,8 +24,8 @@ const IK_POINT_HEAD_BASIS_GLOBAL = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1
 # 3. Rotate the nodes until correct
 # 4. Move the new nodes out and save their rotations 
 
-var IK_POINT_LEFT_HAND_BASIS_GLOBAL : Basis = IK_POINT_HEAD_BASIS_GLOBAL
-var IK_POINT_RIGHT_HAND_BASIS_GLOBAL : Basis = IK_POINT_HEAD_BASIS_GLOBAL
+var IK_POINT_LEFT_HAND_BASIS_GLOBAL : Basis = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, -1.0, 0.0), Vector3(0.0, 0.0, 1.0))
+var IK_POINT_RIGHT_HAND_BASIS_GLOBAL : Basis = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, -1.0, 0.0), Vector3(0.0, 0.0, 1.0))
 
 const IK_HAND_OFFSET = Vector3(0.01, 0.014, 0.13) # Right hand
 
@@ -448,26 +448,36 @@ func get_local_head_transform(p_camera: Node3D, p_origin_offset: Vector3, p_came
 	Vector3.UP, PI) * Transform3D(p_camera.transform.basis,\
 	(p_camera.transform.origin + p_origin_offset - p_camera_offset)).translated(\
 	relative_offset) * Transform3D(IK_POINT_HEAD_BASIS_GLOBAL)
-				
+
+
+func rotate_local_with_global(p_q : Quaternion, local_transform : Transform3D, parent_global_transform : Transform3D) -> Transform3D:
+	var new_rot : Quaternion
+	new_rot = parent_global_transform.basis.get_rotation_quaternion();
+	new_rot = new_rot.inverse() * p_q * new_rot;
+	new_rot = new_rot * local_transform.basis.get_rotation_quaternion();
+	return Transform3D(new_rot.normalized(), local_transform.origin);
+
+
 func update_local_transforms() -> void:
 	var camera_offset: Vector3 = _player_input_node.get_head_accumulator()
 	var origin_offset: Vector3 = -_camera_controller_node.origin_offset
 
 	if tracker_collection_input:
+		var camera: XRCamera3D = VRManager.xr_origin.get_node_or_null("ARVRCamera")
 		if tracker_collection_input.head_spatial:
-			var camera: XRCamera3D = VRManager.xr_origin.get_node_or_null("ARVRCamera")
 			tracker_collection_input.head_spatial.transform = \
 			get_local_head_transform(camera, origin_offset, camera_offset)
 		
 		if tracker_collection_input.left_hand_spatial:
 			var controller: XRController3D = VRManager.xr_origin.left_hand_controller
 			if controller:
-				tracker_collection_input.left_hand_spatial.transform = Transform3D(controller.transform.basis, (controller.transform.origin + camera_offset)).translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_LEFT_HAND_BASIS_GLOBAL)
+				tracker_collection_input.left_hand_spatial.transform = rotate_local_with_global(IK_POINT_LEFT_HAND_BASIS_GLOBAL, controller.transform.translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z) + origin_offset - camera_offset), Transform3D())
 		if tracker_collection_input.right_hand_spatial:
 			var controller: XRController3D = VRManager.xr_origin.right_hand_controller
 			if controller:
-				tracker_collection_input.right_hand_spatial.transform = Transform3D(controller.transform.basis, (controller.transform.origin + camera_offset)).translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_RIGHT_HAND_BASIS_GLOBAL)
-			
+				tracker_collection_input.right_hand_spatial.transform = rotate_local_with_global(IK_POINT_RIGHT_HAND_BASIS_GLOBAL, controller.transform.translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z) + origin_offset - camera_offset), Transform3D())
+
+
 # Calculate the transforms of the trackers to be serialised by the network writer
 func update_output_trackers() -> void:
 	if tracker_collection_output and _avatar_display_node:
