@@ -15,6 +15,7 @@ dest_files=["res://.godot/imported/teapot.glb-c909ba603baf97ea4236617d7ac3876a.s
 
 nodes/root_type="Spatial"
 nodes/root_name="Scene Root"
+nodes/scene_scale=1.0
 nodes/root_scale=1.0
 nodes/generate_physics=false
 nodes/generate_navmesh=0

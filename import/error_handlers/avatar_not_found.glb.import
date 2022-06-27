@@ -15,6 +15,7 @@ dest_files=["res://.godot/imported/avatar_not_found.glb-fa17ab08b54f4ad78e18bf20
 
 nodes/root_type="Spatial"
 nodes/root_name="Scene Root"
+nodes/scene_scale=1.0
 nodes/root_scale=1.0
 nodes/generate_physics=false
 nodes/generate_navmesh=0
