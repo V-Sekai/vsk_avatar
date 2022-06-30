@@ -464,11 +464,11 @@ func update_local_transforms() -> void:
 		if tracker_collection_input.left_hand_spatial:
 			var controller: XRController3D = VRManager.xr_origin.left_hand_controller
 			if controller:
-				tracker_collection_input.left_hand_spatial.transform = Transform3D(controller.transform.basis, (controller.transform.origin + camera_offset)).translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_LEFT_HAND_BASIS_GLOBAL)
+				tracker_collection_input.left_hand_spatial.transform = controller.transform
 		if tracker_collection_input.right_hand_spatial:
 			var controller: XRController3D = VRManager.xr_origin.right_hand_controller
 			if controller:
-				tracker_collection_input.right_hand_spatial.transform = Transform3D(controller.transform.basis, (controller.transform.origin + camera_offset)).translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)) * Transform3D(IK_POINT_RIGHT_HAND_BASIS_GLOBAL)
+				tracker_collection_input.right_hand_spatial.transform = controller.transform
 			
 # Calculate the transforms of the trackers to be serialised by the network writer
 func update_output_trackers() -> void:
