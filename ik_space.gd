@@ -11,11 +11,13 @@ var _player_input_node: Node #  = get_node(_player_input_nodepath)
 @export var debug_points : bool = false
 @export var origin_interpolation_factor: float = 0.0
 @export var rotation_interpolation_factor: float = 0.0
- # (float)
+
 @export var _camera_controller_node_path: NodePath = NodePath()
 @export var _ren_ik_path: NodePath = NodePath()
 @export var _avatar_display_path: NodePath = NodePath()
- # (NodePath)
+
+@export var use_hands = true
+
 const IK_POINT_HEAD_BASIS_GLOBAL = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, -1.0))
 
 # # Procedure to calibrate hands
@@ -200,13 +202,13 @@ func update_ik_controller() -> void:
 				_ren_ik.set_head_target_path(_ren_ik.get_path_to(tracker_collection_input.head_spatial))
 			else:
 				_ren_ik.set_head_target_path(NodePath())
-			
-			if tracker_collection_input.left_hand_spatial and !pending_calibration:
+
+			if use_hands and tracker_collection_input.left_hand_spatial and !pending_calibration:
 				_ren_ik.set_hand_left_target_path(_ren_ik.get_path_to(tracker_collection_input.left_hand_spatial))
 			else:
 				_ren_ik.set_hand_left_target_path(NodePath())
 			
-			if tracker_collection_input.right_hand_spatial and !pending_calibration:
+			if use_hands and tracker_collection_input.right_hand_spatial and !pending_calibration:
 				_ren_ik.set_hand_right_target_path(_ren_ik.get_path_to(tracker_collection_input.right_hand_spatial))
 			else:
 				_ren_ik.set_hand_right_target_path(NodePath())
@@ -589,49 +591,48 @@ func update_physics(p_delta) -> void:
 			
 			
 func setup() -> void:
-	if is_inside_tree():
-		_player_input_node = get_node_or_null(_player_input_path)
-		_avatar_display_node = get_node_or_null(_avatar_display_path)
-		_camera_controller_node = get_node_or_null(_camera_controller_node_path)
-		_ren_ik = get_node_or_null(_ren_ik_path)
-		
-		# Check if humanIK script is assigned and instanceable
+	if not is_inside_tree():
+		return
+	_player_input_node = get_node_or_null(_player_input_path)
+	_avatar_display_node = get_node_or_null(_avatar_display_path)
+	_camera_controller_node = get_node_or_null(_camera_controller_node_path)
+	_ren_ik = get_node_or_null(_ren_ik_path)
+	
+	# Check if humanIK script is assigned and instanceable
 #		if _ren_ik.get_script() == null or !_ren_ik.get_script().can_instance():
 #			printerr("RenIK could not be loaded!")
 #			_ren_ik = null
+	
+	if _ren_ik.get_class() != "RenIK":
+		push_error("RenIK did not load: class is " + str(_ren_ik.get_class()))
+		_ren_ik = null
+	if _ren_ik:
+		_ren_ik.set_process(false)
+		_ren_ik.set_process_internal(false)
+		_ren_ik.set_physics_process(false)
+		_ren_ik.set_physics_process_internal(false)
+		_ren_ik.enable_hip_placement(true)
+		_ren_ik.enable_foot_placement(true)
+	
+	top_level = pin_at_world_origin
+	set_transform(Transform3D())
+	
+	tracker_collection_input = TrackerCollection.new()
+	
+	if is_multiplayer_authority():
+		_create_output_trackers()
 		
-		if _ren_ik.get_class() != "RenIK":
-			push_error("RenIK did not load: class is " + str(_ren_ik.get_class()))
-			_ren_ik = null
-		if _ren_ik:
-			_ren_ik.set_process(false)
-			_ren_ik.set_process_internal(false)
-			_ren_ik.set_physics_process(false)
-			_ren_ik.set_physics_process_internal(false)
-			_ren_ik.enable_hip_placement(true)
-			_ren_ik.enable_foot_placement(true)
+		if !Engine.is_editor_hint():
+			if is_multiplayer_authority():
+				assert(VRManager.xr_mode_changed.connect(self._xr_mode_changed) == OK)
+				assert(VRManager.request_vr_calibration.connect(self._request_vr_calibration) == OK)
+				assert(VRManager.confirm_vr_calibration.connect(self._confirm_vr_calibration) == OK)
 		
-		top_level = pin_at_world_origin
-		set_transform(Transform3D())
+		update_trackers()
+		update_ik_controller()
 		
-		tracker_collection_input = TrackerCollection.new()
-		
-		if is_multiplayer_authority():
-			_create_output_trackers()
-			
-			if !Engine.is_editor_hint():
-				if is_multiplayer_authority():
-					assert(VRManager.xr_mode_changed.connect(self._xr_mode_changed) == OK)
-					assert(VRManager.request_vr_calibration.connect(self._request_vr_calibration) == OK)
-					assert(VRManager.confirm_vr_calibration.connect(self._confirm_vr_calibration) == OK)
-			
-			update_trackers()
-			update_ik_controller()
-			
-			if false: ### FIXME: Not static ### if MocapManager.recording_enabled:
-				mocap_recording = MocapManager.start_recording(Engine.iterations_per_second)
-	else:
-		pass
+		if false: ### FIXME: Not static ### if MocapManager.recording_enabled:
+			mocap_recording = MocapManager.start_recording(Engine.iterations_per_second)
 		
 func _on_avatar_changed():
 	if (is_multiplayer_authority() or NetworkManager.is_server()) and\
