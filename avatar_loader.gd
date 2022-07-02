@@ -98,4 +98,4 @@ func _on_avatar_setup_complete():
 	
 func _on_avatar_setup_failed():
 	printerr("Avatar %s is not valid!" % get_avatar_model_path())
-	load_error_avatar(VSKAssetManager.ASSET_FAILED)
+	load_error_avatar(VSKAssetManager.ASSET_UNKNOWN_FAILURE)
