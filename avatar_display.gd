@@ -644,13 +644,13 @@ func get_head_forward_transform() -> Transform3D:
 	return head_transform
 
 func _setup_voice() -> void:
-	if ! is_multiplayer_authority():
-		var godot_speech: Node = get_node_or_null("/root/GodotSpeech")
+	if not is_multiplayer_authority():
+		var godot_speech: Node = GodotSpeech.godot_speech
 		if godot_speech:
 			if ! voice_player:
 				voice_player = get_node_or_null(voice_player_path)
 
-			godot_speech.voice_controller.add_player_audio(get_multiplayer_authority(), voice_player)
+			godot_speech.add_player_audio(get_multiplayer_authority(), voice_player)
 
 ###
 
