@@ -113,7 +113,7 @@ func selected(p_bone_name: String) -> void:
 func setup_list(p_tab: Control, p_bones: PackedStringArray, p_button_array: Array) -> void:
 	var vbox_container: VBoxContainer = VBoxContainer.new()
 	p_tab.add_child(vbox_container)
-	vbox_container.set_anchors_and_offsets_preset(VBoxContainer.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
+	vbox_container.set_anchors_and_offsets_preset(VBoxContainer.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 0)
 	vbox_container.size_flags_horizontal = VBoxContainer.SIZE_EXPAND_FILL
 
 	for i in range(0, p_bones.size()):
@@ -215,14 +215,14 @@ func _init(p_bone_icon: Texture, p_clear_icon: Texture):
 	tab_container.add_child(left_hand_bone_control)
 	tab_container.add_child(right_hand_bone_control)
 
-	tab_container.set_anchors_and_offsets_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
-	body_control.set_anchors_and_offsets_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
-	head_control.set_anchors_and_offsets_preset(Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0)
+	tab_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 0)
+	body_control.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 0)
+	head_control.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 0)
 	left_hand_bone_control.set_anchors_and_offsets_preset(
-		Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0
+		Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 0
 	)
 	right_hand_bone_control.set_anchors_and_offsets_preset(
-		Control.PRESET_WIDE, Control.PRESET_MODE_MINSIZE, 0
+		Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 0
 	)
 	
 	tab_container.use_hidden_tabs_for_min_size = true
