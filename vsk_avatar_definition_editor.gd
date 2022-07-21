@@ -24,9 +24,6 @@ var clear_icon: Texture = null
 
 const humanoid_data_const = preload("humanoid_data.gd")
 
-const avatar_fixer_const = preload("avatar_fixer.gd")
-
-const bone_direction_const = preload("bone_direction.gd")
 const rotation_fixer_const = preload("rotation_fixer.gd")
 const t_poser_const = preload("t_poser.gd")
 const external_transform_fixer_const = preload("external_transform_fixer.gd")
@@ -37,7 +34,6 @@ const OUTPUT_HAND_RESOURCE_EXTENSION = "tres"
 enum {
 	MENU_OPTION_EXPORT_LEFT_HAND_POSE,
 	MENU_OPTION_EXPORT_RIGHT_HAND_POSE,
-	MENU_OPTION_CORRECT_BONE_DIRECTIONS,
 	MENU_OPTION_SETUP_BONES,
 	MENU_OPTION_FIX_ALL,
 	MENU_OPTION_EXPORT_AVATAR,
@@ -51,21 +47,6 @@ enum {
 }
 
 var save_option: int = SAVE_OPTION_AVATAR
-
-static func correct_bone_directions(p_root: Node, p_humanoid_data: HumanoidData, p_undo_redo: UndoRedo) -> void:
-	var queue : Array
-	queue.push_back(p_root)
-	var string_builder : Array
-	while not queue.is_empty():
-		var front = queue.front()
-		var node = front
-		if node is Skeleton3D:
-			bone_direction_const.fix_skeleton(p_root, node, p_humanoid_data, p_undo_redo)
-		var child_count : int = node.get_child_count()
-		for i in child_count:
-			queue.push_back(node.get_child(i))
-		queue.pop_front()
-	return p_root
 
 func enforce_strict_t_pose(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
 	var base_pose_array: Array = []
@@ -151,12 +132,6 @@ func check_if_avatar_is_valid() -> bool:
 func menu_option(p_id : int) -> void:
 	var err: int = avatar_callback_const.AVATAR_OK
 	match p_id:
-		MENU_OPTION_CORRECT_BONE_DIRECTIONS:
-			if check_if_avatar_is_valid():
-				node = correct_bone_directions(node, node.humanoid_data, editor_plugin.get_undo_redo())
-				_refresh_skeleton(node._skeleton_node)
-			else:
-				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_SETUP_BONES:
 			if check_if_avatar_is_valid():
 				err = setup_bones_menu()
@@ -165,9 +140,6 @@ func menu_option(p_id : int) -> void:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_FIX_ALL:
 			if check_if_avatar_is_valid():
-				err = avatar_fixer_const.fix_avatar(node, node._skeleton_node, node.humanoid_data, editor_plugin.get_undo_redo())
-				_refresh_skeleton(node._skeleton_node)
-				menu_option(MENU_OPTION_CORRECT_BONE_DIRECTIONS)
 				var queue : Array
 				queue.push_back(node._skeleton_node.owner)
 				while not queue.is_empty():

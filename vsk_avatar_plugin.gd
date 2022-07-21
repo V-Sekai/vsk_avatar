@@ -34,7 +34,6 @@ func update_menu_options() -> void:
 		option_button.get_popup().add_item("Upload Avatar", avatar_definition_editor_const.MENU_OPTION_UPLOAD_AVATAR)
 		option_button.get_popup().add_item("Save Left Hand Pose (Debug)", avatar_definition_editor_const.MENU_OPTION_EXPORT_LEFT_HAND_POSE)
 		option_button.get_popup().add_item("Save Right Hand Pose (Debug)", avatar_definition_editor_const.MENU_OPTION_EXPORT_RIGHT_HAND_POSE)
-		option_button.get_popup().add_item("Correct Bone Directions (Debug)", avatar_definition_editor_const.MENU_OPTION_CORRECT_BONE_DIRECTIONS)
 		option_button.get_popup().add_item("Fix All (Debug)", avatar_definition_editor_const.MENU_OPTION_FIX_ALL)
 
 func _enter_tree() -> void:
