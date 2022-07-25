@@ -53,19 +53,20 @@ enum {
 var save_option: int = SAVE_OPTION_AVATAR
 
 static func correct_bone_directions(p_root: Node, p_humanoid_data: HumanoidData, p_undo_redo: UndoRedo) -> void:
-	var queue : Array
-	queue.push_back(p_root)
-	var string_builder : Array
-	while not queue.is_empty():
-		var front = queue.front()
-		var node = front
-		if node is Skeleton3D:
-			bone_direction_const.fix_skeleton(p_root, node, p_humanoid_data, p_undo_redo)
-		var child_count : int = node.get_child_count()
-		for i in child_count:
-			queue.push_back(node.get_child(i))
-		queue.pop_front()
 	return p_root
+#	var queue : Array
+#	queue.push_back(p_root)
+#	var string_builder : Array
+#	while not queue.is_empty():
+#		var front = queue.front()
+#		var node = front
+#		if node is Skeleton3D:
+#			bone_direction_const.fix_skeleton(p_root, node, p_humanoid_data, p_undo_redo)
+#		var child_count : int = node.get_child_count()
+#		for i in child_count:
+#			queue.push_back(node.get_child(i))
+#		queue.pop_front()
+#	return p_root
 
 func enforce_strict_t_pose(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
 	var base_pose_array: Array = []
@@ -188,7 +189,7 @@ func menu_option(p_id : int) -> void:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_UPLOAD_AVATAR:
 			if check_if_avatar_is_valid():
-				menu_option(MENU_OPTION_FIX_ALL)
+				#menu_option(MENU_OPTION_FIX_ALL)
 				export_avatar_upload()
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
