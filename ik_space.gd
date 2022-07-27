@@ -30,7 +30,7 @@ const IK_POINT_RIGHT_HAND_BASIS_GLOBAL = Basis(Vector3(1, 0, 0), Vector3(0, -1, 
 #var IK_POINT_LEFT_HAND_BASIS_GLOBAL : Basis = IK_POINT_HEAD_BASIS_GLOBAL
 #var IK_POINT_RIGHT_HAND_BASIS_GLOBAL : Basis = IK_POINT_HEAD_BASIS_GLOBAL
 
-const IK_HAND_OFFSET = Vector3.ZERO #Vector3(0.01, 0.014, 0.13) # Right hand
+const IK_HAND_OFFSET = Vector3(0, 0.014 * 3, 0) # Right hand
 
 class ik_points:
 	const HEAD_ID = 0
