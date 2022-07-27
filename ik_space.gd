@@ -19,8 +19,8 @@ var _player_input_node: Node #  = get_node(_player_input_nodepath)
 @export var use_hands = true
 
 const IK_POINT_HEAD_BASIS_GLOBAL = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, -1.0))
-const IK_POINT_LEFT_HAND_BASIS_GLOBAL = Basis(Vector3(-1, 0, 0), Vector3(0, 0.707, -0.707), Vector3(0.0, -0.707, -0.707))
-const IK_POINT_RIGHT_HAND_BASIS_GLOBAL = Basis(Vector3(-1, 0, 0), Vector3(0, 0.707, -0.707), Vector3(0.0, -0.707, -0.707))
+const IK_POINT_LEFT_HAND_BASIS_GLOBAL = Basis(Vector3(1, 0, 0), Vector3(0, -1, 0), Vector3(0, 0, -1))
+const IK_POINT_RIGHT_HAND_BASIS_GLOBAL = Basis(Vector3(1, 0, 0), Vector3(0, -1, 0), Vector3(0, 0, -1))
 # # Procedure to calibrate hands
 # 1. Copy the existing left hand and right hand transforms
 # 2. Put a corresponding node as a child
