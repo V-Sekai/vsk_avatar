@@ -449,7 +449,7 @@ func get_local_head_transform(p_camera: Node3D, p_origin_offset: Vector3, p_came
 
 	return Transform3D().rotated(\
 	Vector3.UP, PI) * Transform3D(p_camera.transform.basis,\
-	(p_camera.transform.origin + p_origin_offset - p_camera_offset)).translated(\
+	(p_camera.transform.origin + p_origin_offset - p_camera_offset)).translated_local(\
 	relative_offset) * Transform3D(IK_POINT_HEAD_BASIS_GLOBAL)
 
 func update_local_transforms() -> void:
@@ -467,15 +467,17 @@ func update_local_transforms() -> void:
 			if controller:
 				tracker_collection_input.left_hand_spatial.transform = (Transform3D().rotated(Vector3.UP, PI) *
 					Transform3D(controller.transform.basis, (controller.transform.origin  + origin_offset - camera_offset))
-					.translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z))
-						* Transform3D(IK_POINT_LEFT_HAND_BASIS_GLOBAL))
-		if tracker_collection_input.right_hand_spatial:
-			var controller: XRController3D = VRManager.xr_origin.right_hand_controller
-			if controller:
-				tracker_collection_input.right_hand_spatial.transform = (Transform3D().rotated(Vector3.UP, PI) *
-					Transform3D(controller.transform.basis, (controller.transform.origin + origin_offset - camera_offset))
-					.translated(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z))
-						* Transform3D(IK_POINT_RIGHT_HAND_BASIS_GLOBAL))
+					.translated_local((Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z))
+						* Transform3D(IK_POINT_LEFT_HAND_BASIS_GLOBAL)))
+		if not tracker_collection_input.right_hand_spatial:
+			return
+		var controller: XRController3D = VRManager.xr_origin.right_hand_controller
+		if not controller:
+			return
+		tracker_collection_input.right_hand_spatial.transform = (Transform3D().rotated(Vector3.UP, PI) *
+			Transform3D(controller.transform.basis, (controller.transform.origin + origin_offset - camera_offset))
+			.translated_local((Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z))
+				* Transform3D(IK_POINT_RIGHT_HAND_BASIS_GLOBAL)))
 			
 # Calculate the transforms of the trackers to be serialised by the network writer
 func update_output_trackers() -> void:
