@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/xbot_animations.gltf-9f28e685d0df25ce6fa3cdbe
 
 nodes/root_type="Spatial"
 nodes/root_name="Scene Root"
-nodes/scene_scale=1.0
+nodes/apply_root_scale=true
 nodes/root_scale=1.0
 meshes/ensure_tangents=true
 meshes/generate_lods=true

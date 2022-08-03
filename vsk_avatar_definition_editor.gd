@@ -240,8 +240,8 @@ func _save_file_at_path(p_path : String) -> void:
 					
 				if hand_pose:
 					if ResourceSaver.save(
-						p_path,
 						hand_pose,
+						p_path,
 						ResourceSaver.FLAG_RELATIVE_PATHS
 					) & 0xffffffff == OK:
 						
