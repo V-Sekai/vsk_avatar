@@ -2,7 +2,6 @@
 extends Node3D
 
 const avatar_physics_const = preload("avatar_physics.gd")
-const humanoid_data_const = preload("humanoid_data.gd")
 
 var driver_node: Node = null
 
@@ -22,13 +21,6 @@ var _avatar_physics_node: Node = get_node_or_null(avatar_physics_path)
  # @onready var _mouth_transform_node: Node3D = get_node_or_null(mouth_transform_node_path)
 
 @export var database_id: String
-@export var humanoid_data: Resource = null : # HumanoidData
-	set = set_humanoid_data
-
-
-func set_humanoid_data(p_humanoid_data: HumanoidData) -> void:
-	if p_humanoid_data is humanoid_data_const:
-		humanoid_data = p_humanoid_data
 
 
 func set_eye_transform_path(p_node_path: NodePath) -> void:

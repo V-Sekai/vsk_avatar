@@ -48,26 +48,6 @@ static func get_bone_chain(p_skeleton: Skeleton3D, p_first: int, p_last: int) ->
 
 	return PackedInt32Array(bone_chain)
 
-static func get_internal_bone_name_for_humanoid_bone(
-	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_bone_name: String
-) -> String:
-	if p_skeleton and p_humanoid_data:
-		var internal_bone_name: String = p_humanoid_data.get(p_bone_name)
-		return internal_bone_name
-
-	return ""
-
-static func get_bone_id_for_humanoid_bone(
-	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_bone_name: String
-) -> int:
-	if p_skeleton and p_humanoid_data:
-		var internal_bone_name: String = get_internal_bone_name_for_humanoid_bone(
-			p_skeleton, p_humanoid_data, p_bone_name
-		)
-		return p_skeleton.find_bone(internal_bone_name)
-
-	return -1
-
 static func is_bone_parent_of(p_skeleton: Skeleton3D, p_parent_id: int, p_child_id: int) -> bool:
 	var p: int = p_skeleton.get_bone_parent(p_child_id)
 	while (p != -1):
@@ -92,54 +72,3 @@ static func change_bone_rest(p_skeleton: Skeleton3D, bone_idx: int, bone_rest: T
 	p_skeleton.set_bone_rest(bone_idx, Transform3D(
 			Basis(new_rotation) * Basis(Vector3(1,0,0) * old_scale.x, Vector3(0,1,0) * old_scale.y, Vector3(0,0,1) * old_scale.z),
 			bone_rest.origin))
-	
-static func rename_skeleton_to_humanoid_bones(
-	p_skeleton: Skeleton3D, p_humanoid_data: HumanoidData, p_skins: Array, _undo_redo: UndoRedo,
-) -> bool:
-	if p_skeleton == null or p_humanoid_data == null:
-		return false
-
-	var bone_count: int = p_skeleton.get_bone_count()
-
-	var original_bone_names: Array = []
-	var bone_names: Array = []
-	var bone_name_mapping: Dictionary = {}
-	var bone_rests: Array = []
-	var bone_parents: Array = []
-
-	# Get all the data from the original skeleton
-	for i in range(0, bone_count):
-		original_bone_names.push_back(p_skeleton.get_bone_name(i))
-		bone_names.push_back(p_skeleton.get_bone_name(i))
-		bone_rests.push_back(p_skeleton.get_bone_rest(i))
-		bone_parents.push_back(p_skeleton.get_bone_parent(i))
-
-	# Rename all the bones with the humanoid_mappings
-	for name in HumanoidData.skeleton_mappings:
-		var bone_id: int = get_bone_id_for_humanoid_bone(
-			p_skeleton, p_humanoid_data, "%s_bone_name" % name
-		)
-		if bone_id != -1:
-			bone_names[bone_id] = name
-
-		p_humanoid_data.set("%s_bone_name" % name, name)
-
-	for i in range(0, bone_count):
-		bone_name_mapping[original_bone_names[i]] = bone_names[i]
-	# Destroy the old skeleton and replace it with the new data
-	p_skeleton.clear_bones()
-	for i in range(0, bone_count):
-		p_skeleton.add_bone(bone_names[i])
-		p_skeleton.set_bone_parent(i, bone_parents[i])
-		change_bone_rest(p_skeleton, i, bone_rests[i])
-	
-	# Update the names for the skins too
-	for skin in p_skins:
-		for i in range(0, skin.get_bind_count()):
-			var bind_name: String = skin.get_bind_name(i)
-			if bone_name_mapping.has(bind_name):
-				var new_bone_name: String = bone_name_mapping[bind_name]
-				if new_bone_name != bind_name:
-					skin.set_bind_name(i, new_bone_name)
-
-	return true

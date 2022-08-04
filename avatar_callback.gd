@@ -10,8 +10,6 @@ enum {
 	SKELETON_ZERO_BONES,
 	ROOT_NOT_PARENT_OF_SKELETON,
 	ROOT_NOT_PARENT_OF_VISEME_MESH,
-	NO_HUMANOID_DATA,
-	HUMANOID_DATA_INVALID,
 	NO_MUSCLE_DATA,
 	SKIN_MESH_INSTANCE_SIZE_MISMATCH,
 	AVATAR_COULD_NOT_SANITISE,
@@ -60,10 +58,6 @@ static func get_error_str(p_err: int) -> String:
 			error_str = "Skeleton3D is not a child of the root node!"
 		ROOT_NOT_PARENT_OF_VISEME_MESH:
 			error_str = "Viseme mesh is not a child of the root node!"
-		NO_HUMANOID_DATA:
-			error_str = "Humanoid avatars require HumanoidData resource!"
-		HUMANOID_DATA_INVALID:
-			error_str = "Avatar HumanoidData is invalid!"
 		NO_MUSCLE_DATA:
 			error_str = "Humanoid avatars require MuscleData resource!"
 		SKIN_MESH_INSTANCE_SIZE_MISMATCH:

@@ -4,21 +4,21 @@ extends RefCounted
 const LEFT_SIDE_NAME = "left"
 const RIGHT_SIDE_NAME = "right"
 
-const THUMB_NAME = "thumb"
-const INDEX_NAME = "index"
-const MIDDLE_NAME = "middle"
-const RING_NAME = "ring"
-const LITTLE_NAME = "little"
+const THUMB_NAME = "Thumb"
+const INDEX_NAME = "Index"
+const MIDDLE_NAME = "Middle"
+const RING_NAME = "Ring"
+const LITTLE_NAME = "Little"
 
-const PROXIMAL_NAME = "proximal"
-const INTERMEDIATE_NAME = "intermediate"
-const DISTAL_NAME = "distal"
-const ENDPOINT_NAME = "endpoint"
+const METACARPAL_NAME = "Proximal"
+const PROXIMAL_NAME = "Proximal"
+const INTERMEDIATE_NAME = "Intermediate"
+const DISTAL_NAME = "Distal"
 
 const digit_names: PackedStringArray = [THUMB_NAME, INDEX_NAME, MIDDLE_NAME, RING_NAME, LITTLE_NAME]
-const digit_joint_names: PackedStringArray = [PROXIMAL_NAME, INTERMEDIATE_NAME, DISTAL_NAME]
+const digit_joint_names: PackedStringArray = [METACARPAL_NAME, PROXIMAL_NAME, INTERMEDIATE_NAME, DISTAL_NAME]
 
-enum { DIGIT_JOINT_PROXIMAL, DIGIT_JOINT_INTERMEDIATE, DIGIT_JOINT_DISTAL, DIGIT_JOINT_ENDPOINT }
+enum { DIGIT_JOINT_METACARPAL, DIGIT_JOINT_PROXIMAL, DIGIT_JOINT_INTERMEDIATE, DIGIT_JOINT_DISTAL }
 
 enum { DIGIT_THUMB, DIGIT_INDEX, DIGIT_MIDDLE, DIGIT_RING, DIGIT_LITTLE }
 
@@ -29,11 +29,11 @@ static func get_name_for_digit_joint(p_digit_joint: int) -> String:
 		DIGIT_JOINT_PROXIMAL:
 			return PROXIMAL_NAME
 		DIGIT_JOINT_INTERMEDIATE:
-			return INTERMEDIATE_NAME
+			return INTERMEDIATE_NAME # not on thumb
 		DIGIT_JOINT_DISTAL:
 			return DISTAL_NAME
-		DIGIT_JOINT_ENDPOINT:
-			return ENDPOINT_NAME
+		DIGIT_JOINT_METACARPAL:
+			return METACARPAL_NAME # thumb
 	return ""
 
 static func get_name_for_digit(p_digit: int) -> String:

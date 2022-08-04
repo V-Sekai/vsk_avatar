@@ -4,10 +4,6 @@ extends Control
 const vsk_types_const = preload("res://addons/vsk_importer_exporter/vsk_types.gd")
 const avatar_callback_const = preload("avatar_callback.gd")
 
-const bone_mapper_dialog_const = preload("bone_mapper_dialog.gd")
-const bone_lib_const = preload("bone_lib.gd")
-
-const hand_pose_const = preload("hand_pose.gd")
 const hand_pose_exporter_const = preload("hand_pose_extractor.gd")
 
 var editor_plugin: EditorPlugin = null
@@ -17,19 +13,8 @@ var err_dialog : AcceptDialog = null
 
 var save_dialog : FileDialog = null
 
-var bone_mapper_dialog : AcceptDialog = null
-
 var bone_icon: Texture = null
 var clear_icon: Texture = null
-
-const humanoid_data_const = preload("humanoid_data.gd")
-
-const avatar_fixer_const = preload("avatar_fixer.gd")
-
-const bone_direction_const = preload("bone_direction.gd")
-const rotation_fixer_const = preload("rotation_fixer.gd")
-const t_poser_const = preload("t_poser.gd")
-const external_transform_fixer_const = preload("external_transform_fixer.gd")
 
 const OUTPUT_SCENE_EXTENSION = "scn"
 const OUTPUT_HAND_RESOURCE_EXTENSION = "tres"
@@ -37,9 +22,6 @@ const OUTPUT_HAND_RESOURCE_EXTENSION = "tres"
 enum {
 	MENU_OPTION_EXPORT_LEFT_HAND_POSE,
 	MENU_OPTION_EXPORT_RIGHT_HAND_POSE,
-	MENU_OPTION_CORRECT_BONE_DIRECTIONS,
-	MENU_OPTION_SETUP_BONES,
-	MENU_OPTION_FIX_ALL,
 	MENU_OPTION_EXPORT_AVATAR,
 	MENU_OPTION_UPLOAD_AVATAR,
 }
@@ -52,8 +34,6 @@ enum {
 
 var save_option: int = SAVE_OPTION_AVATAR
 
-static func correct_bone_directions(p_root: Node, p_humanoid_data: HumanoidData, p_undo_redo: UndoRedo) -> void:
-	return p_root
 #	var queue : Array
 #	queue.push_back(p_root)
 #	var string_builder : Array
@@ -67,26 +47,6 @@ static func correct_bone_directions(p_root: Node, p_humanoid_data: HumanoidData,
 #			queue.push_back(node.get_child(i))
 #		queue.pop_front()
 #	return p_root
-
-func enforce_strict_t_pose(p_root: Node, p_skeleton_node: Skeleton3D, p_humanoid_data: HumanoidData) -> void:
-	var base_pose_array: Array = []
-	for i in range(0, p_skeleton_node.get_bone_count()):
-		base_pose_array.push_back(p_skeleton_node.get_bone_rest(i))
-	
-	t_poser_const.enforce_strict_t_pose(p_root, p_skeleton_node, p_humanoid_data, base_pose_array)
-
-func setup_bones_menu() -> int:
-	if !node.humanoid_data:
-		return avatar_callback_const.NO_HUMANOID_DATA
-	if !node._skeleton_node:
-		return avatar_callback_const.SKELETON_IS_NULL
-	
-	assert(bone_mapper_dialog)
-	bone_mapper_dialog.set_humanoid_data(node.humanoid_data)
-	bone_mapper_dialog.set_skeleton(node._skeleton_node)
-	bone_mapper_dialog.popup_centered_ratio() # Was without ratio but now broken
-	
-	return avatar_callback_const.AVATAR_OK
 
 func export_avatar_local() -> void:
 	save_option = SAVE_OPTION_AVATAR
@@ -148,47 +108,32 @@ func check_if_avatar_is_valid() -> bool:
 		
 	return true
 
+func apply_extra_cull_margin(start_node: Node):
+	var queue : Array
+	queue.push_back(start_node._skeleton_node.owner)
+	while not queue.is_empty():
+		var front = queue.front()
+		var node = front
+		if node is MeshInstance3D:
+			node.extra_cull_margin = 16384.0
+		var child_count : int = node.get_child_count()
+		for i in child_count:
+			queue.push_back(node.get_child(i))
+		queue.pop_front()
 
 func menu_option(p_id : int) -> void:
 	var err: int = avatar_callback_const.AVATAR_OK
 	match p_id:
-		MENU_OPTION_CORRECT_BONE_DIRECTIONS:
-			if check_if_avatar_is_valid():
-				node = correct_bone_directions(node, node.humanoid_data, editor_plugin.get_undo_redo())
-				_refresh_skeleton(node._skeleton_node)
-			else:
-				err = avatar_callback_const.ROOT_IS_NULL
-		MENU_OPTION_SETUP_BONES:
-			if check_if_avatar_is_valid():
-				err = setup_bones_menu()
-				_refresh_skeleton(node._skeleton_node)
-			else:
-				err = avatar_callback_const.ROOT_IS_NULL
-		MENU_OPTION_FIX_ALL:
-			if check_if_avatar_is_valid():
-				err = avatar_fixer_const.fix_avatar(node, node._skeleton_node, node.humanoid_data, editor_plugin.get_undo_redo())
-				_refresh_skeleton(node._skeleton_node)
-				menu_option(MENU_OPTION_CORRECT_BONE_DIRECTIONS)
-				var queue : Array
-				queue.push_back(node._skeleton_node.owner)
-				while not queue.is_empty():
-					var front = queue.front()
-					var node = front
-					if node is MeshInstance3D:
-						node.extra_cull_margin = 16384.0
-					var child_count : int = node.get_child_count()
-					for i in child_count:
-						queue.push_back(node.get_child(i))
-					queue.pop_front()
-			else:
-				err = avatar_callback_const.ROOT_IS_NULL
+
 		MENU_OPTION_EXPORT_AVATAR:
 			if check_if_avatar_is_valid():
+				apply_extra_cull_margin(node)
 				export_avatar_local()
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_UPLOAD_AVATAR:
 			if check_if_avatar_is_valid():
+				apply_extra_cull_margin(node)
 				#menu_option(MENU_OPTION_FIX_ALL)
 				export_avatar_upload()
 			else:
@@ -228,13 +173,11 @@ func _save_file_at_path(p_path : String) -> void:
 		err = avatar_callback_const.AVATAR_COULD_NOT_EXPORT_HANDS
 		if node:
 			var skeleton: Skeleton3D = node._skeleton_node
-			var humanoid_data: HumanoidData = node.humanoid_data
-			if skeleton and humanoid_data:
+			if skeleton:
 				
-				var hand_pose: RefCounted = \
+				var hand_pose: Animation = \
 				hand_pose_exporter_const.generate_hand_pose_from_skeleton(
 					skeleton,
-					humanoid_data,
 					true if save_option == SAVE_OPTION_RIGHT_HAND_POSE else false
 				)
 					
@@ -260,9 +203,6 @@ func setup_dialogs() -> void:
 	save_dialog.file_selected.connect(self._save_file_at_path)
 	editor_plugin.get_editor_interface().get_base_control().add_child(save_dialog)
 	
-	bone_mapper_dialog = bone_mapper_dialog_const.new(bone_icon, clear_icon)
-	editor_plugin.get_editor_interface().get_base_control().add_child(bone_mapper_dialog)
-	
 func teardown_dialogs() -> void:
 	if err_dialog:
 		if err_dialog.is_inside_tree():
@@ -273,11 +213,6 @@ func teardown_dialogs() -> void:
 		if save_dialog.is_inside_tree():
 			save_dialog.get_parent().remove_child(err_dialog)
 		save_dialog.queue_free()
-		
-	if bone_mapper_dialog:
-		if bone_mapper_dialog.is_inside_tree():
-			bone_mapper_dialog.get_parent().remove_child(err_dialog)
-		bone_mapper_dialog.queue_free()
 	
 func _enter_tree():
 	setup_dialogs()

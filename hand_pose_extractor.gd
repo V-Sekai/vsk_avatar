@@ -1,14 +1,11 @@
 extends Node
 
-const hand_pose_const = preload("hand_pose.gd")
 
 static func get_transform_for_humanoid_bone(
 	p_skeleton: Skeleton3D,
-	p_humanoid_data: HumanoidData,
 	p_humanoid_bone_name: String) -> Transform3D:
-	
-	var humanoid_bone_name: String = p_humanoid_data.get(p_humanoid_bone_name)
-	var bone_id: int = p_skeleton.find_bone(humanoid_bone_name)
+
+	var bone_id: int = p_skeleton.find_bone(p_humanoid_bone_name)
 	if bone_id != -1:
 		return p_skeleton.get_bone_pose(bone_id)
 	
@@ -16,140 +13,71 @@ static func get_transform_for_humanoid_bone(
 
 static func generate_hand_pose_from_skeleton(
 	p_skeleton: Skeleton3D,
-	p_humanoid_data: HumanoidData,
-	p_right_hand: bool) -> RefCounted:
+	p_right_hand: bool) -> Animation:
 	
-	var hand_pose: RefCounted = hand_pose_const.new()
+	var hand_pose_dict: Dictionary = {}
 	
-	if p_right_hand:
-		hand_pose.thumb_proximal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"thumb_proximal_right_bone_name")
-		hand_pose.thumb_intermediate = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"thumb_intermediate_right_bone_name")
-		hand_pose.thumb_distal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"thumb_distal_right_bone_name")
-			
-		hand_pose.index_proximal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"index_proximal_right_bone_name")
-		hand_pose.index_intermediate = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"index_intermediate_right_bone_name")
-		hand_pose.index_distal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"index_distal_right_bone_name")
-			
-		hand_pose.middle_proximal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"middle_proximal_right_bone_name")
-		hand_pose.middle_intermediate = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"middle_intermediate_right_bone_name")
-		hand_pose.middle_distal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"middle_distal_right_bone_name")
-			
-		hand_pose.ring_proximal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"ring_proximal_right_bone_name")
-		hand_pose.ring_intermediate = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"ring_intermediate_right_bone_name")
-		hand_pose.ring_distal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"ring_distal_right_bone_name")
+	var hand_prefix = "Right" if p_right_hand else "Left"
+	hand_pose_dict["ThumbMetacarpal"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "ThumbMetacarpal")
+	hand_pose_dict["ThumbProximal"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "ThumbProximal")
+	hand_pose_dict["ThumbDistal"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "ThumbDistal")
 		
-		hand_pose.little_proximal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"little_proximal_right_bone_name")
-		hand_pose.little_intermediate = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"little_intermediate_right_bone_name")
-		hand_pose.little_distal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"little_distal_right_bone_name")
-	else:
-		hand_pose.thumb_proximal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"thumb_proximal_left_bone_name")
-		hand_pose.thumb_intermediate = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"thumb_intermediate_left_bone_name")
-		hand_pose.thumb_distal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"thumb_distal_left_bone_name")
-			
-		hand_pose.index_proximal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"index_proximal_left_bone_name")
-		hand_pose.index_intermediate = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"index_intermediate_left_bone_name")
-		hand_pose.index_distal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"index_distal_left_bone_name")
-			
-		hand_pose.middle_proximal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"middle_proximal_left_bone_name")
-		hand_pose.middle_intermediate = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"middle_intermediate_left_bone_name")
-		hand_pose.middle_distal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"middle_distal_left_bone_name")
-			
-		hand_pose.ring_proximal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"ring_proximal_left_bone_name")
-		hand_pose.ring_intermediate = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"ring_intermediate_left_bone_name")
-		hand_pose.ring_distal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"ring_distal_left_bone_name")
+	hand_pose_dict["IndexProximal"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "IndexProximal")
+	hand_pose_dict["IndexIntermediate"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "IndexIntermediate")
+	hand_pose_dict["IndexDistal"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "IndexDistal")
 		
-		hand_pose.little_proximal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"little_proximal_left_bone_name")
-		hand_pose.little_intermediate = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"little_intermediate_left_bone_name")
-		hand_pose.little_distal = get_transform_for_humanoid_bone(
-			p_skeleton,
-			p_humanoid_data,
-			"little_distal_left_bone_name")
+	hand_pose_dict["MiddleProximal"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "MiddleProximal")
+	hand_pose_dict["MiddleIntermediate"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "MiddleIntermediate")
+	hand_pose_dict["MiddleDistal"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "MiddleDistal")
+		
+	hand_pose_dict["RingProximal"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "RingProximal")
+	hand_pose_dict["RingIntermediate"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "RingIntermediate")
+	hand_pose_dict["RingDistal"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "RingDistal")
 	
-	return hand_pose
+	hand_pose_dict["LittleProximal"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "LittleProximal")
+	hand_pose_dict["LittleIntermediate"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "LittleIntermediate")
+	hand_pose_dict["LittleDistal"] = get_transform_for_humanoid_bone(
+		p_skeleton,
+		hand_prefix + "LittleDistal")
+
+	var hand_pose_anim: Animation = Animation.new()
+	for finger_bone in hand_pose_dict:
+		for this_hand_prefix in ["Left", "Right"]:
+			var quat: Quaternion = hand_pose_dict[finger_bone]
+			var euler: Vector3 = quat.get_euler()
+			if this_hand_prefix == "Right":
+				euler.z = -euler.z
+				euler.y = -euler.y
+			var track = hand_pose_anim.add_track(Animation.TYPE_ROTATION_3D)
+			hand_pose_anim.track_set_path(track, NodePath("%GeneralSkeleton:" + this_hand_prefix + finger_bone))
+			hand_pose_anim.rotation_track_insert_key(track, 0.0, Quaternion(euler))
+	
+	return hand_pose_anim

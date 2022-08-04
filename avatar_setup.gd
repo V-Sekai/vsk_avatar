@@ -6,15 +6,13 @@ static func create_pose_track_for_humanoid_bone(
 	p_animation: Animation,
 	p_base_path: String,
 	p_skeleton: Skeleton3D,
-	p_humanoid_data: HumanoidData,
 	p_humanoid_bone_name: String,
 	p_transform: Transform3D) -> Animation:
 
-	if !p_skeleton or !p_humanoid_data:
+	if !p_skeleton:
 		return p_animation
 
-	var humanoid_bone_name : String = p_humanoid_data.get(p_humanoid_bone_name)
-	var bone_index : int = p_skeleton.find_bone(humanoid_bone_name)
+	var bone_index : int = p_skeleton.find_bone(p_humanoid_bone_name)
 	if bone_index == -1:
 		return p_animation
 
@@ -35,17 +33,19 @@ static func create_pose_track_for_humanoid_bone(
 static func create_animation_from_hand_pose(
 	p_root_node: Node,
 	p_skeleton: Skeleton3D,
-	p_humanoid_data: HumanoidData,
 	p_hand_pose: RefCounted) -> Animation:
 
 	var animation: Animation = Animation.new()
 	animation.length = 0.001
-	for side in ["left", "right"]:
-		for digit in ["thumb", "index", "middle", "ring", "little"]:
-			for joint in ["proximal", "intermediate", "distal"]:
-
+	for side in ["Left", "Right"]:
+		for digit in ["Thumb", "Index", "Middle", "Ring", "Little"]:
+			for joint in ["Metacarpal", "Proximal", "Intermediate", "Distal"]:
+				if digit == "Thumb" and joint == "Intermediate":
+					continue
+				if digit != "Thumb" and joint == "Metacarpal":
+					continue
 				var transform: Transform3D = Transform3D()
-				if side == "left":
+				if side == "Left":
 					transform = p_hand_pose.get(
 						"%s_%s" % [digit, joint])
 				else:
@@ -62,7 +62,6 @@ static func create_animation_from_hand_pose(
 					animation,
 					p_root_node.get_path_to(p_skeleton),
 					p_skeleton,
-					p_humanoid_data,
 					"%s_%s_%s_bone_name" % [digit, joint, side],
 					transform
 					)
@@ -72,14 +71,12 @@ static func setup_animation_from_hand_pose(
 	p_animation_player: AnimationPlayer,
 	p_root_node: Node,
 	p_skeleton: Skeleton3D,
-	p_humanoid_data: HumanoidData,
 	p_hand_pose_name: String,
 	p_hand_pose: RefCounted) -> void:
 
 	var animation: Animation = create_animation_from_hand_pose(
 		p_root_node,
 		p_skeleton,
-		p_humanoid_data,
 		p_hand_pose)
 	var animation_library : AnimationLibrary = AnimationLibrary.new()
 	animation_library.add_animation(p_hand_pose_name, animation)
@@ -89,7 +86,6 @@ static func setup_animation_from_hand_pose_dictionary(
 	p_animation_player: AnimationPlayer,
 	p_root_node: Node,
 	p_skeleton: Skeleton3D,
-	p_humanoid_data: HumanoidData,
 	p_pose_dictionary: Dictionary) -> void:
 
 	for key in p_pose_dictionary:
@@ -97,15 +93,13 @@ static func setup_animation_from_hand_pose_dictionary(
 			p_animation_player,
 			p_root_node,
 			p_skeleton,
-			p_humanoid_data,
 			key,
 			p_pose_dictionary[key])
 
 static func setup_default_hand_animations(
 	p_animation_player: AnimationPlayer,
 	p_root_node: Node,
-	p_skeleton: Skeleton3D,
-	p_humanoid_data: HumanoidData) -> AnimationPlayer:
+	p_skeleton: Skeleton3D) -> AnimationPlayer:
 
 	# Hand Animation
 	var hand_pose_default_const = load("res://addons/vsk_avatar/hand_poses/hand_pose_default_pose.tres")
@@ -122,7 +116,6 @@ static func setup_default_hand_animations(
 		p_animation_player,
 		p_root_node,
 		p_skeleton,
-		p_humanoid_data,
 		{
 			"DefaultPose":hand_pose_default_const,
 			"Neutral":hand_pose_neutral_const,
@@ -142,12 +135,11 @@ static func setup_animation_tree_hand_blend_tree(
 	p_root: Node,
 	p_animation_tree: AnimationTree,
 	p_animation_player: AnimationPlayer,
-	p_skeleton: Skeleton3D,
-	p_humanoid_data: HumanoidData) -> AnimationTree:
+	p_skeleton: Skeleton3D) -> AnimationTree:
 
 	var default_avatar_tree_const = load("res://addons/vsk_avatar/animation/default_avatar_tree.tres")
 
-	if !p_skeleton or !p_humanoid_data:
+	if !p_skeleton:
 		return p_animation_tree
 
 	p_animation_tree.anim_player = p_animation_tree.get_path_to(p_animation_player)
@@ -161,18 +153,22 @@ static func setup_animation_tree_hand_blend_tree(
 	left_hand_blend.filter_enabled = true
 	right_hand_blend.filter_enabled = true
 
-	var base_path: String = p_root.get_path_to(p_skeleton)
+	var base_path: String = "%GeneralSkeleton"
 
-	for digit in ["thumb", "index", "middle", "ring", "little"]:
-		for joint in ["proximal", "intermediate", "distal"]:
+	for digit in ["Thumb", "Index", "Middle", "Ring", "Little"]:
+		for joint in ["Metacarpal", "Proximal", "Intermediate", "Distal"]:
+			if digit == "Thumb" and joint == "Intermediate":
+				continue
+			if digit != "Thumb" and joint == "Metacarpal":
+				continue
 			# Left
-			var left_bone_name: String = p_humanoid_data.get("%s_%s_left_bone_name" % [digit, joint])
+			var left_bone_name: String = "Left%s%s" % [digit, joint]
 			var left_bone_index: int = p_skeleton.find_bone(left_bone_name)
 			if left_bone_index != -1:
 				var filter_path: String = base_path + ":" + left_bone_name
 				left_hand_blend.set_filter_path(filter_path, true)
 			# Right
-			var right_bone_name: String = p_humanoid_data.get("%s_%s_right_bone_name" % [digit, joint])
+			var right_bone_name: String = "Right%s%s" % [digit, joint]
 			var right_bone_index: int = p_skeleton.find_bone(right_bone_name)
 			if right_bone_index != -1:
 				var filter_path: String = base_path + ":" + right_bone_name

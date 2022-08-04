@@ -1,7 +1,7 @@
 @tool
 extends Node
 
-const humanoid_data_const = preload("humanoid_data.gd")
+# Unused code
 
 var HIP_NAMES = PackedStringArray(["hips", "hip", "pelvis"])
 var SPINE_NAMES = PackedStringArray(["spine"])
@@ -57,7 +57,6 @@ class BoneInfo extends RefCounted:
 	var bone_direction: Vector3 = Vector3()
 
 func gather_bone_info(p_skeleton: Skeleton3D) -> RefCounted:
-	var humanoid_data : RefCounted = humanoid_data_const.new()
 	var bone_info_list: Array = []
 
 	for i in range(0, p_skeleton.get_bone_count()):
@@ -73,4 +72,4 @@ func gather_bone_info(p_skeleton: Skeleton3D) -> RefCounted:
 		
 		bone_info.push_back(bone_info)
 
-	return humanoid_data
+	return null
