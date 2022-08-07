@@ -217,7 +217,7 @@ func calculate_mouth_shapes(p_delta: float) -> void:
 
 	audio_jaw_open = clamp(audio_jaw_open, 0.0, 1.0)
 	var trailing_audio_jaw_open_ratio = (100.0 - p_delta * NORMAL_HZ) / 100.0  # --> 0.99 at 60 Hz
-	trailing_audio_jaw_open = lerp(
+	trailing_audio_jaw_open = lerpfs(
 		trailing_audio_jaw_open, audio_jaw_open, trailing_audio_jaw_open_ratio
 	)
 
@@ -292,13 +292,13 @@ func apply_eyelid_offset(p_head_orientation: Quaternion) -> void:
 func update(p_delta: float) -> void:
 	var audio_loudness: float = 0.0
 
-	average_loudness = lerp(
+	average_loudness = lerpf(
 		average_loudness, audio_loudness, min(p_delta / AUDIO_AVERAGING_SECS, 1.0)
 	)
 	if long_term_average_loudness == -1.0:
 		long_term_average_loudness = average_loudness
 	else:
-		long_term_average_loudness = lerp(
+		long_term_average_loudness = lerpf(
 			long_term_average_loudness,
 			average_loudness,
 			min(p_delta / AUDIO_LONG_TERM_AVERAGING_SECS, 1.0)

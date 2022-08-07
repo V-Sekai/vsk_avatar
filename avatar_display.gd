@@ -330,14 +330,14 @@ func calculate_proportions() -> void:
 		)
 		var origin_wrist_scale_offset: float = avatar_wristspan / player_wrist_length
 
-		VRManager.set_origin_world_scale(lerp(
+		VRManager.set_origin_world_scale(lerpf(
 			origin_height_scale_offset, origin_wrist_scale_offset, VRManager.vr_user_preferences.eye_to_arm_ratio
 		))
 		var stilts: float = (
 			(player_height * origin_height_scale_offset)
 			- (player_height * origin_wrist_scale_offset)
 		)
-		height_offset = lerp(0.0, stilts, VRManager.vr_user_preferences.eye_to_arm_ratio)
+		height_offset = lerpf(0.0, stilts, VRManager.vr_user_preferences.eye_to_arm_ratio)
 	else:
 		height_offset = 0.0
 		VRManager.set_origin_world_scale(1.0)
