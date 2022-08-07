@@ -132,7 +132,6 @@ static func setup_default_hand_animations(
 	return p_animation_player
 
 static func setup_animation_tree_hand_blend_tree(
-	p_root: Node,
 	p_animation_tree: AnimationTree,
 	p_animation_player: AnimationPlayer,
 	p_skeleton: Skeleton3D) -> AnimationTree:

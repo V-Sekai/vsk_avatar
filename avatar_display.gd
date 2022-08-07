@@ -550,7 +550,6 @@ func _setup_hand_poses(p_avatar_node: Node, p_skeleton: Skeleton3D) -> void:
 		p_avatar_node.add_child(animation_tree)
 
 		animation_tree = avatar_setup_const.setup_animation_tree_hand_blend_tree(
-			p_avatar_node,
 			animation_tree,
 			animation_player,
 			p_skeleton
