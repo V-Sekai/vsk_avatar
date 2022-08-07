@@ -217,7 +217,7 @@ func calculate_mouth_shapes(p_delta: float) -> void:
 
 	audio_jaw_open = clamp(audio_jaw_open, 0.0, 1.0)
 	var trailing_audio_jaw_open_ratio = (100.0 - p_delta * NORMAL_HZ) / 100.0  # --> 0.99 at 60 Hz
-	trailing_audio_jaw_open = lerpfs(
+	trailing_audio_jaw_open = lerpf(
 		trailing_audio_jaw_open, audio_jaw_open, trailing_audio_jaw_open_ratio
 	)
 
