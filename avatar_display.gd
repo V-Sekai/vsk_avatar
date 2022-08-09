@@ -80,6 +80,7 @@ var _ik_space: Node = null
 var _player_camera_controller: Node = null
 
 var avatar_node: Node3D = null
+var mirror_node: Node3D = null
 
 const avatar_default_driver_const = preload("avatar_default_driver.gd")
 const bone_lib_const = preload("res://addons/vsk_avatar/bone_lib.gd")
@@ -111,6 +112,7 @@ func _avatar_ready(p_packed_scene: PackedScene) -> void:
 			clear_avatar()
 
 			setup_avatar_instantiate(p_packed_scene.instantiate())
+			create_mirror_copy(Transform3D(Basis().rotated(Vector3.FORWARD, deg2rad(180)), Vector3(0,0,1)));
 
 func _update_voice_player() -> void:
 	if voice_player:
@@ -679,3 +681,28 @@ func _threaded_instance_setup() -> void:
 
 func _on_avatar_ready(p_packed_scene: PackedScene):
 	_avatar_ready(p_packed_scene)
+
+func create_mirror_copy(p_mirror_plane:Transform3D):
+	if avatar_node != null && avatar_skeleton != null:
+		if mirror_node == null :
+			mirror_node = Node3D.new()
+		else:
+			if mirror_node.get_parent() != null:
+				mirror_node.get_parent().remove_child(mirror_node)
+			for child in mirror_node.get_children():
+				child.queue_free()
+		
+		#move mirror_node to match plane
+		mirror_node.transform = p_mirror_plane
+		
+		for child in avatar_skeleton.get_children():
+			var mirror_child = child.duplicate()
+			if mirror_child is MeshInstance3D:
+				mirror_child.skeleton = NodePath("../" + str(mirror_child.skeleton))
+			mirror_child.transform = mirror_node.transform.inverse() * mirror_child.transform
+			mirror_node.add_child(mirror_child)
+			
+		mirror_node.scale_object_local(Vector3(1,1,-1))
+		avatar_skeleton.add_child(mirror_node)
+		
+		
