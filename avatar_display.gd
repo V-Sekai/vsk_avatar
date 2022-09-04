@@ -112,7 +112,7 @@ func _avatar_ready(p_packed_scene: PackedScene) -> void:
 			clear_avatar()
 
 			setup_avatar_instantiate(p_packed_scene.instantiate())
-			create_mirror_copy(Transform3D(Basis().rotated(Vector3.FORWARD, deg2rad(180)), Vector3(0,0,1)));
+			create_mirror_copy(Transform3D(Basis().rotated(Vector3.FORWARD, deg_to_rad(180)), Vector3(0,0,1)));
 
 func _update_voice_player() -> void:
 	if voice_player:

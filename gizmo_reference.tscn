@@ -14,7 +14,7 @@ albedo_color = Color(1, 0, 0, 1)
 [sub_resource type="StandardMaterial3D" id="4"]
 albedo_color = Color(0, 1, 0, 1)
 
-[node name="GizmoReference" type="Position3D"]
+[node name="GizmoReference" type="Marker3D"]
 transform = Transform3D(1, -2.1684e-19, 0, 0, 1, 0, -4.31987e-20, 0, 1, 0, 0, 0)
 
 [node name="Forward" type="MeshInstance3D" parent="."]
