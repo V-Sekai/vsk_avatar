@@ -663,4 +663,4 @@ func _entity_ready():
 		ik_point_count -= 1
 
 	if !Engine.is_editor_hint():
-		assert(external_trackers_changed.connect(self._external_trackers_updated, CONNECT_ONESHOT) == OK)
+		assert(external_trackers_changed.connect(self._external_trackers_updated, CONNECT_ONE_SHOT) == OK)
