@@ -27,6 +27,8 @@ var simulation_logic: Node = null
 var saved_head_transform: Transform3D = Transform3D()
 
 var use_wristspan_ratio: bool = false
+@export
+var use_mirror_mode: bool = false
 var avatar_eye_height: float = 0.0
 var avatar_wristspan: float = 0.0
 var height_offset: float = 0.0
@@ -110,9 +112,9 @@ func _avatar_ready(p_packed_scene: PackedScene) -> void:
 	if is_inside_tree():
 		if p_packed_scene:
 			clear_avatar()
-
-			setup_avatar_instantiate(p_packed_scene.instantiate())
-			create_mirror_copy(Transform3D(Basis().rotated(Vector3.FORWARD, deg_to_rad(180)), Vector3(0,0,1)));
+			if use_mirror_mode:
+				setup_avatar_instantiate(p_packed_scene.instantiate())
+				create_mirror_copy(Transform3D(Basis().rotated(Vector3.FORWARD, deg_to_rad(180)), Vector3(0,0,1)));
 
 func _update_voice_player() -> void:
 	if voice_player:
