@@ -114,8 +114,6 @@ func apply_extra_cull_margin(start_node: Node):
 	while not queue.is_empty():
 		var front = queue.front()
 		var node = front
-		if node is MeshInstance3D:
-			node.extra_cull_margin = 16384.0
 		var child_count : int = node.get_child_count()
 		for i in child_count:
 			queue.push_back(node.get_child(i))
