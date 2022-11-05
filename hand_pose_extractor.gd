@@ -78,6 +78,6 @@ static func generate_hand_pose_from_skeleton(
 				euler.y = -euler.y
 			var track = hand_pose_anim.add_track(Animation.TYPE_ROTATION_3D)
 			hand_pose_anim.track_set_path(track, NodePath("%GeneralSkeleton:" + this_hand_prefix + finger_bone))
-			hand_pose_anim.rotation_track_insert_key(track, 0.0, Quaternion(euler))
+			hand_pose_anim.rotation_track_insert_key(track, 0.0, Quaternion.from_euler(euler))
 	
 	return hand_pose_anim
