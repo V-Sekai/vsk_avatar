@@ -15,15 +15,15 @@ filters = ["Armature/Skeleton:index_distal_right", "Armature/Skeleton:index_inte
 
 [resource]
 graph_offset = Vector2(-203.661, -246.443)
-nodes/Animation/node = SubResource( "AnimationNodeAnimation_0awa0" )
+nodes/Animation/node = SubResource("AnimationNodeAnimation_0awa0")
 nodes/Animation/position = Vector2(0, -180)
-nodes/LeftHandBlend/node = SubResource( "AnimationNodeBlend2_ltr02" )
+nodes/LeftHandBlend/node = SubResource("AnimationNodeBlend2_ltr02")
 nodes/LeftHandBlend/position = Vector2(400, -160)
-nodes/LeftHandStateMachine/node = ExtResource( "1" )
+nodes/LeftHandStateMachine/node = ExtResource("1")
 nodes/LeftHandStateMachine/position = Vector2(0, 0)
-nodes/RightHandBlend/node = SubResource( "AnimationNodeBlend2_44x8a" )
+nodes/RightHandBlend/node = SubResource("AnimationNodeBlend2_44x8a")
 nodes/RightHandBlend/position = Vector2(400, 80)
-nodes/RightHandStateMachine/node = ExtResource( "1" )
+nodes/RightHandStateMachine/node = ExtResource("1")
 nodes/RightHandStateMachine/position = Vector2(320, 480)
 nodes/output/position = Vector2(800, 120)
-node_connections = [&"output", 0, &"RightHandBlend", &"RightHandBlend", 0, &"LeftHandBlend", &"RightHandBlend", 1, &"RightHandStateMachine", &"LeftHandBlend", 0, &"Animation", &"LeftHandBlend", 1, &"LeftHandStateMachine"]
+node_connections = [&"output", 0, &"RightHandBlend", &"LeftHandBlend", 0, &"Animation", &"LeftHandBlend", 1, &"LeftHandStateMachine", &"RightHandBlend", 0, &"LeftHandBlend", &"RightHandBlend", 1, &"RightHandStateMachine"]
