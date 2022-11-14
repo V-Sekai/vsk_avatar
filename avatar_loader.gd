@@ -66,7 +66,7 @@ func get_avatar_model_path() -> String:
 
 func set_avatar_model_path(p_path: String) -> void:
 	if avatar_path != p_path:
-		if avatar_path != "":
+		if not avatar_path.is_empty():
 			VSKAvatarManager.cancel_avatar(avatar_path)
 		avatar_path = p_path
 
