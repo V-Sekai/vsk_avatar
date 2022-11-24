@@ -12,8 +12,7 @@ static func get_bone_global_transform(p_id: int, p_skeleton: Skeleton3D, p_local
 
 	for transform in p_local_transform_array:
 		if p_id >= len(transform):
-			var j: JSON = JSON.new()
-			push_error("Missing bone global transform: Transform " + j.stringify(transform) + " has length " + str(len(transform)) + " id " + str(p_id))
+			push_error("Missing bone global transform: Transform " + JSON.stringify(transform) + " has length " + str(len(transform)) + " id " + str(p_id))
 			return return_transform
 		return_transform *= transform[p_id]
 
