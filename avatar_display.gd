@@ -1,6 +1,8 @@
 @tool
 extends Node3D
 
+const avatar_display_const = preload("res://addons/vsk_avatar/avatar_display.gd")
+
 const node_util_const = preload("res://addons/gd_util/node_util.gd")
 
 # const player_camera_controller_const = preload("res://addons/actor/player_camera_controller.gd")
@@ -491,7 +493,7 @@ func _setup_avatar_eyes(
 
 			eye_offset_transform = head_global_rest_transfrom.affine_inverse() * eye_global_transform
 
-		avatar_wristspan = _calculate_humanoid_wristspan(p_skeleton)
+		avatar_wristspan = avatar_display_const._calculate_humanoid_wristspan(p_skeleton)
 	else:
 		avatar_node.set_transform(Transform3D(AVATAR_BASIS, Vector3()))
 		avatar_node.set_as_top_level(false)
