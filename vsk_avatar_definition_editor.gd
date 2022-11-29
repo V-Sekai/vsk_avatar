@@ -108,16 +108,6 @@ func check_if_avatar_is_valid() -> bool:
 		
 	return true
 
-func apply_extra_cull_margin(start_node: Node):
-	var queue : Array
-	queue.push_back(start_node._skeleton_node.owner)
-	while not queue.is_empty():
-		var front = queue.front()
-		var node = front
-		var child_count : int = node.get_child_count()
-		for i in child_count:
-			queue.push_back(node.get_child(i))
-		queue.pop_front()
 
 func menu_option(p_id : int) -> void:
 	var err: int = avatar_callback_const.AVATAR_OK
@@ -125,13 +115,11 @@ func menu_option(p_id : int) -> void:
 
 		MENU_OPTION_EXPORT_AVATAR:
 			if check_if_avatar_is_valid():
-				apply_extra_cull_margin(node)
 				export_avatar_local()
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_UPLOAD_AVATAR:
 			if check_if_avatar_is_valid():
-				apply_extra_cull_margin(node)
 				#menu_option(MENU_OPTION_FIX_ALL)
 				export_avatar_upload()
 			else:

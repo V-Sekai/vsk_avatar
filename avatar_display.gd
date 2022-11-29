@@ -574,12 +574,29 @@ func _setup_hand_poses(p_avatar_node: Node, p_skeleton: Skeleton3D) -> void:
 		if player_hand_controller:
 			player_hand_controller.update_driver()
 
+
+func apply_extra_cull_margin(start_node: Node):
+	var queue : Array
+	queue.push_back(start_node)
+	while not queue.is_empty():
+		var front = queue.front()
+		var node = front
+		if node is MeshInstance3D:
+			node.extra_cull_margin = 16384.0 # Workaround https://github.com/godotengine/godot/issues/57740
+			node.lod_bias = 16384.0 # Workaround https://github.com/godotengine/godot/issues/67890
+		var child_count : int = node.get_child_count()
+		for i in child_count:
+			queue.push_back(node.get_child(i))
+		queue.pop_front()
+
 func setup_avatar_instantiate(p_avatar_node: Node3D) -> void:
 	avatar_skeleton = null
 
 	if p_avatar_node and (\
 		p_avatar_node.get_script() == avatar_definition_const or\
 		p_avatar_node.get_script() == avatar_definition_runtime_const):
+
+		apply_extra_cull_margin(p_avatar_node)
 
 		avatar_node = p_avatar_node
 		add_child(avatar_node)
