@@ -1,8 +1,6 @@
 @tool
 extends Node3D
 
-const avatar_display_const = preload("res://addons/vsk_avatar/avatar_display.gd")
-
 const node_util_const = preload("res://addons/gd_util/node_util.gd")
 
 # const player_camera_controller_const = preload("res://addons/actor/player_camera_controller.gd")
@@ -113,9 +111,10 @@ func _on_avatar_cleared():
 func _avatar_ready(p_packed_scene: PackedScene) -> void:
 	if is_inside_tree():
 		if p_packed_scene:
+			print("Instantiate avatar: " + str(p_packed_scene) + " " + str(p_packed_scene.resource_name))
 			clear_avatar()
+			setup_avatar_instantiate(p_packed_scene.instantiate())
 			if use_mirror_mode:
-				setup_avatar_instantiate(p_packed_scene.instantiate())
 				create_mirror_copy(Transform3D(Basis().rotated(Vector3.FORWARD, deg_to_rad(180)), Vector3(0,0,1)));
 
 func _update_voice_player() -> void:
@@ -493,7 +492,7 @@ func _setup_avatar_eyes(
 
 			eye_offset_transform = head_global_rest_transfrom.affine_inverse() * eye_global_transform
 
-		avatar_wristspan = avatar_display_const._calculate_humanoid_wristspan(p_skeleton)
+		avatar_wristspan = _calculate_humanoid_wristspan(p_skeleton)
 	else:
 		avatar_node.set_transform(Transform3D(AVATAR_BASIS, Vector3()))
 		avatar_node.set_as_top_level(false)
