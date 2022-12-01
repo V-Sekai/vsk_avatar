@@ -24,7 +24,7 @@ var simulation_logic: Node = null
 # Deals with the fact that shrinking the head and then
 # writing out transforms call result in determinant
 # errors
-var saved_head_transform: Transform3D = Transform3D()
+var saved_head_scale: Vector3 = Vector3.ONE
 
 var use_wristspan_ratio: bool = false
 @export
@@ -636,24 +636,15 @@ func try_head_shrink() -> void:
 
 func shrink_head() -> void:
 	if avatar_skeleton and head_id != bone_lib_const.NO_BONE:
-		var custom_head_pose: Transform3D = avatar_skeleton.get_bone_global_pose(head_id)
-		var custom_head_pose_parent: Transform3D = avatar_skeleton.get_bone_global_pose(avatar_skeleton.get_bone_parent(head_id))
-		custom_head_pose = Transform3D(custom_head_pose.basis.orthonormalized().scaled(Vector3(0.000001, 0.000001, 0.000001)), custom_head_pose_parent.origin)
-		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0, true)
-		# FIXME(lyuma): I don't understand why doing this twice makes it work, but it does...
-		custom_head_pose = avatar_skeleton.get_bone_global_pose(head_id)
-		custom_head_pose = Transform3D(custom_head_pose.basis.orthonormalized().scaled(Vector3(0.000001, 0.000001, 0.000001)), custom_head_pose_parent.origin)
-		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0, true)
+		avatar_skeleton.set_bone_pose_scale(head_id, Vector3(0.000001, 0.000001, 0.000001))
 
 func save_head() -> void:
 	if avatar_skeleton and head_id != bone_lib_const.NO_BONE:
-		saved_head_transform = avatar_skeleton.get_bone_global_pose(head_id)
+		saved_head_scale = avatar_skeleton.get_bone_pose_scale(head_id)
 
 func restore_head() -> void:
 	if avatar_skeleton and head_id != bone_lib_const.NO_BONE:
-		var custom_head_pose: Transform3D = avatar_skeleton.get_bone_global_pose(head_id)
-		custom_head_pose = Transform3D(custom_head_pose.basis.orthonormalized().scaled(saved_head_transform.basis.get_scale()), custom_head_pose.origin)
-		avatar_skeleton.set_bone_global_pose_override(head_id, custom_head_pose, 1.0, true)
+		avatar_skeleton.set_bone_pose_scale(head_id, saved_head_scale)
 
 func get_head_forward_transform() -> Transform3D:
 	var head_transform: Transform3D
