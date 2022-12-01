@@ -576,7 +576,7 @@ func _setup_hand_poses(p_avatar_node: Node, p_skeleton: Skeleton3D) -> void:
 
 
 func apply_extra_cull_margin(start_node: Node):
-	var queue : Array
+	var queue : Array = []
 	queue.push_back(start_node)
 	while not queue.is_empty():
 		var front = queue.front()
