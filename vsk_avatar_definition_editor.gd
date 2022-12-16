@@ -20,10 +20,10 @@ const OUTPUT_SCENE_EXTENSION = "scn"
 const OUTPUT_HAND_RESOURCE_EXTENSION = "tres"
 
 enum {
+	MENU_OPTION_UPLOAD_AVATAR,
+	MENU_OPTION_EXPORT_AVATAR,
 	MENU_OPTION_EXPORT_LEFT_HAND_POSE,
 	MENU_OPTION_EXPORT_RIGHT_HAND_POSE,
-	MENU_OPTION_EXPORT_AVATAR,
-	MENU_OPTION_UPLOAD_AVATAR,
 }
 
 enum {
@@ -120,7 +120,6 @@ func menu_option(p_id : int) -> void:
 				err = avatar_callback_const.ROOT_IS_NULL
 		MENU_OPTION_UPLOAD_AVATAR:
 			if check_if_avatar_is_valid():
-				#menu_option(MENU_OPTION_FIX_ALL)
 				export_avatar_upload()
 			else:
 				err = avatar_callback_const.ROOT_IS_NULL
