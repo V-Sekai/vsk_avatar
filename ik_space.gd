@@ -642,8 +642,8 @@ func setup() -> void:
 		update_trackers()
 		update_ik_controller()
 
-		if false: ### FIXME: Not static ### if MocapManager.recording_enabled:
-			mocap_recording = MocapManager.start_recording(Engine.iterations_per_second)
+		if ProjectSettings.get_setting("mocap_manager/recording_enabled"):
+			mocap_recording = MocapManager.start_recording(Engine.physics_ticks_per_second)
 
 func _on_avatar_changed():
 	if (is_multiplayer_authority() or NetworkManager.is_server()) and\
