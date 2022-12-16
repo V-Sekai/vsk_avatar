@@ -69,7 +69,7 @@ enum shrink_enum {
 
 @export_enum("Determined by View", "Shrink", "Unshrink")
 var shrink_mode : int
-@export var default_avatar_height : float = 1.8
+@export var default_avatar_height : float = 1.63
 @export var _ren_ik_path: NodePath = NodePath()
 @export var _ik_space_path: NodePath = NodePath()
 @export var player_camera_controller_path: NodePath = NodePath()
