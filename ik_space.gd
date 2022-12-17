@@ -888,7 +888,7 @@ func setup() -> void:
 		update_trackers()
 		update_ik_controller()
 
-		if ProjectSettings.get_setting("mocap_manager/recording_enabled"):
+		if ProjectSettings.has_setting("mocap_manager/recording_enabled") and ProjectSettings.get_setting("mocap_manager/recording_enabled"):
 			mocap_recording = MocapManager.start_recording(Engine.physics_ticks_per_second)
 
 
