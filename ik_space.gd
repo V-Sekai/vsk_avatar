@@ -210,7 +210,6 @@ func update_trackers() -> void:
 			tracker_collection_input.head_spatial = create_new_spatial_point(
 				"HeadInput", Transform3D(Basis(), Vector3()), false
 			)
-	pass
 
 
 func update_ik_controller() -> void:
@@ -323,25 +322,22 @@ func _xr_mode_changed() -> void:
 
 	update_trackers()
 	update_ik_controller()
-	pass
 
 
 func _request_vr_calibration() -> void:
-	if 1:
-		if !pending_calibration:
-			pending_calibration = true
+	if !pending_calibration:
+		pending_calibration = true
 
-			update_trackers()
-			update_ik_controller()
+		update_trackers()
+		update_ik_controller()
 
 
 func _confirm_vr_calibration() -> void:
-	if 1:
-		if pending_calibration:
-			pending_calibration = false
+	if pending_calibration:
+		pending_calibration = false
 
-			update_trackers()
-			update_ik_controller()
+		update_trackers()
+		update_ik_controller()
 
 
 func create_new_spatial_point(
@@ -389,7 +385,6 @@ func _on_tracker_added(p_tracker: Node3D) -> void:
 
 		if should_update_ik_controller:
 			update_ik_controller()
-	pass
 
 
 func _on_tracker_removed(p_tracker: Node3D) -> void:
@@ -428,7 +423,6 @@ func _on_tracker_removed(p_tracker: Node3D) -> void:
 
 		if should_update_ik_controller:
 			update_ik_controller()
-	pass
 
 
 func update_external_transform(p_mask: int, p_transform_array: Array) -> void:
