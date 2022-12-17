@@ -22,19 +22,15 @@ const IK_POINT_HEAD_BASIS_GLOBAL = Basis(
 	Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, -1.0)
 )
 const IK_POINT_LEFT_HAND_BASIS_GLOBAL = Basis(
-	Vector3(1, 0, 0), Vector3(0, -1, 0), Vector3(0, 0, -1)
+	Vector3(1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, -1)
 )
-const IK_POINT_RIGHT_HAND_BASIS_GLOBAL = Basis(
-	Vector3(1, 0, 0), Vector3(0, -1, 0), Vector3(0, 0, -1)
-)
+const IK_POINT_RIGHT_HAND_BASIS_GLOBAL = IK_POINT_LEFT_HAND_BASIS_GLOBAL
+
 # # Procedure to calibrate hands
 # 1. Copy the existing left hand and right hand transforms
 # 2. Put a corresponding node as a child
 # 3. Rotate the nodes until correct
 # 4. Move the new nodes out and save their rotations
-
-#var IK_POINT_LEFT_HAND_BASIS_GLOBAL : Basis = IK_POINT_HEAD_BASIS_GLOBAL
-#var IK_POINT_RIGHT_HAND_BASIS_GLOBAL : Basis = IK_POINT_HEAD_BASIS_GLOBAL
 
 const IK_HAND_OFFSET = Vector3(0, 0.014 * 3, 0)  # Right hand
 
