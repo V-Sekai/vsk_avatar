@@ -85,19 +85,13 @@ func load_model(p_bypass_whitelist: bool, p_skip_validation: bool) -> void:
 		assert(VSKAvatarManager.avatar_load_update.connect(self._avatar_load_update) == OK)
 
 		avatar_pending = true
-	(
-		VSKAvatarManager
-		. call_deferred("request_avatar", avatar_path, p_bypass_whitelist, p_skip_validation)
-	)
+	VSKAvatarManager.call_deferred("request_avatar", avatar_path, p_bypass_whitelist, p_skip_validation)
 
 
 func load_error_avatar(p_err: int) -> void:
 	avatar_cleared.emit()
 
-	var error_avatar_path: String = (
-		VSKAssetManager
-		. get_error_path(VSKAssetManager.user_content_type.USER_CONTENT_AVATAR, p_err)
-	)
+	var error_avatar_path: String = VSKAssetManager.get_error_path(VSKAssetManager.user_content_type.USER_CONTENT_AVATAR, p_err)
 
 	set_avatar_model_path(error_avatar_path)
 	load_model(true, true)

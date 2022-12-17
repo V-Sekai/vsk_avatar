@@ -18,12 +18,8 @@ var _player_input_node: Node
 
 @export var use_hands = true
 
-const IK_POINT_HEAD_BASIS_GLOBAL = Basis(
-	Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, -1.0)
-)
-const IK_POINT_LEFT_HAND_BASIS_GLOBAL = Basis(
-	Vector3(1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, -1)
-)
+const IK_POINT_HEAD_BASIS_GLOBAL = Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, -1.0))
+const IK_POINT_LEFT_HAND_BASIS_GLOBAL = Basis(Vector3(1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, -1))
 const IK_POINT_RIGHT_HAND_BASIS_GLOBAL = IK_POINT_LEFT_HAND_BASIS_GLOBAL
 
 # # Procedure to calibrate hands.
@@ -130,24 +126,12 @@ func _create_output_trackers() -> void:
 	if !tracker_collection_output:
 		tracker_collection_output = TrackerCollection.new()
 
-		tracker_collection_output.head_spatial = create_new_spatial_point(
-			"HeadOutput", Transform3D(), true
-		)
-		tracker_collection_output.hips_spatial = create_new_spatial_point(
-			"HipsOutput", Transform3D(), true
-		)
-		tracker_collection_output.left_hand_spatial = create_new_spatial_point(
-			"LeftHandOutput", Transform3D(), true
-		)
-		tracker_collection_output.right_hand_spatial = create_new_spatial_point(
-			"RightHandOutput", Transform3D(), true
-		)
-		tracker_collection_output.left_foot_spatial = create_new_spatial_point(
-			"LeftFootOutput", Transform3D(), true
-		)
-		tracker_collection_output.right_foot_spatial = create_new_spatial_point(
-			"RightFootOutput", Transform3D(), true
-		)
+		tracker_collection_output.head_spatial = create_new_spatial_point("HeadOutput", Transform3D(), true)
+		tracker_collection_output.hips_spatial = create_new_spatial_point("HipsOutput", Transform3D(), true)
+		tracker_collection_output.left_hand_spatial = create_new_spatial_point("LeftHandOutput", Transform3D(), true)
+		tracker_collection_output.right_hand_spatial = create_new_spatial_point("RightHandOutput", Transform3D(), true)
+		tracker_collection_output.left_foot_spatial = create_new_spatial_point("LeftFootOutput", Transform3D(), true)
+		tracker_collection_output.right_foot_spatial = create_new_spatial_point("RightFootOutput", Transform3D(), true)
 
 
 func _external_trackers_updated():
@@ -181,19 +165,13 @@ func update_trackers() -> void:
 		free_trackers()
 
 		if VRManager.is_xr_active():
-			tracker_collection_input.head_spatial = create_new_spatial_point(
-				"HeadInput", Transform3D(Basis(), Vector3()), false
-			)
+			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform3D(Basis(), Vector3()), false)
 
 			if VRManager.xr_origin.left_hand_controller:
-				tracker_collection_input.left_hand_spatial = create_new_spatial_point(
-					"LeftHandInput", Transform3D(Basis(), Vector3()), false
-				)
+				tracker_collection_input.left_hand_spatial = create_new_spatial_point("LeftHandInput", Transform3D(Basis(), Vector3()), false)
 
 			if VRManager.xr_origin.right_hand_controller:
-				tracker_collection_input.right_hand_spatial = create_new_spatial_point(
-					"RightHandInput", Transform3D(Basis(), Vector3()), false
-				)
+				tracker_collection_input.right_hand_spatial = create_new_spatial_point("RightHandInput", Transform3D(Basis(), Vector3()), false)
 
 			if VRManager.xr_origin.tracker_added.connect(self._on_tracker_added) != OK:
 				printerr("Could not connect tracker_added!")
@@ -207,9 +185,7 @@ func update_trackers() -> void:
 				VRManager.xr_origin.tracker_added.disconnect(self._on_tracker_added)
 			if VRManager.xr_origin.tracker_removed.is_connected(self._on_tracker_removed):
 				VRManager.xr_origin.tracker_removed.disconnect(self._on_tracker_removed)
-			tracker_collection_input.head_spatial = create_new_spatial_point(
-				"HeadInput", Transform3D(Basis(), Vector3()), false
-			)
+			tracker_collection_input.head_spatial = create_new_spatial_point("HeadInput", Transform3D(Basis(), Vector3()), false)
 
 
 func update_ik_controller() -> void:
@@ -226,92 +202,37 @@ func update_ik_controller() -> void:
 				# that of the display node. Otherwise, the identity transform
 				# since RenIK drives position of the skeleton via its bones.
 				if pending_calibration:
-					_avatar_display_node.avatar_skeleton.global_transform = (
-						_avatar_display_node . global_transform
-					)
+					_avatar_display_node.avatar_skeleton.global_transform = (_avatar_display_node.global_transform)
 				else:
 					_avatar_display_node.avatar_skeleton.global_transform = Transform3D()
 
 			if tracker_collection_input.head_spatial and !pending_calibration:
-				(
-					_ren_ik
-					. set_head_target_path(
-						_ren_ik.get_path_to(tracker_collection_input.head_spatial)
-					)
-				)
+				_ren_ik.set_head_target_path(_ren_ik.get_path_to(tracker_collection_input.head_spatial))
 			else:
 				_ren_ik.set_head_target_path(NodePath())
 
 			if use_hands and tracker_collection_input.left_hand_spatial and !pending_calibration:
-				(
-					_ren_ik
-					. set_hand_left_target_path(
-						_ren_ik.get_path_to(tracker_collection_input.left_hand_spatial)
-					)
-				)
+				_ren_ik.set_hand_left_target_path(_ren_ik.get_path_to(tracker_collection_input.left_hand_spatial))
 			else:
 				_ren_ik.set_hand_left_target_path(NodePath())
 
 			if use_hands and tracker_collection_input.right_hand_spatial and !pending_calibration:
-				(
-					_ren_ik
-					. set_hand_right_target_path(
-						_ren_ik.get_path_to(tracker_collection_input.right_hand_spatial)
-					)
-				)
+				_ren_ik.set_hand_right_target_path(_ren_ik.get_path_to(tracker_collection_input.right_hand_spatial))
 			else:
 				_ren_ik.set_hand_right_target_path(NodePath())
 
 			if tracker_collection_input.hips_spatial and !pending_calibration:
-				(
-					_ren_ik
-					. set_hip_target_path(
-						(
-							_ren_ik
-							. get_path_to(
-								tracker_collection_input.hips_spatial.get_node_or_null("Rotation")
-							)
-						)
-					)
-				)
+				_ren_ik.set_hip_target_path(_ren_ik.get_path_to(tracker_collection_input.hips_spatial.get_node_or_null("Rotation")))
 			else:
 				_ren_ik.set_hip_target_path(NodePath())
 
 			if tracker_collection_input.left_foot_spatial and !pending_calibration:
-				(
-					_ren_ik
-					. set_foot_left_target_path(
-						(
-							_ren_ik
-							. get_path_to(
-								(
-									tracker_collection_input
-									. left_foot_spatial
-									. get_node_or_null("Rotation")
-								)
-							)
-						)
-					)
-				)
+				_ren_ik.set_foot_left_target_path(_ren_ik.get_path_to(tracker_collection_input.left_foot_spatial.get_node_or_null("Rotation")))
 			else:
 				_ren_ik.set_foot_left_target_path(NodePath())
 
 			if tracker_collection_input.right_foot_spatial and !pending_calibration:
-				(
-					_ren_ik
-					. set_foot_right_target_path(
-						(
-							_ren_ik
-							. get_path_to(
-								(
-									tracker_collection_input
-									. right_foot_spatial
-									. get_node_or_null("Rotation")
-								)
-							)
-						)
-					)
-				)
+				_ren_ik.set_foot_right_target_path(_ren_ik.get_path_to(tracker_collection_input.right_foot_spatial.get_node_or_null("Rotation")))
 			else:
 				_ren_ik.set_foot_right_target_path(NodePath())
 
@@ -340,9 +261,7 @@ func _confirm_vr_calibration() -> void:
 		update_ik_controller()
 
 
-func create_new_spatial_point(
-	p_name: String, p_transform: Transform3D, p_no_debug: bool = false
-) -> Node3D:
+func create_new_spatial_point(p_name: String, p_transform: Transform3D, p_no_debug: bool = false) -> Node3D:
 	var spatial: Node3D = Node3D.new()
 	spatial.set_name(p_name)
 
@@ -371,16 +290,12 @@ func _on_tracker_added(p_tracker: Node3D) -> void:
 			XRPositionalTracker.TRACKER_HAND_LEFT:
 				if VRManager.xr_origin.left_hand_controller:
 					if tracker_collection_input.left_hand_spatial == null:
-						tracker_collection_input.left_hand_spatial = create_new_spatial_point(
-							"LeftHandInput", Transform3D(Basis(), Vector3()), false
-						)
+						tracker_collection_input.left_hand_spatial = create_new_spatial_point("LeftHandInput", Transform3D(Basis(), Vector3()), false)
 						should_update_ik_controller = true
 			XRPositionalTracker.TRACKER_HAND_RIGHT:
 				if VRManager.xr_origin.right_hand_controller:
 					if tracker_collection_input.right_hand_spatial == null:
-						tracker_collection_input.right_hand_spatial = create_new_spatial_point(
-							"RightHandInput", Transform3D(Basis(), Vector3()), false
-						)
+						tracker_collection_input.right_hand_spatial = create_new_spatial_point("RightHandInput", Transform3D(Basis(), Vector3()), false)
 						should_update_ik_controller = true
 
 		if should_update_ik_controller:
@@ -400,24 +315,14 @@ func _on_tracker_removed(p_tracker: Node3D) -> void:
 				if VRManager.xr_origin.left_hand_controller == null:
 					if tracker_collection_input.left_hand_spatial:
 						tracker_collection_input.left_hand_spatial.queue_free()
-						(
-							tracker_collection_input
-							. left_hand_spatial
-							. get_parent()
-							. remove_child(tracker_collection_input.left_hand_spatial)
-						)
+						tracker_collection_input.left_hand_spatial.get_parent().remove_child(tracker_collection_input.left_hand_spatial)
 						tracker_collection_input.left_hand_spatial = null
 						should_update_ik_controller = true
 			XRPositionalTracker.TRACKER_HAND_RIGHT:
 				if VRManager.xr_origin.right_hand_controller == null:
 					if tracker_collection_input.right_hand_controller:
 						tracker_collection_input.right_hand_controller.queue_free()
-						(
-							tracker_collection_input
-							. right_hand_controller
-							. get_parent()
-							. remove_child(tracker_collection_input.right_hand_controller)
-						)
+						tracker_collection_input.right_hand_controller.get_parent().remove_child(tracker_collection_input.right_hand_controller)
 						tracker_collection_input.right_hand_controller = null
 						should_update_ik_controller = true
 
@@ -453,45 +358,31 @@ func update_external_transform(p_mask: int, p_transform_array: Array) -> void:
 					var spatial_name: String = ""
 					if i == ik_points.HEAD_ID:
 						spatial_name = "HeadInput"
-						spatial = create_new_spatial_point(
-							spatial_name, Transform3D(Basis(), Vector3())
-						)
+						spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 						tracker_collection_input.head_spatial = spatial
 					elif i == ik_points.LEFT_HAND_ID:
 						spatial_name = "LeftHandInput"
-						spatial = create_new_spatial_point(
-							spatial_name, Transform3D(Basis(), Vector3())
-						)
+						spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 						tracker_collection_input.left_hand_spatial = spatial
 					elif i == ik_points.RIGHT_HAND_ID:
 						spatial_name = "RightHandInput"
-						spatial = create_new_spatial_point(
-							spatial_name, Transform3D(Basis(), Vector3())
-						)
+						spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 						tracker_collection_input.right_hand_spatial = spatial
 					elif i == ik_points.LEFT_FOOT_ID:
 						spatial_name = "LeftFootInput"
-						spatial = create_new_spatial_point(
-							spatial_name, Transform3D(Basis(), Vector3())
-						)
+						spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 						tracker_collection_input.left_foot_spatial = spatial
 					elif i == ik_points.RIGHT_FOOT_ID:
 						spatial_name = "RightFootInput"
-						spatial = create_new_spatial_point(
-							spatial_name, Transform3D(Basis(), Vector3())
-						)
+						spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 						tracker_collection_input.right_foot_spatial = spatial
 					elif i == ik_points.HIPS_ID:
 						spatial_name = "HipsInput"
-						spatial = create_new_spatial_point(
-							spatial_name, Transform3D(Basis(), Vector3())
-						)
+						spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 						tracker_collection_input.hips_spatial = spatial
 					elif i == ik_points.CHEST_ID:
 						spatial_name = "ChestInput"
-						spatial = create_new_spatial_point(
-							spatial_name, Transform3D(Basis(), Vector3())
-						)
+						spatial = create_new_spatial_point(spatial_name, Transform3D(Basis(), Vector3()))
 						tracker_collection_input.chest_spatial = spatial
 					spatial.set_transform(p_transform_array[i])
 				target_transforms[i] = p_transform_array[i]
@@ -536,11 +427,7 @@ func interpolate_transforms(p_delta: float) -> void:
 			tracker_collection_input.head_spatial.transform = (
 				GodotMathExtension
 				. get_interpolated_transform(
-					tracker_collection_input.head_spatial.transform,
-					target_transforms[ik_points.HEAD_ID],
-					origin_interpolation_factor,
-					rotation_interpolation_factor,
-					p_delta
+					tracker_collection_input.head_spatial.transform, target_transforms[ik_points.HEAD_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta
 				)
 			)
 		# Hands
@@ -594,29 +481,19 @@ func interpolate_transforms(p_delta: float) -> void:
 			tracker_collection_input.hips_spatial.transform = (
 				GodotMathExtension
 				. get_interpolated_transform(
-					tracker_collection_input.hips_spatial.transform,
-					target_transforms[ik_points.HIPS_ID],
-					origin_interpolation_factor,
-					rotation_interpolation_factor,
-					p_delta
+					tracker_collection_input.hips_spatial.transform, target_transforms[ik_points.HIPS_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta
 				)
 			)
 		if tracker_collection_input.chest_spatial:
 			tracker_collection_input.chest_spatial.transform = (
 				GodotMathExtension
 				. get_interpolated_transform(
-					tracker_collection_input.chest_spatial.transform,
-					target_transforms[ik_points.CHEST_ID],
-					origin_interpolation_factor,
-					rotation_interpolation_factor,
-					p_delta
+					tracker_collection_input.chest_spatial.transform, target_transforms[ik_points.CHEST_ID], origin_interpolation_factor, rotation_interpolation_factor, p_delta
 				)
 			)
 
 
-func get_local_head_transform(
-	p_camera: Node3D, p_origin_offset: Vector3, p_camera_offset: Vector3
-) -> Transform3D:
+func get_local_head_transform(p_camera: Node3D, p_origin_offset: Vector3, p_camera_offset: Vector3) -> Transform3D:
 	var tilt_ratio: float = 0.0
 	var offset_value: float = 1.0
 	# If we're not in VR, modify the offset of the head based on pitch.
@@ -625,20 +502,12 @@ func get_local_head_transform(
 		tilt_ratio = abs(offset_value)
 
 	var relative_offset: Vector3 = Vector3(
-		0.0,
-		lerp(-eye_offset.y, eye_offset.z * sign(offset_value) * 2.0, tilt_ratio),
-		lerp(eye_offset.z, eye_offset.y * sign(offset_value) * 2.0, tilt_ratio)
+		0.0, lerp(-eye_offset.y, eye_offset.z * sign(offset_value) * 2.0, tilt_ratio), lerp(eye_offset.z, eye_offset.y * sign(offset_value) * 2.0, tilt_ratio)
 	)
 
 	return (
 		Transform3D().rotated(Vector3.UP, PI)
-		* (
-			Transform3D(
-				p_camera.transform.basis,
-				p_camera.transform.origin + p_origin_offset - p_camera_offset
-			)
-			. translated_local(relative_offset)
-		)
+		* (Transform3D(p_camera.transform.basis, p_camera.transform.origin + p_origin_offset - p_camera_offset).translated_local(relative_offset))
 		* Transform3D(IK_POINT_HEAD_BASIS_GLOBAL)
 	)
 
@@ -650,22 +519,15 @@ func update_local_transforms() -> void:
 	if tracker_collection_input:
 		if tracker_collection_input.head_spatial:
 			var camera: XRCamera3D = VRManager.xr_origin.get_node_or_null("ARVRCamera")
-			tracker_collection_input.head_spatial.transform = get_local_head_transform(
-				camera, origin_offset, camera_offset
-			)
+			tracker_collection_input.head_spatial.transform = get_local_head_transform(camera, origin_offset, camera_offset)
 		if tracker_collection_input.left_hand_spatial:
 			var controller: XRController3D = VRManager.xr_origin.left_hand_controller
 			if controller:
 				tracker_collection_input.left_hand_spatial.transform = (
 					Transform3D().rotated(Vector3.UP, PI)
 					* (
-						Transform3D(
-							controller.transform.basis,
-							controller.transform.origin + origin_offset - camera_offset
-						)
-						. translated_local(
-							Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)
-						)
+						Transform3D(controller.transform.basis, controller.transform.origin + origin_offset - camera_offset)
+						. translated_local(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z))
 					)
 					* Transform3D(IK_POINT_LEFT_HAND_BASIS_GLOBAL)
 				)
@@ -675,13 +537,8 @@ func update_local_transforms() -> void:
 				tracker_collection_input.right_hand_spatial.transform = (
 					Transform3D().rotated(Vector3.UP, PI)
 					* (
-						Transform3D(
-							controller.transform.basis,
-							controller.transform.origin + origin_offset - camera_offset
-						)
-						. translated_local(
-							Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z)
-						)
+						Transform3D(controller.transform.basis, controller.transform.origin + origin_offset - camera_offset)
+						. translated_local(Vector3(IK_HAND_OFFSET.x, IK_HAND_OFFSET.y, IK_HAND_OFFSET.z))
 					)
 					* Transform3D(IK_POINT_RIGHT_HAND_BASIS_GLOBAL)
 				)
@@ -693,37 +550,17 @@ func update_output_trackers() -> void:
 		var skeleton: Skeleton3D = _avatar_display_node.avatar_skeleton
 		if skeleton:
 			# Calculate the transforms for the output trackers based on the global poses.
-			var head_transform: Transform3D = (
-				skeleton . get_bone_global_pose(_avatar_display_node.head_id)
-			)
+			var head_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.head_id)
 			if is_multiplayer_authority():
-				head_transform = Transform3D(
-					(
-						head_transform
-						. basis
-						. orthonormalized()
-						. scaled(_avatar_display_node.saved_head_scale)
-					),
-					head_transform.origin
-				)
+				head_transform = Transform3D(head_transform.basis.orthonormalized().scaled(_avatar_display_node.saved_head_scale), head_transform.origin)
 
-			var hips_transform: Transform3D = (
-				skeleton . get_bone_global_pose(_avatar_display_node.hip_id)
-			)
+			var hips_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.hip_id)
 
-			var left_hand_transform: Transform3D = (
-				skeleton . get_bone_global_pose(_avatar_display_node.left_hand_id)
-			)
-			var right_hand_transform: Transform3D = (
-				skeleton . get_bone_global_pose(_avatar_display_node.right_hand_id)
-			)
+			var left_hand_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.left_hand_id)
+			var right_hand_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.right_hand_id)
 
-			var left_foot_transform: Transform3D = (
-				skeleton . get_bone_global_pose(_avatar_display_node.left_foot_id)
-			)
-			var right_foot_transform: Transform3D = (
-				skeleton . get_bone_global_pose(_avatar_display_node.right_foot_id)
-			)
+			var left_foot_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.left_foot_id)
+			var right_foot_transform: Transform3D = skeleton.get_bone_global_pose(_avatar_display_node.right_foot_id)
 
 			# Global transform is inefficent. Try to find a cheaper way of doing this.
 			var affine_inverse: Transform3D = global_transform.affine_inverse()
@@ -731,18 +568,10 @@ func update_output_trackers() -> void:
 			# Update the trackers.
 			tracker_collection_output.head_spatial.transform = affine_inverse * head_transform
 			tracker_collection_output.hips_spatial.transform = affine_inverse * hips_transform
-			tracker_collection_output.left_hand_spatial.transform = (
-				affine_inverse * left_hand_transform
-			)
-			tracker_collection_output.right_hand_spatial.transform = (
-				affine_inverse * right_hand_transform
-			)
-			tracker_collection_output.left_foot_spatial.transform = (
-				affine_inverse * left_foot_transform
-			)
-			tracker_collection_output.right_foot_spatial.transform = (
-				affine_inverse * right_foot_transform
-			)
+			tracker_collection_output.left_hand_spatial.transform = (affine_inverse * left_hand_transform)
+			tracker_collection_output.right_hand_spatial.transform = (affine_inverse * right_hand_transform)
+			tracker_collection_output.left_foot_spatial.transform = (affine_inverse * left_foot_transform)
+			tracker_collection_output.right_foot_spatial.transform = (affine_inverse * right_foot_transform)
 
 	output_trackers_is_dirty = false
 
@@ -774,14 +603,7 @@ static func _get_transforms_from_tracker_collection(p_tracker: RefCounted) -> Ar
 		if p_tracker.hips_spatial:
 			hips_transform = p_tracker.hips_spatial.transform
 
-	return [
-		head_transform,
-		left_hand_transform,
-		right_hand_transform,
-		left_foot_transform,
-		right_foot_transform,
-		hips_transform
-	]
+	return [head_transform, left_hand_transform, right_hand_transform, left_foot_transform, right_foot_transform, hips_transform]
 
 
 # Called once the IK for this armature has been calculated.
@@ -798,12 +620,7 @@ func execute_ik(p_delta: float) -> void:
 	if is_multiplayer_authority():
 		_avatar_display_node.restore_head()
 
-	if (
-		_ren_ik
-		and !pending_calibration
-		and _avatar_display_node.avatar_node
-		and _avatar_display_node.avatar_skeleton
-	):
+	if _ren_ik and !pending_calibration and _avatar_display_node.avatar_node and _avatar_display_node.avatar_skeleton:
 		var skel: Skeleton3D = _avatar_display_node.avatar_skeleton
 		skel.transform = Transform3D.IDENTITY
 		for b in skel.get_parentless_bones():
@@ -845,10 +662,7 @@ func update_physics(p_delta) -> void:
 				_ren_ik.update_placement(p_delta)
 			if mocap_recording:
 				update_output_trackers()
-				var transform_array = (
-					[global_transform]
-					+ _get_transforms_from_tracker_collection(tracker_collection_output)
-				)
+				var transform_array = [global_transform] + _get_transforms_from_tracker_collection(tracker_collection_output)
 				mocap_recording.write_transform_array(transform_array)
 
 
@@ -893,11 +707,7 @@ func setup() -> void:
 
 
 func _on_avatar_changed():
-	if (
-		(is_multiplayer_authority() or NetworkManager.is_server())
-		and _avatar_display_node
-		and _avatar_display_node.avatar_skeleton
-	):
+	if (is_multiplayer_authority() or NetworkManager.is_server()) and _avatar_display_node and _avatar_display_node.avatar_skeleton:
 		resize_local_transform_cache(_avatar_display_node.avatar_skeleton.get_bone_count())
 	else:
 		resize_local_transform_cache(0)
@@ -912,4 +722,4 @@ func _entity_ready():
 		ik_point_count -= 1
 
 	if !Engine.is_editor_hint():
-		assert((external_trackers_changed.connect(self._external_trackers_updated, CONNECT_ONE_SHOT) == OK))
+		assert(external_trackers_changed.connect(self._external_trackers_updated, CONNECT_ONE_SHOT) == OK)
