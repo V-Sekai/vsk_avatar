@@ -16,8 +16,7 @@ extends Resource
 @export var ring_proximal: Transform3D = Transform3D()
 @export var ring_intermediate: Transform3D = Transform3D()
 @export var ring_distal: Transform3D = Transform3D()
- 
+
 @export var little_proximal: Transform3D = Transform3D()
 @export var little_intermediate: Transform3D = Transform3D()
 @export var little_distal: Transform3D = Transform3D()
-

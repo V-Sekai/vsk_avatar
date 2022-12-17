@@ -171,11 +171,14 @@ enum Blendshapes {
 
 var transient_blendshape_coefficents: PackedFloat32Array = PackedFloat32Array()
 
+
 static func should_do(p_desired_interval: float, p_delta: float) -> bool:
 	return randf() < p_delta / p_desired_interval
 
+
 static func rand_vector3() -> Vector3:
 	return Vector3(randf() - 0.5, randf() - 0.5, randf() - 0.5) * 2.0
+
 
 static func update_fake_coefficients(
 	p_left_blink, p_right_blink, p_brow_up, p_jaw_open, p_mouth2, p_mouth3, p_mouth4, p_coefficients
@@ -349,8 +352,7 @@ func update(p_delta: float) -> void:
 			):
 				var rand_speed_variability: float = randf()
 				var eye_blink_velocity: float = (
-					BLINK_SPEED
-					+ rand_speed_variability * BLINK_SPEED_VARIABILITY
+					BLINK_SPEED + rand_speed_variability * BLINK_SPEED_VARIABILITY
 				)
 				if force_blink_to_retarget:
 					eye_blink_velocity = 0.5 * eye_blink_velocity

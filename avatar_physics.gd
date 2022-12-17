@@ -13,7 +13,9 @@ const collidergroup_class: GDScript = preload("res://addons/vrm/vrm_collidergrou
 var spring_bones_internal: Array = []
 var collider_groups_internal: Array = []
 
-class CachedSkeletonPolyfill extends RefCounted:
+
+class CachedSkeletonPolyfill:
+	extends RefCounted
 	var skel: Skeleton3D
 	var bone_to_children: Dictionary = {}.duplicate()
 	var overrides: Array = [].duplicate()
@@ -36,20 +38,25 @@ class CachedSkeletonPolyfill extends RefCounted:
 			overrides[i] = Transform3D.IDENTITY
 			override_weights[i] = 0.0
 
-	func set_bone_global_pose_override(bone_idx: int, transform: Transform3D, weight: float, _overide_persistent: bool=false) -> void:
+	func set_bone_global_pose_override(
+		bone_idx: int, transform: Transform3D, weight: float, _overide_persistent: bool = false
+	) -> void:
 		# persistent makes no sense - it seems to reset weight unless it is true
 		# so we ignore the default and always pass true in.
 		skel.set_bone_global_pose_override(bone_idx, transform, weight, true)
 		overrides[bone_idx] = transform
 		override_weights[bone_idx] = weight
 
-	func get_bone_global_pose(bone_idx: int, lvl: int=0) -> Transform3D:
+	func get_bone_global_pose(bone_idx: int, lvl: int = 0) -> Transform3D:
 		if lvl == 128:
 			return Transform3D.IDENTITY
 		if override_weights[bone_idx] == 1.0:
 			return overrides[bone_idx]
 		var transform: Transform3D = skel.get_bone_pose(bone_idx)
-		transform = transform * (1.0 - override_weights[bone_idx]) + overrides[bone_idx] * override_weights[bone_idx]
+		transform = (
+			transform * (1.0 - override_weights[bone_idx])
+			+ overrides[bone_idx] * override_weights[bone_idx]
+		)
 		var par_bone: int = skel.get_bone_parent(bone_idx)
 		if par_bone == -1:
 			return transform
@@ -58,7 +65,9 @@ class CachedSkeletonPolyfill extends RefCounted:
 	func get_bone_children(bone_idx) -> Array[int]:
 		return self.bone_to_children.get(bone_idx, [])
 
-	func get_bone_global_pose_without_override(bone_idx: int, _force_update: bool=false) -> Transform3D:
+	func get_bone_global_pose_without_override(
+		bone_idx: int, _force_update: bool = false
+	) -> Transform3D:
 		var par_bone: int = bone_idx
 		var transform: Transform3D = skel.get_bone_pose(par_bone)
 		var par: int = skel.get_bone_parent(bone_idx)
@@ -66,9 +75,10 @@ class CachedSkeletonPolyfill extends RefCounted:
 			return transform
 		return skel.get_bone_global_pose(par) * transform
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	return;# FIX LATER
+	return  # FIX LATER
 	collider_groups_internal.clear()
 	spring_bones_internal.clear()
 	var skel_to_polyfill: Dictionary = {}.duplicate()
@@ -102,6 +112,7 @@ func _ready():
 				new_spring_bone._ready(skel, parent_polyfill, tmp_colliders)
 				spring_bones_internal.append(new_spring_bone)
 	return
+
 
 func update(delta):
 	if not Engine.is_editor_hint():

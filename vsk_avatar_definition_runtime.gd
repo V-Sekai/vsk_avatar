@@ -5,20 +5,20 @@ const avatar_physics_const = preload("avatar_physics.gd")
 
 var driver_node: Node = null
 
-@export var skeleton_path: NodePath = NodePath() :
+@export var skeleton_path: NodePath = NodePath():
 	set = set_skeleton_path
 
 var _skeleton_node: Skeleton3D = null
 
-@export var avatar_physics_path: NodePath = NodePath() :
+@export var avatar_physics_path: NodePath = NodePath():
 	set = set_avatar_physics_path
 
 var _avatar_physics_node: Node = get_node_or_null(avatar_physics_path)
 
 @export var eye_transform_node_path: NodePath = NodePath()
- 
+
 @export var mouth_transform_node_path: NodePath = NodePath()
- # @onready var _mouth_transform_node: Node3D = get_node_or_null(mouth_transform_node_path)
+# @onready var _mouth_transform_node: Node3D = get_node_or_null(mouth_transform_node_path)
 
 @export var database_id: String
 
@@ -34,18 +34,18 @@ func set_mouth_transform_path(p_node_path: NodePath) -> void:
 func set_skeleton_path(p_skeleton_path: NodePath) -> void:
 	skeleton_path = p_skeleton_path
 	_skeleton_node = null
-	
+
 	var skeleton_node: Skeleton3D = get_node_or_null(skeleton_path)
 	if skeleton_node is Skeleton3D:
 		_skeleton_node = skeleton_node
 	else:
 		_skeleton_node = null
-	
+
 
 func set_avatar_physics_path(p_avatar_physics_path: NodePath) -> void:
 	avatar_physics_path = p_avatar_physics_path
 	_avatar_physics_node = null
-	
+
 	var avatar_physics_node: Node = get_node_or_null(avatar_physics_path)
 	if avatar_physics_node:
 		if avatar_physics_node.get_script() == avatar_physics_const:

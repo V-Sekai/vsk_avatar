@@ -1,7 +1,6 @@
 @tool
 class_name HumanoidData extends Resource
 
-
 var _skeleton_node: Skeleton3D = null
 
 enum {
@@ -314,14 +313,17 @@ func get_skeleton_bone_name(p_humanoid_bone_id: int) -> String:
 			printerr("Invald index")
 			return ""
 
+
 func find_skeleton_bone_for_humanoid_bone(p_skeleton: Skeleton3D, p_humanoid_id: int) -> int:
 	return p_skeleton.find_bone(get_skeleton_bone_name(p_humanoid_id))
+
 
 func is_skeleton_bone_empty(p_humanoid_bone_id: int) -> bool:
 	if not get_skeleton_bone_name(p_humanoid_bone_id).is_empty():
 		return true
 	else:
 		return false
+
 
 func _validate_bone_name_property(p_property: Dictionary, p_hintstring: String) -> Dictionary:
 	if _skeleton_node:
@@ -343,451 +345,651 @@ func _get_property_list() -> Array:
 				names += ","
 			names += _skeleton_node.get_bone_name(i)
 
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "head_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "head_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+			)
 		)
 	)
 
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "neck_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "neck_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+			)
 		)
 	)
 
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "shoulder_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "shoulder_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "upper_arm_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "upper_arm_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "forearm_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "forearm_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "hand_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
-		)
-	)
-
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "shoulder_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "upper_arm_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "forearm_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "hand_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "hand_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
 
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "spine_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "shoulder_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "chest_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "upper_arm_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "upper_chest_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "forearm_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
-
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "hips_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
-		)
-	)
-
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "thigh_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "shin_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "foot_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "toe_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
-		)
-	)
-
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "thigh_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "shin_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "foot_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "toe_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "hand_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
 
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "thumb_proximal_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "spine_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "thumb_intermediate_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "chest_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "thumb_distal_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "upper_chest_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
 
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "index_proximal_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "index_intermediate_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "index_distal_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "hips_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+			)
 		)
 	)
 
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "middle_proximal_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "thigh_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "middle_intermediate_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "shin_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "middle_distal_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "foot_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
-
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "ring_proximal_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "ring_intermediate_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "ring_distal_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "toe_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
 
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "little_proximal_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "thigh_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "little_intermediate_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "shin_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "little_distal_left_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "foot_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
-
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "thumb_proximal_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "thumb_intermediate_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "thumb_distal_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "toe_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
 		)
 	)
 
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "index_proximal_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "thumb_proximal_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "index_intermediate_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "thumb_intermediate_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "index_distal_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "middle_proximal_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "middle_intermediate_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "middle_distal_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "thumb_distal_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
 
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "ring_proximal_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "index_proximal_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "ring_intermediate_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "index_intermediate_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "ring_distal_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "little_proximal_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "little_intermediate_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
-		)
-	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{
-				"name": "little_distal_right_bone_name",
-				"type": TYPE_STRING,
-				"hint": PROPERTY_HINT_NONE
-			},
-			names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "index_distal_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
 
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "eye_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "middle_proximal_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "eye_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "middle_intermediate_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
 		)
 	)
-	property_list.push_back(
-		_validate_bone_name_property(
-			{"name": "jaw_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "middle_distal_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "ring_proximal_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "ring_intermediate_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "ring_distal_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "little_proximal_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "little_intermediate_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "little_distal_left_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "thumb_proximal_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "thumb_intermediate_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "thumb_distal_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "index_proximal_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "index_intermediate_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "index_distal_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "middle_proximal_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "middle_intermediate_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "middle_distal_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "ring_proximal_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "ring_intermediate_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "ring_distal_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "little_proximal_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "little_intermediate_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{
+					"name": "little_distal_right_bone_name",
+					"type": TYPE_STRING,
+					"hint": PROPERTY_HINT_NONE
+				},
+				names
+			)
+		)
+	)
+
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "eye_left_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "eye_right_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE},
+				names
+			)
+		)
+	)
+	(
+		property_list
+		. push_back(
+			_validate_bone_name_property(
+				{"name": "jaw_bone_name", "type": TYPE_STRING, "hint": PROPERTY_HINT_NONE}, names
+			)
 		)
 	)
 

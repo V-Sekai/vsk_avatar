@@ -33,12 +33,14 @@ var PINKY_FINGER_NAMES = PackedStringArray(["pinky"])
 
 var TWIST_BONE_NAME = PackedStringArray(["twist", "roll"])
 
+
 static func get_sanitisied_bone_name_list(p_skeleton: Skeleton3D) -> PackedStringArray:
 	var sanitised_names: PackedStringArray = PackedStringArray()
 	for i in range(0, p_skeleton.get_bone_count()):
 		sanitised_names.push_back(p_skeleton.get_bone_name(i))
 
 	return sanitised_names
+
 
 static func get_bone_children_ids(
 	p_skeleton: Skeleton3D, p_id: int, p_children: PackedInt32Array = PackedInt32Array()
@@ -50,26 +52,28 @@ static func get_bone_children_ids(
 
 	return p_children
 
-class BoneInfo extends RefCounted:
+
+class BoneInfo:
+	extends RefCounted
 	var bone_parent: int = -1
 	var bone_name: String = ""
 	var bone_length: float = 0.0
 	var bone_direction: Vector3 = Vector3()
+
 
 func gather_bone_info(p_skeleton: Skeleton3D) -> RefCounted:
 	var bone_info_list: Array = []
 
 	for i in range(0, p_skeleton.get_bone_count()):
 		var bone_info: BoneInfo = BoneInfo.new()
-		
+
 		bone_info.bone_name = p_skeleton.get_bone_name(i)
 		bone_info.bone_parent = p_skeleton.get_bone_parent(i)
-		
+
 		if bone_info.bone_parent != -1:
 			bone_info.bone_length = p_skeleton.get_bone_rest(i).origin.distance_to(Vector3())
 			bone_info.bone_direction = Vector3().direction_to(p_skeleton.get_bone_rest(i).origin)
-			
-		
+
 		bone_info.push_back(bone_info)
 
 	return null
