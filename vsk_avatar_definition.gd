@@ -5,7 +5,7 @@ const vsk_user_content_definition_helper_conest = preload("res://addons/vsk_impo
 
 @export_enum("VSK_PREVIEW_CAMERA", "VSK_PREVIEW_TEXTURE") var vskeditor_preview_type: int
 @export var vskeditor_preview_texture: Texture2D
-@export_node_path(Camera3D) var vskeditor_preview_camera_path
+@export_node_path("Camera3D") var vskeditor_preview_camera_path 
 @export var vskeditor_pipeline_paths: Array[NodePath]
 
 
