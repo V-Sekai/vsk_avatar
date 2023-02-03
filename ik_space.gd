@@ -622,9 +622,6 @@ func execute_ik(p_delta: float) -> void:
 
 	if _ren_ik and !pending_calibration and _avatar_display_node.avatar_node and _avatar_display_node.avatar_skeleton:
 		var skel: Skeleton3D = _avatar_display_node.avatar_skeleton
-		skel.transform = Transform3D.IDENTITY
-		for b in skel.get_parentless_bones():
-			skel.set_bone_local_pose_override(b, Transform3D.IDENTITY, 0.0, true)
 		#print("Left hand local:" + str(_ren_ik.get_node(_ren_ik.get_hand_left_target_path()).position) + " global:" + str(_ren_ik.get_node(_ren_ik.get_hand_left_target_path()).global_position))
 		_ren_ik.update_ik()
 
