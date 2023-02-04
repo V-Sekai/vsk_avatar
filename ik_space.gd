@@ -621,7 +621,6 @@ func execute_ik(p_delta: float) -> void:
 		_avatar_display_node.restore_head()
 
 	if _ren_ik and !pending_calibration and _avatar_display_node.avatar_node and _avatar_display_node.avatar_skeleton:
-		var skel: Skeleton3D = _avatar_display_node.avatar_skeleton
 		#print("Left hand local:" + str(_ren_ik.get_node(_ren_ik.get_hand_left_target_path()).position) + " global:" + str(_ren_ik.get_node(_ren_ik.get_hand_left_target_path()).global_position))
 		_ren_ik.update_ik()
 
