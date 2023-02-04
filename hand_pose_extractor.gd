@@ -22,7 +22,9 @@ static func generate_hand_pose_from_skeleton(p_skeleton: Skeleton3D, p_right_han
 	hand_pose_dict["IndexDistal"] = get_transform_for_humanoid_bone(p_skeleton, hand_prefix + "IndexDistal")
 
 	hand_pose_dict["MiddleProximal"] = get_transform_for_humanoid_bone(p_skeleton, hand_prefix + "MiddleProximal")
-	hand_pose_dict["MiddleIntermediate"] = get_transform_for_humanoid_bone(p_skeleton, hand_prefix + "MiddleIntermediate")
+	hand_pose_dict["MiddleIntermediate"] = get_transform_for_humanoid_bone(
+		p_skeleton, hand_prefix + "MiddleIntermediate"
+	)
 	hand_pose_dict["MiddleDistal"] = get_transform_for_humanoid_bone(p_skeleton, hand_prefix + "MiddleDistal")
 
 	hand_pose_dict["RingProximal"] = get_transform_for_humanoid_bone(p_skeleton, hand_prefix + "RingProximal")
@@ -30,7 +32,9 @@ static func generate_hand_pose_from_skeleton(p_skeleton: Skeleton3D, p_right_han
 	hand_pose_dict["RingDistal"] = get_transform_for_humanoid_bone(p_skeleton, hand_prefix + "RingDistal")
 
 	hand_pose_dict["LittleProximal"] = get_transform_for_humanoid_bone(p_skeleton, hand_prefix + "LittleProximal")
-	hand_pose_dict["LittleIntermediate"] = get_transform_for_humanoid_bone(p_skeleton, hand_prefix + "LittleIntermediate")
+	hand_pose_dict["LittleIntermediate"] = get_transform_for_humanoid_bone(
+		p_skeleton, hand_prefix + "LittleIntermediate"
+	)
 	hand_pose_dict["LittleDistal"] = get_transform_for_humanoid_bone(p_skeleton, hand_prefix + "LittleDistal")
 
 	var hand_pose_anim: Animation = Animation.new()

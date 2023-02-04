@@ -180,7 +180,9 @@ static func rand_vector3() -> Vector3:
 	return Vector3(randf() - 0.5, randf() - 0.5, randf() - 0.5) * 2.0
 
 
-static func update_fake_coefficients(p_left_blink, p_right_blink, p_brow_up, p_jaw_open, p_mouth2, p_mouth3, p_mouth4, p_coefficients) -> PackedFloat32Array:
+static func update_fake_coefficients(
+	p_left_blink, p_right_blink, p_brow_up, p_jaw_open, p_mouth2, p_mouth3, p_mouth4, p_coefficients
+) -> PackedFloat32Array:
 	p_coefficients.resize(max(p_coefficients.size(), Blendshapes.BlendshapeCount))
 
 	p_coefficients[Blendshapes.EyeBlink_L] = p_left_blink
@@ -206,7 +208,9 @@ func calculate_mouth_shapes(p_delta: float) -> void:
 	var delta_time_ratio: float = p_delta / (1.0 / NORMAL_HZ)
 
 	# From the change in loudness, decide how much to open or close the jaw
-	var delta_loudness: float = max(min(average_loudness - long_term_average_loudness, MAX_DELTA_LOUDNESS), 0.0) / MAX_DELTA_LOUDNESS
+	var delta_loudness: float = (
+		max(min(average_loudness - long_term_average_loudness, MAX_DELTA_LOUDNESS), 0.0) / MAX_DELTA_LOUDNESS
+	)
 	var audio_delta: float = pow(delta_loudness, 2.0) * JAW_OPEN_SCALE
 	if audio_delta > audio_jaw_open:
 		audio_jaw_open += (audio_delta - audio_jaw_open) * JAW_OPEN_RATE * delta_time_ratio
@@ -278,7 +282,9 @@ func update(p_delta: float) -> void:
 	if long_term_average_loudness == -1.0:
 		long_term_average_loudness = average_loudness
 	else:
-		long_term_average_loudness = lerpf(long_term_average_loudness, average_loudness, min(p_delta / AUDIO_LONG_TERM_AVERAGING_SECS, 1.0))
+		long_term_average_loudness = lerpf(
+			long_term_average_loudness, average_loudness, min(p_delta / AUDIO_LONG_TERM_AVERAGING_SECS, 1.0)
+		)
 
 	# Procedural Eye Joint Animation
 	if 1:
@@ -305,7 +311,19 @@ func update(p_delta: float) -> void:
 				or force_blink
 				or (
 					brow_audio_lift < EPSILON
-					and should_do(max(1.0, sqrt(abs(average_loudness - long_term_average_loudness)) * ROOT_LOUDNESS_TO_BLINK_INTERVAL) / BASE_BLINK_RATE, p_delta)
+					and should_do(
+						(
+							max(
+								1.0,
+								(
+									sqrt(abs(average_loudness - long_term_average_loudness))
+									* ROOT_LOUDNESS_TO_BLINK_INTERVAL
+								)
+							)
+							/ BASE_BLINK_RATE
+						),
+						p_delta
+					)
 				)
 			):
 				var rand_speed_variability: float = randf()
@@ -341,7 +359,10 @@ func update(p_delta: float) -> void:
 	if 1:
 		# Update audio attack data for facial animation (eyebrows and mouth)
 		var audio_attack_averaging_rate: float = (10.0 - p_delta * NORMAL_HZ) / 10.0  # --> 0.9 at 60 Hz
-		audio_attack = (audio_attack_averaging_rate * audio_attack + ((1.0 - audio_attack_averaging_rate) * abs((audio_loudness - long_term_average_loudness) - last_loudness)))
+		audio_attack = (
+			audio_attack_averaging_rate * audio_attack
+			+ ((1.0 - audio_attack_averaging_rate) * abs((audio_loudness - long_term_average_loudness) - last_loudness))
+		)
 		last_loudness = (audio_loudness - long_term_average_loudness)
 		if audio_attack > BROW_LIFT_THRESHOLD:
 			brow_audio_lift += sqrt(audio_attack) * 0.01
@@ -358,7 +379,14 @@ func update(p_delta: float) -> void:
 		mouth_time = 0.0
 
 	transient_blendshape_coefficents = update_fake_coefficients(
-		left_eye_blink, right_eye_blink, brow_audio_lift, audio_jaw_open, mouth2, mouth3, mouth4, transient_blendshape_coefficents
+		left_eye_blink,
+		right_eye_blink,
+		brow_audio_lift,
+		audio_jaw_open,
+		mouth2,
+		mouth3,
+		mouth4,
+		transient_blendshape_coefficents
 	)
 
 	# Lid adjustment procedural

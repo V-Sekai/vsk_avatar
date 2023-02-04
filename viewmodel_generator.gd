@@ -45,7 +45,9 @@ static func generate_mesh_for_bone_ids(p_mesh: Mesh, p_valid_bone_ids: PackedInt
 					continue
 				else:
 					var bone_ids: PackedInt32Array = mesh_data_tool.get_vertex_bones(vertex_ids[face_vertex_idx])
-					var bone_weights: PackedFloat32Array = mesh_data_tool.get_vertex_weights(vertex_ids[face_vertex_idx])
+					var bone_weights: PackedFloat32Array = mesh_data_tool.get_vertex_weights(
+						vertex_ids[face_vertex_idx]
+					)
 
 					var vertex_valid: bool = false
 
