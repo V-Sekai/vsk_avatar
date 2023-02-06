@@ -125,7 +125,7 @@ static func setup_animation_tree_hand_blend_tree(
 
 	p_animation_tree.anim_player = p_animation_tree.get_path_to(p_animation_player)
 	p_animation_tree.tree_root = default_avatar_tree_const
-	p_animation_tree.process_mode = AnimationTree.ANIMATION_PROCESS_MANUAL
+	p_animation_tree.process_mode = Node.PROCESS_MODE_DISABLED
 	p_animation_tree.active = true
 
 	var left_hand_blend: AnimationNode = p_animation_tree.tree_root.get_node("LeftHandBlend")
