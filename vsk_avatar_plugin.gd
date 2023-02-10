@@ -85,7 +85,7 @@ func _edit(p_object: Variant) -> void:
 
 
 func _handles(p_object: Variant) -> bool:
-	if p_object.get_script() == avatar_definition_const:
+	if p_object != null and p_object.get_script() == avatar_definition_const:
 		return true
 	else:
 		return false

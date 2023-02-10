@@ -178,7 +178,7 @@ func setup_dialogs() -> void:
 	editor_plugin.get_editor_interface().get_base_control().add_child(err_dialog)
 
 	save_dialog = FileDialog.new()
-	save_dialog.mode = FileDialog.FILE_MODE_SAVE_FILE
+	save_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
 	save_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	save_dialog.exclusive = true
 	save_dialog.file_selected.connect(self._save_file_at_path)
