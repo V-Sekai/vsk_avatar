@@ -6,12 +6,9 @@
 [sub_resource type="SphereMesh" id="1"]
 
 [node name="Avatar" type="Node3D"]
-script = ExtResource( "2" )
-database_id = ""
-vskeditor_preview_type = 0
-vskeditor_pipeline_paths = []
+script = ExtResource("2")
 
 [node name="LoadingOrb" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 1.5, 0)
-material_override = ExtResource( "2_3707a" )
-mesh = SubResource( "1" )
+material_override = ExtResource("2_3707a")
+mesh = SubResource("1")

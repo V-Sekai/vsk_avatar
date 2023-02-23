@@ -5,8 +5,5 @@
 
 [node name="Avatar" type="Node3D"]
 script = ExtResource("1")
-vskeditor_preview_type = 0
-vskeditor_pipeline_paths = []
-database_id = ""
 
 [node name="teapot" parent="." instance=ExtResource("2")]
