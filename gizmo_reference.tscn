@@ -870,7 +870,7 @@ shader_parameter/_DebugMode = 0.0
 shader_parameter/_MToonVersion = 33.0
 
 [node name="GizmoReference" type="Marker3D"]
-transform = Transform3D(1, -2.1684e-19, 0, 0, 1, 0, -4.31987e-20, 0, 1, 0, 0, 0)
+transform = Transform3D(0.4, -1.6186e-58, 1.72795e-20, 0, 0.4, 3.74688e-39, -1.72795e-20, -3.74688e-39, 0.4, 0, 0, 0)
 
 [node name="Forward" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, -6.50521e-19, -2.1684e-19, 8.63974e-20, -4.37114e-08, -1, 4.31987e-20, 1, -4.37114e-08, -2.1684e-20, -6.45849e-10, 0.1)
